@@ -176,14 +176,11 @@
       {
         "name": "Belize",
         "cities": [
-          "Belmopan"
         ]
       },
       {
         "name": "Canada",
         "cities": [
-          "Manitoba",
-          "Regina",
           "Saskatchewan",
           "Saskatoon",
           "Winnipeg"
@@ -192,8 +189,6 @@
       {
         "name": "Costa Rica",
         "cities": [
-          "Limón",
-          "San José"
         ]
       },
       {
@@ -205,40 +200,27 @@
       {
         "name": "El Salvador",
         "cities": [
-          "San Salvador",
-          "Santa Ana"
         ]
       },
       {
         "name": "Guatemala",
         "cities": [
-          "Guatemala City"
         ]
       },
       {
         "name": "Honduras",
         "cities": [
-          "San Pedro Sula",
-          "Tegucigalpa"
         ]
       },
       {
         "name": "Mexico",
         "cities": [
-          "Ciudad Neza",
-          "Ecatepec de Morelos",
-          "Guadalajara",
-          "León",
-          "Mexico City",
-          "Monterrey",
-          "Puebla"
+          "Mexico City"
         ]
       },
       {
         "name": "Nicaragua",
         "cities": [
-          "León",
-          "Managua"
         ]
       },
       {
@@ -262,7 +244,6 @@
           "Minnesota",
           "Mississippi",
           "Missouri",
-          "Nashville",
           "Nebraska",
           "North Dakota",
           "Oklahoma",
@@ -272,7 +253,6 @@
           "South Dakota",
           "Tennessee",
           "Texas",
-          "Tulsa",
           "Wisconsin"
         ]
       }
@@ -284,13 +264,11 @@
       {
         "name": "Bahamas",
         "cities": [
-          "Nassau"
         ]
       },
       {
         "name": "Brazil",
         "cities": [
-          "Acre",
           "Rio Branco"
         ]
       },
@@ -298,8 +276,6 @@
         "name": "Canada",
         "cities": [
           "Montreal",
-          "Ontario",
-          "Ottawa",
           "Quebec",
           "Toronto"
         ]
@@ -307,50 +283,32 @@
       {
         "name": "Cayman Islands",
         "cities": [
-          "George Town"
-        ]
-      },
-      {
-        "name": "Chile",
-        "cities": [
-
         ]
       },
       {
         "name": "Colombia",
         "cities": [
-          "Barranquilla",
-          "Bogotá",
-          "Cali",
-          "Cartagena",
-          "Medellín"
         ]
       },
       {
         "name": "Cuba",
         "cities": [
-          "Havana",
-          "Santiago de Cuba"
         ]
       },
       {
         "name": "Ecuador",
         "cities": [
-          "Guayaquil",
-          "Quito"
+          "Guayaquil"
         ]
       },
       {
         "name": "Haiti",
         "cities": [
-          "Port-au-Prince"
         ]
       },
       {
         "name": "Jamaica",
         "cities": [
-          "Kingston",
-          "Spanish Town"
         ]
       },
       {
@@ -362,15 +320,11 @@
       {
         "name": "Panama",
         "cities": [
-          "Panama City"
         ]
       },
       {
         "name": "Peru",
         "cities": [
-          "Arequipa",
-          "Lima",
-          "Trujillo"
         ]
       },
       {
@@ -379,34 +333,18 @@
           "Atlanta",
           "Baltimore",
           "Boston",
-          "Charlotte",
-          "Cincinnati",
-          "Cleveland",
-          "Columbus",
-          "Connecticut",
-          "Delaware",
           "Detroit",
           "Florida",
-          "Georgia",
-          "Indiana",
           "Indianapolis",
-          "Jacksonville",
           "Kentucky",
-          "Lexington-Fayette",
-          "Maine",
-          "Maryland",
           "Massachusetts",
           "Miami",
           "Michigan",
-          "New Hampshire",
-          "New Jersey",
           "New York",
-          "North Carolina",
           "Ohio",
           "Pennsylvania",
           "Philadelphia",
           "Pittsburgh",
-          "Raleigh",
           "Rhode Island",
           "South Carolina",
           "Staten Island",
@@ -437,183 +375,140 @@
       {
         "name": "Anguilla",
         "cities": [
-          "The Valley"
         ]
       },
       {
         "name": "Antigua and Barbuda",
         "cities": [
-          "St. John's"
         ]
       },
       {
         "name": "Aruba",
         "cities": [
-          "Oranjestad"
         ]
       },
       {
         "name": "Barbados",
         "cities": [
-          "Bridgetown"
         ]
       },
       {
         "name": "Bermuda",
         "cities": [
-          "Hamilton"
         ]
       },
       {
         "name": "Bolivia",
         "cities": [
-          "La Paz",
-          "Santa Cruz"
         ]
       },
       {
         "name": "Bonaire, Sint Eustatius and Saba",
         "cities": [
-          "Kralendijk"
         ]
       },
       {
         "name": "Brazil",
         "cities": [
-          "Amazonas",
-          "Manaus",
-          "Rondônia",
-          "Roraima"
+          "Amazonas"
         ]
       },
       {
         "name": "British Virgin Islands",
         "cities": [
-          "Road Town"
         ]
       },
       {
         "name": "Canada",
         "cities": [
-          "Newfoundland and Labrador",
           "Halifax",
-          "New Brunswick",
           "Nova Scotia",
-          "Prince Edward Island",
-          "Saint John"
+          "Prince Edward Island"
         ]
       },
       {
         "name": "Curaçao",
         "cities": [
-          "Willemstad"
         ]
       },
       {
         "name": "Dominica",
         "cities": [
-          "Roseau"
         ]
       },
       {
         "name": "Dominican Republic",
         "cities": [
-          "Santiago de los Caballeros",
-          "Santo Domingo"
         ]
       },
       {
         "name": "Grenada",
         "cities": [
-          "St. George's"
         ]
       },
       {
         "name": "Guadeloupe",
         "cities": [
-          "Basse-Terre"
         ]
       },
       {
         "name": "Guyana",
         "cities": [
-          "Georgetown"
         ]
       },
       {
         "name": "Martinique",
         "cities": [
-          "Fort-de-France"
         ]
       },
       {
         "name": "Montserrat",
         "cities": [
-          "Plymouth"
         ]
       },
       {
         "name": "Puerto Rico",
         "cities": [
-          "Carolina",
-          "San Juan"
         ]
       },
       {
         "name": "Saint Kitts and Nevis",
         "cities": [
-          "Basseterre"
         ]
       },
       {
         "name": "Saint Lucia",
         "cities": [
-          "Castries"
         ]
       },
       {
         "name": "Saint Martin",
         "cities": [
-          "Marigot"
-        ]
-      },
-      {
-        "name": "Saint Vincent and the Grenadines",
-        "cities": [
-          "Kingstown"
         ]
       },
       {
         "name": "Saint-Barthélemy",
         "cities": [
-          "Gustavia"
         ]
       },
       {
         "name": "Trinidad and Tobago",
         "cities": [
-          "Chaguanas",
-          "Port of Spain"
         ]
       },
       {
         "name": "Turks and Caicos Islands",
         "cities": [
-          "Cockburn Town"
         ]
       },
       {
         "name": "U.S. Virgin Islands",
         "cities": [
-          "Charlotte Amalie"
         ]
       },
       {
         "name": "Venezuela",
         "cities": [
-          "Caracas",
-          "Maracaibo",
-          "Maracay"
         ]
       }
     ],
@@ -694,14 +589,11 @@
       {
         "name": "Suriname",
         "cities": [
-          "Paramaribo"
         ]
       },
       {
         "name": "Uruguay",
         "cities": [
-          "Montevideo",
-          "Salto"
         ]
       }
     ],
@@ -771,26 +663,21 @@
       {
         "name": "Canary Islands",
         "cities": [
-          "Las Palmas"
         ]
       },
       {
         "name": "Faroe Islands",
         "cities": [
-          "Tórshavn"
         ]
       },
       {
         "name": "Gambia",
         "cities": [
-          "Banjul"
         ]
       },
       {
         "name": "Ghana",
         "cities": [
-          "Accra",
-          "Kumasi"
         ]
       },
       {
@@ -808,27 +695,21 @@
       {
         "name": "Guinea",
         "cities": [
-          "Conakry",
-          "Nzérékoré"
         ]
       },
       {
         "name": "Guinea-Bissau",
         "cities": [
-          "Bafatá",
-          "Bissau"
         ]
       },
       {
         "name": "Iceland",
         "cities": [
-          "Reykjavik"
         ]
       },
       {
         "name": "Ireland",
         "cities": [
-          "Cork",
           "Dublin"
         ]
       },
@@ -841,9 +722,6 @@
       {
         "name": "Ivory Coast",
         "cities": [
-          "Abidjan",
-          "Bouaké",
-          "Yamoussoukro"
         ]
       },
       {
@@ -855,49 +733,36 @@
       {
         "name": "Liberia",
         "cities": [
-          "Monrovia"
         ]
       },
       {
         "name": "Mali",
         "cities": [
-          "Bamako",
-          "Sikasso"
         ]
       },
       {
         "name": "Mauritania",
         "cities": [
-          "Nouadhibou",
-          "Nouakchott"
         ]
       },
       {
         "name": "Morocco",
         "cities": [
-          "Casablanca",
-          "Rabat"
         ]
       },
       {
         "name": "Portugal",
         "cities": [
-          "Lisbon",
-          "Porto"
         ]
       },
       {
         "name": "Senegal",
         "cities": [
-          "Dakar",
-          "Touba"
         ]
       },
       {
         "name": "Sierra Leone",
         "cities": [
-          "Bo",
-          "Freetown"
         ]
       },
       {
@@ -909,23 +774,12 @@
       {
         "name": "Togo",
         "cities": [
-          "Lomé",
-          "Sokodé"
         ]
       },
       {
         "name": "United Kingdom",
         "cities": [
-          "Birmingham",
-          "Bristol",
-          "Edinburgh",
-          "Glasgow",
-          "Leeds",
-          "Leicester",
-          "Liverpool",
-          "London",
-          "Manchester",
-          "Sheffield"
+          "London"
         ]
       },
       {
@@ -942,16 +796,11 @@
       {
         "name": "Albania",
         "cities": [
-          "Durrës",
-          "Tirana"
         ]
       },
       {
         "name": "Algeria",
         "cities": [
-          "Algiers",
-          "Boumerdas",
-          "Oran"
         ]
       },
       {
@@ -963,126 +812,86 @@
       {
         "name": "Angola",
         "cities": [
-          "Luanda",
-          "N'dalatando"
         ]
       },
       {
         "name": "Austria",
         "cities": [
-          "Graz",
-          "Vienna"
         ]
       },
       {
         "name": "Belgium",
         "cities": [
-          "Antwerp",
-          "Brussels"
         ]
       },
       {
         "name": "Benin",
         "cities": [
-          "Abomey-Calavi",
-          "Porto-Novo"
         ]
       },
       {
         "name": "Bosnia and Herzegovina",
         "cities": [
-          "Sarajevo"
         ]
       },
       {
         "name": "Cameroon",
         "cities": [
-          "Douala",
-          "Yaoundé"
         ]
       },
       {
         "name": "Central African Republic",
         "cities": [
-          "Bangui",
-          "Bimbo"
         ]
       },
       {
         "name": "Chad",
         "cities": [
-          "Moundou",
-          "N'Djamena"
         ]
       },
       {
         "name": "Congo-Brazzaville",
         "cities": [
-          "Brazzaville",
-          "Pointe-Noire"
         ]
       },
       {
         "name": "Congo-Kinshasa",
         "cities": [
-          "Kikwit",
-          "Kinshasa"
         ]
       },
       {
         "name": "Croatia",
         "cities": [
-          "Zagreb"
         ]
       },
       {
         "name": "Czechia",
         "cities": [
-          "Brno",
-          "Prague"
         ]
       },
       {
         "name": "Denmark",
         "cities": [
-          "Aarhus",
-          "Copenhagen"
         ]
       },
       {
         "name": "Equatorial Guinea",
         "cities": [
-          "Bata",
-          "Malabo"
         ]
       },
       {
         "name": "France",
         "cities": [
-          "Lyon",
-          "Marseille",
-          "Nice",
-          "Paris",
-          "Toulouse"
         ]
       },
       {
         "name": "Gabon",
         "cities": [
-          "Libreville",
-          "Port-Gentil"
         ]
       },
       {
         "name": "Germany",
         "cities": [
-          "Berlin",
-          "Cologne",
-          "Essen",
-          "Frankfurt",
-          "Hamburg",
-          "Munich",
-          "Stuttgart"
         ]
       },
       {
@@ -1094,18 +903,11 @@
       {
         "name": "Hungary",
         "cities": [
-          "Budapest",
-          "Debrecen"
         ]
       },
       {
         "name": "Italy",
         "cities": [
-          "Milan",
-          "Naples",
-          "Palermo",
-          "Rome",
-          "Turin"
         ]
       },
       {
@@ -1123,14 +925,11 @@
       {
         "name": "Macedonia",
         "cities": [
-          "Bitola",
-          "Skopje"
         ]
       },
       {
         "name": "Malta",
         "cities": [
-          "Valletta"
         ]
       },
       {
@@ -1142,50 +941,31 @@
       {
         "name": "Montenegro",
         "cities": [
-          "Podgorica"
         ]
       },
       {
         "name": "Netherlands",
         "cities": [
-          "Amsterdam",
-          "The Hague"
         ]
       },
       {
         "name": "Niger",
         "cities": [
-          "Niamey"
         ]
       },
       {
         "name": "Nigeria",
         "cities": [
-          "Aba",
-          "Abuja",
-          "Benin City",
-          "Ibadan",
-          "Kaduna",
-          "Kano",
-          "Lagos",
-          "Maiduguri",
-          "Port Harcourt",
-          "Zaria"
         ]
       },
       {
         "name": "Norway",
         "cities": [
-          "Bergen",
-          "Oslo"
         ]
       },
       {
         "name": "Poland",
         "cities": [
-          "Krakow",
-          "Warsaw",
-          "Łódź"
         ]
       },
       {
@@ -1197,52 +977,37 @@
       {
         "name": "Serbia",
         "cities": [
-          "Belgrade",
-          "Niš"
         ]
       },
       {
         "name": "Slovakia",
         "cities": [
-          "Bratislava",
-          "Košice"
         ]
       },
       {
         "name": "Slovenia",
         "cities": [
-          "Ljubljana",
-          "Maribor"
         ]
       },
       {
         "name": "Spain",
         "cities": [
-          "Barcelona",
-          "Madrid",
-          "Seville",
-          "Valencia",
-          "Zaragoza"
+          "Madrid"
         ]
       },
       {
         "name": "Sweden",
         "cities": [
-          "Gothenburg",
-          "Stockholm"
         ]
       },
       {
         "name": "Switzerland",
         "cities": [
-          "Bern",
-          "Zurich"
         ]
       },
       {
         "name": "Tunisia",
         "cities": [
-          "Tunis"
         ]
       },
       {
@@ -1259,100 +1024,76 @@
       {
         "name": "Botswana",
         "cities": [
-          "Francistown",
           "Gaborone"
         ]
       },
       {
         "name": "Bulgaria",
         "cities": [
-          "Plovdiv",
           "Sofia"
         ]
       },
       {
         "name": "Burundi",
         "cities": [
-          "Bujumbura",
-          "Muyinga"
+          "Bujumbura"
         ]
       },
       {
         "name": "Congo-Kinshasa",
         "cities": [
-          "Kisangani",
-          "Lubumbashi",
-          "Mbuji-Mayi"
+          "Kisangani"
         ]
       },
       {
         "name": "Cyprus",
         "cities": [
-          "Limassol",
-          "Nicosia"
         ]
       },
       {
         "name": "Egypt",
         "cities": [
-          "Alexandria",
-          "Cairo",
-          "Port Said"
         ]
       },
       {
         "name": "Estonia",
         "cities": [
-          "Tallinn",
-          "Tartu"
         ]
       },
       {
         "name": "Finland",
         "cities": [
-          "Espoo",
-          "Helsinki"
         ]
       },
       {
         "name": "Greece",
         "cities": [
-          "Athens",
-          "Thessaloniki"
         ]
       },
       {
         "name": "Israel",
         "cities": [
-          "Haifa",
-          "Jerusalem"
         ]
       },
       {
         "name": "Jordan",
         "cities": [
-          "Amman",
-          "Zarqa"
         ]
       },
       {
         "name": "Latvia",
         "cities": [
-          "Daugavpils",
-          "Riga"
         ]
       },
       {
         "name": "Lebanon",
         "cities": [
-          "Beirut",
-          "Tripoli"
+          "Beirut"
         ]
       },
       {
         "name": "Lesotho",
         "cities": [
-          "Mafeteng",
           "Maseru"
         ]
       },
@@ -1365,35 +1106,29 @@
       {
         "name": "Lithuania",
         "cities": [
-          "Kaunas",
-          "Vilnius"
         ]
       },
       {
         "name": "Malawi",
         "cities": [
-          "Blantyre",
           "Lilongwe"
         ]
       },
       {
         "name": "Moldova",
         "cities": [
-          "Chişinău",
-          "Tiraspol"
+          "Chişinău"
         ]
       },
       {
         "name": "Mozambique",
         "cities": [
-          "Maputo",
-          "Matola"
+          "Maputo"
         ]
       },
       {
         "name": "Namibia",
         "cities": [
-          "Rundu",
           "Windhoek"
         ]
       },
@@ -1406,8 +1141,7 @@
       {
         "name": "Romania",
         "cities": [
-          "Bucharest",
-          "Iași"
+          "Bucharest"
         ]
       },
       {
@@ -1425,53 +1159,38 @@
       {
         "name": "South Africa",
         "cities": [
-          "Cape Town",
-          "Durban",
-          "Johannesburg",
-          "Pretoria",
-          "Soweto"
+          "Cape Town"
         ]
       },
       {
         "name": "Swaziland",
         "cities": [
-          "Manzini",
-          "Mbabane"
         ]
       },
       {
         "name": "Syria",
         "cities": [
-          "Aleppo",
-          "Damascus"
         ]
       },
       {
         "name": "Ukraine",
         "cities": [
-          "Dnipropetrovsk",
-          "Kharkiv",
           "Kyiv"
         ]
       },
       {
         "name": "Zambia",
         "cities": [
-          "Kitwe",
-          "Lusaka"
         ]
       },
       {
         "name": "Zimbabwe",
         "cities": [
-          "Bulawayo",
-          "Harare"
         ]
       },
       {
         "name": "Åland",
         "cities": [
-          "Mariehamn"
         ]
       }
     ],
@@ -1488,9 +1207,7 @@
       {
         "name": "Belarus",
         "cities": [
-          "Gomel",
-          "Minsk",
-          "Mogilev"
+          "Minsk"
         ]
       },
       {
@@ -1508,47 +1225,36 @@
       {
         "name": "Eritrea",
         "cities": [
-          "Asmara",
-          "Cheren"
         ]
       },
       {
         "name": "Ethiopia",
         "cities": [
-          "Addis Ababa",
-          "Bahir Dar",
-          "Dire Dawa",
-          "Mek’elē",
-          "Nazrēt"
+          "Addis Ababa"
         ]
       },
       {
         "name": "Iraq",
         "cities": [
-          "Baghdad",
-          "Basra"
+          "Baghdad"
         ]
       },
       {
         "name": "Kenya",
         "cities": [
-          "Mombasa",
-          "Nairobi",
-          "Nakuru"
+          "Nairobi"
         ]
       },
       {
         "name": "Kuwait",
         "cities": [
-          "Al Ahmadi",
-          "Kuwait City"
+          "Al Ahmadi"
         ]
       },
       {
         "name": "Madagascar",
         "cities": [
-          "Antananarivo",
-          "Toamasina"
+          "Antananarivo"
         ]
       },
       {
@@ -1566,10 +1272,7 @@
       {
         "name": "Russia",
         "cities": [
-          "Kazan",
           "Moscow",
-          "Nizhny Novgorod",
-          "Rostov-on-Don",
           "Saint Petersburg"
         ]
       },
@@ -1577,8 +1280,7 @@
         "name": "Saudi Arabia",
         "cities": [
           "Jeddah",
-          "Mecca",
-          "Riyadh"
+          "Mecca"
         ]
       },
       {
@@ -1597,50 +1299,38 @@
       {
         "name": "Sudan",
         "cities": [
-          "Kassala",
-          "Khartoum",
-          "Port Sudan"
+          "Kassala"
         ]
       },
       {
         "name": "Tanzania",
         "cities": [
-          "Dar es Salaam",
-          "Dodoma"
+          "Dar es Salaam"
         ]
       },
       {
         "name": "Turkey",
         "cities": [
-          "Adana",
           "Ankara",
-          "Bursa",
-          "Gaziantep",
-          "Istanbul",
-          "Izmir",
-          "Konya"
+          "Istanbul"
         ]
       },
       {
         "name": "Uganda",
         "cities": [
-          "Gulu",
-          "Kampala",
-          "Lira"
+          "Gulu"
         ]
       },
       {
         "name": "Ukraine",
         "cities": [
-          "Donetsk",
-          "Luhansk"
+          "Donetsk"
         ]
       },
       {
         "name": "Yemen",
         "cities": [
-          "Al Hudaydah",
-          "Sanaa"
+          "Al Hudaydah"
         ]
       }
     ],
@@ -2062,13 +1752,7 @@
       {
         "name": "Philippines",
         "cities": [
-          "Antipolo",
-          "Bacolod City",
-          "City of Cebu",
-          "Dadiangas",
-          "Davao City",
-          "Manila",
-          "Zamboanga City"
+          "Manila"
         ]
       },
       {
@@ -2086,8 +1770,6 @@
       {
         "name": "Taiwan",
         "cities": [
-          "Kaohsiung",
-          "Taipei"
         ]
       }
     ],
@@ -2337,7 +2019,7 @@
       {
         "name": "Kiribati",
         "cities": [
-
+          "Kanton Island"
         ]
       },
       {
@@ -2361,7 +2043,7 @@
       {
         "name": "New Zealand",
         "cities": [
-
+          "Chatham Islands"
         ]
       }
     ],
