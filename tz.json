@@ -73,7 +73,7 @@
         ]
       }
     ],
-    "offset": "-8.5"
+    "offset": "-9.5"
   },
   {
     "countries": [
@@ -142,8 +142,7 @@
           "Alberta",
           "Calgary",
           "Edmonton",
-          "Northwest Territories",
-          "Nunavut"
+          "Northwest Territories"
         ]
       },
       {
@@ -328,6 +327,13 @@
         ]
       },
       {
+        "name": "Cuba",
+        "cities": [
+          "Havana",
+          "Santiago de Cuba"
+        ]
+      },
+      {
         "name": "Ecuador",
         "cities": [
           "Guayaquil",
@@ -418,11 +424,9 @@
   {
     "countries": [
       {
-        "name": "Venezuela",
+        "name": "Canada",
         "cities": [
-          "Caracas",
-          "Maracaibo",
-          "Maracay"
+          "St Johns"
         ]
       }
     ],
@@ -455,6 +459,12 @@
         ]
       },
       {
+        "name": "Bermuda",
+        "cities": [
+          "Hamilton"
+        ]
+      },
+      {
         "name": "Bolivia",
         "cities": [
           "La Paz",
@@ -471,11 +481,7 @@
         "name": "Brazil",
         "cities": [
           "Amazonas",
-          "Campo Grande",
           "Manaus",
-          "Mato Grosso",
-          "Mato Grosso do Sul",
-          "Pará",
           "Rondônia",
           "Roraima"
         ]
@@ -489,14 +495,12 @@
       {
         "name": "Canada",
         "cities": [
-
-        ]
-      },
-      {
-        "name": "Cuba",
-        "cities": [
-          "Havana",
-          "Santiago de Cuba"
+          "Newfoundland and Labrador",
+          "Halifax",
+          "New Brunswick",
+          "Nova Scotia",
+          "Prince Edward Island",
+          "Saint John"
         ]
       },
       {
@@ -603,6 +607,14 @@
         "cities": [
           "Charlotte Amalie"
         ]
+      },
+      {
+        "name": "Venezuela",
+        "cities": [
+          "Caracas",
+          "Maracaibo",
+          "Maracay"
+        ]
       }
     ],
     "offset": "-4"
@@ -618,52 +630,27 @@
         ]
       },
       {
-        "name": "Bermuda",
-        "cities": [
-          "Hamilton"
-        ]
-      },
-      {
         "name": "Brazil",
         "cities": [
           "Alagoas",
           "Amapá",
           "Bahia",
-          "Belo Horizonte",
           "Belém",
-          "Brasília",
+          "Campo Grande",
           "Ceará",
-          "Curitiba",
-          "Espírito Santo",
-          "Federal District",
           "Fortaleza",
-          "Goiás",
           "Maranhão",
-          "Minas Gerais",
-          "Paraná",
+          "Mato Grosso",
+          "Mato Grosso do Sul",
           "Paraíba",
+          "Pará",
           "Pernambuco",
           "Piauí",
-          "Porto Alegre",
           "Recife",
           "Rio Grande do Norte",
-          "Rio Grande do Sul",
-          "Rio de Janeiro",
           "Salvador",
-          "Santa Catarina",
           "Sergipe",
-          "São Paulo",
           "Tocantins"
-        ]
-      },
-      {
-        "name": "Canada",
-        "cities": [
-          "Halifax",
-          "New Brunswick",
-          "Nova Scotia",
-          "Prince Edward Island",
-          "Saint John"
         ]
       },
       {
@@ -699,6 +686,12 @@
         ]
       },
       {
+        "name": "Saint Pierre and Miquelon",
+        "cities": [
+          "Saint-Pierre"
+        ]
+      },
+      {
         "name": "Suriname",
         "cities": [
           "Paramaribo"
@@ -717,27 +710,21 @@
   {
     "countries": [
       {
-        "name": "Canada",
-        "cities": [
-          "Newfoundland and Labrador",
-          "St Johns"
-        ]
-      }
-    ],
-    "offset": "-1.5"
-  },
-  {
-    "countries": [
-      {
         "name": "Brazil",
         "cities": [
-
-        ]
-      },
-      {
-        "name": "Saint Pierre and Miquelon",
-        "cities": [
-          "Saint-Pierre"
+          "Belo Horizonte",
+          "Brasília",
+          "Curitiba",
+          "Espírito Santo",
+          "Federal District",
+          "Goiás",
+          "Minas Gerais",
+          "Paraná",
+          "Porto Alegre",
+          "Rio Grande do Sul",
+          "Rio de Janeiro",
+          "Santa Catarina",
+          "São Paulo"
         ]
       },
       {
@@ -1460,18 +1447,6 @@
         ]
       },
       {
-        "name": "Turkey",
-        "cities": [
-          "Adana",
-          "Ankara",
-          "Bursa",
-          "Gaziantep",
-          "Istanbul",
-          "Izmir",
-          "Konya"
-        ]
-      },
-      {
         "name": "Ukraine",
         "cities": [
           "Dnipropetrovsk",
@@ -1632,6 +1607,18 @@
         "cities": [
           "Dar es Salaam",
           "Dodoma"
+        ]
+      },
+      {
+        "name": "Turkey",
+        "cities": [
+          "Adana",
+          "Ankara",
+          "Bursa",
+          "Gaziantep",
+          "Istanbul",
+          "Izmir",
+          "Konya"
         ]
       },
       {
@@ -2123,7 +2110,7 @@
       {
         "name": "Australia",
         "cities": [
-
+          "Eucla"
         ]
       }
     ],
@@ -2295,12 +2282,6 @@
   {
     "countries": [
       {
-        "name": "Fiji",
-        "cities": [
-          "Suva"
-        ]
-      },
-      {
         "name": "Kiribati",
         "cities": [
           "Tarawa"
@@ -2348,6 +2329,12 @@
   {
     "countries": [
       {
+        "name": "Fiji",
+        "cities": [
+          "Suva"
+        ]
+      },
+      {
         "name": "Kiribati",
         "cities": [
 
@@ -2364,12 +2351,6 @@
         "name": "Tokelau",
         "cities": [
 
-        ]
-      },
-      {
-        "name": "Tonga",
-        "cities": [
-          "Nuku'alofa"
         ]
       }
     ],
@@ -2398,6 +2379,12 @@
         "name": "Samoa",
         "cities": [
           "Apia"
+        ]
+      },
+      {
+        "name": "Tonga",
+        "cities": [
+          "Nuku'alofa"
         ]
       }
     ],
