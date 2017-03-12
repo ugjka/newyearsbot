@@ -1906,7 +1906,6 @@
       {
         "name": "Russia",
         "cities": [
-          "Novosibirsk",
           "Omsk"
         ]
       }
@@ -1978,6 +1977,7 @@
         "name": "Russia",
         "cities": [
           "Krasnoyarsk",
+          "Novosibirsk",
           "Novokuznetsk"
         ]
       },
