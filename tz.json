@@ -28,7 +28,7 @@
       {
         "name": "U.S. Minor Outlying Islands",
         "cities": [
-          "Itascatown pre-WW2"
+          "Midway Island"
         ]
       }
     ],
@@ -39,26 +39,31 @@
       {
         "name": "Cook Islands",
         "cities": [
-          "Avarua"
+          "Avarua",
+          "Rarotonga"
         ]
       },
       {
         "name": "French Polynesia",
         "cities": [
-          "Papeete"
+          "Papeete",
+          "Vaitape (Bora Bora)"
         ]
       },
       {
         "name": "U.S. Minor Outlying Islands",
         "cities": [
-          "Millersville - pre-WW2 settlement"
+          "Palmyra Atoll",
+          "Johnston Atoll"
         ]
       },
       {
         "name": "United States",
         "cities": [
           "Hawaii",
-          "Honolulu"
+          "Honolulu",
+          "Hilo",
+          "Wailuku"
         ]
       }
     ],
@@ -69,7 +74,11 @@
       {
         "name": "French Polynesia",
         "cities": [
-          "Atuona"
+          "Atuona",
+          "Eiao",
+          "Taiohae",
+          "Hatutu",
+          "Fatu Huku"
         ]
       }
     ],
@@ -80,6 +89,7 @@
       {
         "name": "French Polynesia",
         "cities": [
+          "Gambier Islands",
           "Rikitea"
         ]
       },
@@ -181,8 +191,6 @@
       {
         "name": "Canada",
         "cities": [
-          "Saskatchewan",
-          "Saskatoon",
           "Winnipeg"
         ]
       },
@@ -231,12 +239,10 @@
           "Austin",
           "Chicago",
           "Dallas",
-          "Fort Worth",
           "Houston",
           "Illinois",
           "Iowa",
           "Kansas",
-          "Kansas City",
           "Louisiana",
           "Memphis",
           "Milwaukee",
@@ -247,7 +253,6 @@
           "Nebraska",
           "North Dakota",
           "Oklahoma",
-          "Oklahoma City",
           "Omaha",
           "San Antonio",
           "South Dakota",
@@ -342,12 +347,7 @@
           "Michigan",
           "New York",
           "Ohio",
-          "Pennsylvania",
-          "Philadelphia",
-          "Pittsburgh",
-          "Rhode Island",
           "South Carolina",
-          "Staten Island",
           "Tampa",
           "Vermont",
           "Virginia",
@@ -364,7 +364,10 @@
       {
         "name": "Canada",
         "cities": [
-          "St Johns"
+          "St Johns",
+          "Stephenville",
+          "Paradise",
+          "Grand Falls-Windsor"
         ]
       }
     ],
@@ -422,8 +425,7 @@
         "name": "Canada",
         "cities": [
           "Halifax",
-          "Nova Scotia",
-          "Prince Edward Island"
+          "Nova Scotia"
         ]
       },
       {
@@ -472,32 +474,12 @@
         ]
       },
       {
-        "name": "Saint Kitts and Nevis",
-        "cities": [
-        ]
-      },
-      {
         "name": "Saint Lucia",
         "cities": [
         ]
       },
       {
-        "name": "Saint Martin",
-        "cities": [
-        ]
-      },
-      {
-        "name": "Saint-Barthélemy",
-        "cities": [
-        ]
-      },
-      {
         "name": "Trinidad and Tobago",
-        "cities": [
-        ]
-      },
-      {
-        "name": "Turks and Caicos Islands",
         "cities": [
         ]
       },
@@ -558,13 +540,11 @@
       {
         "name": "Falkland Islands",
         "cities": [
-          "Stanley"
         ]
       },
       {
         "name": "French Guiana",
         "cities": [
-          "Cayenne"
         ]
       },
       {
@@ -576,14 +556,11 @@
       {
         "name": "Paraguay",
         "cities": [
-          "Asunción",
-          "Ciudad del Este"
         ]
       },
       {
         "name": "Saint Pierre and Miquelon",
         "cities": [
-          "Saint-Pierre"
         ]
       },
       {
@@ -799,11 +776,6 @@
         ]
       },
       {
-        "name": "Algeria",
-        "cities": [
-        ]
-      },
-      {
         "name": "Andorra",
         "cities": [
 
@@ -840,22 +812,7 @@
         ]
       },
       {
-        "name": "Central African Republic",
-        "cities": [
-        ]
-      },
-      {
         "name": "Chad",
-        "cities": [
-        ]
-      },
-      {
-        "name": "Congo-Brazzaville",
-        "cities": [
-        ]
-      },
-      {
-        "name": "Congo-Kinshasa",
         "cities": [
         ]
       },
@@ -992,7 +949,6 @@
       {
         "name": "Spain",
         "cities": [
-          "Madrid"
         ]
       },
       {
@@ -1117,31 +1073,26 @@
       {
         "name": "Moldova",
         "cities": [
-          "Chişinău"
         ]
       },
       {
         "name": "Mozambique",
         "cities": [
-          "Maputo"
         ]
       },
       {
         "name": "Namibia",
         "cities": [
-          "Windhoek"
         ]
       },
       {
         "name": "Palestine",
         "cities": [
-          "Gaza"
         ]
       },
       {
         "name": "Romania",
         "cities": [
-          "Bucharest"
         ]
       },
       {
@@ -1153,13 +1104,11 @@
       {
         "name": "Rwanda",
         "cities": [
-          "Kigali"
         ]
       },
       {
         "name": "South Africa",
         "cities": [
-          "Cape Town"
         ]
       },
       {
@@ -1299,38 +1248,26 @@
       {
         "name": "Sudan",
         "cities": [
-          "Kassala"
         ]
       },
       {
         "name": "Tanzania",
         "cities": [
-          "Dar es Salaam"
         ]
       },
       {
         "name": "Turkey",
         "cities": [
-          "Ankara",
-          "Istanbul"
         ]
       },
       {
         "name": "Uganda",
         "cities": [
-          "Gulu"
-        ]
-      },
-      {
-        "name": "Ukraine",
-        "cities": [
-          "Donetsk"
         ]
       },
       {
         "name": "Yemen",
         "cities": [
-          "Al Hudaydah"
         ]
       }
     ],
@@ -1671,13 +1608,6 @@
       {
         "name": "Vietnam",
         "cities": [
-          "Biên Hòa",
-          "Da Nang",
-          "Haiphong",
-          "Hanoi",
-          "HoChiMinh City",
-          "Huế",
-          "Nha Trang"
         ]
       }
     ],
@@ -1792,7 +1722,9 @@
       {
         "name": "Australia",
         "cities": [
-          "Eucla"
+          "Eucla",
+          "Madura",
+          "Mundrabilla"
         ]
       }
     ],
@@ -1966,7 +1898,7 @@
       {
         "name": "Kiribati",
         "cities": [
-          "Tarawa"
+          "Gilbert Islands"
         ]
       },
       {
