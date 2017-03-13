@@ -18,13 +18,13 @@ import (
 	irc "github.com/ugjka/dumbirc"
 )
 
-var target = time.Date(2017, time.March, 13, 0, 0, 0, 0, time.UTC)
+var target = time.Date(2017, time.March, 14, 0, 0, 0, 0, time.UTC)
 
 const ircNick = "HNYbot18"
 const ircName = "newyears"
 const ircServer = "irc.freenode.net:7000"
 
-var ircChannel = []string{"#ugjka"}
+var ircChannel = []string{"#ugjkatest"}
 
 type tz struct {
 	Countries []struct {

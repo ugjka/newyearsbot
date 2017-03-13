@@ -8,7 +8,9 @@ import (
 	"os"
 	"sort"
 	"strconv"
-	"text/tabwriter"
+	"time"
+
+	irc "github.com/ugjka/dumbirc"
 )
 
 type tz struct {
@@ -69,6 +71,12 @@ func (t tzs) Less(i, j int) bool {
 	return false
 }
 
+const ircNick = "HNYbotTest"
+const ircName = "newyears2"
+const ircServer = "irc.freenode.net:7000"
+
+var ircChannel = []string{"#ugjkatest2"}
+
 func main() {
 	var zones tzs
 	file, err := os.Open("../tz.json")
@@ -79,18 +87,40 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = json.Unmarshal(content, &zones)
-	if err != nil {
-		log.Fatal(err)
-	}
+	json.Unmarshal(content, &zones)
 	sort.Sort(sort.Reverse(zones))
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', tabwriter.AlignRight|tabwriter.Debug)
-	for _, k := range zones {
-		tmp := len([]byte(k.String()))
-		//if tmp > 396 {
-		if tmp > 0 {
-			fmt.Fprintf(w, "%s\t%d\t%d\t\n", k.Offset, tmp, tmp-396)
+
+	ircobj := irc.New(ircNick, ircName, ircServer, true)
+	ircobj.AddCallback(irc.WELCOME, func(msg irc.Message) {
+		ircobj.Join(ircChannel)
+	})
+
+	ircobj.AddCallback(irc.PING, func(msg irc.Message) {
+		ircobj.Pong()
+	})
+
+	ircobj.AddCallback(irc.NICKTAKEN, func(msg irc.Message) {
+		ircobj.Nick += "_"
+		ircobj.NewNick(ircobj.Nick)
+	})
+	ircobj.Start()
+	go func() {
+		for {
+			time.Sleep(time.Minute)
+			ircobj.Ping()
 		}
+	}()
+	go func() {
+		log.Println(<-ircobj.Errchan)
+		os.Exit(1)
+	}()
+	time.Sleep(time.Second * 30)
+
+	for _, k := range zones {
+		time.Sleep(time.Second * 2)
+		ircobj.PrivMsg(ircChannel[0], "Next New Year in 29 minutes 57 seconds in "+k.String())
+		time.Sleep(time.Second * 1)
+		ircobj.PrivMsg(ircChannel[0], "Happy New Year in "+k.String())
 	}
-	w.Flush()
+
 }
