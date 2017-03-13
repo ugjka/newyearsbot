@@ -24,7 +24,7 @@ const ircNick = "HNYbot18"
 const ircName = "newyears"
 const ircServer = "irc.freenode.net:7000"
 
-var ircChannel = []string{"#ugjkatest"}
+var ircChannel = []string{"#ugjka", "#ugjkatest", "#ugjkatest2"}
 
 type tz struct {
 	Countries []struct {
@@ -142,13 +142,19 @@ func main() {
 				log.Fatal(err)
 			}
 			tmp := fmt.Sprint("Next New Year in ", humandur, " in ", zones[i])
-			ircobj.PrivMsg(ircChannel[0], tmp)
+			for _, k := range ircChannel {
+				ircobj.PrivMsg(k, tmp)
+			}
 			time.Sleep(target.Sub(time.Now().UTC().Add(dur)))
 			tmp = fmt.Sprint("Happy New Year in ", zones[i])
-			ircobj.PrivMsg(ircChannel[0], tmp)
+			for _, k := range ircChannel {
+				ircobj.PrivMsg(k, tmp)
+			}
 		}
 	}
-	ircobj.PrivMsg(ircChannel[0], "That's it, the New Year is here across the globe!")
+	for _, k := range ircChannel {
+		ircobj.PrivMsg(k, "That's it, the New Year is here across the globe!")
+	}
 }
 
 const geocode = "http://maps.googleapis.com/maps/api/geocode/json?"
