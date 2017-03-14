@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"net/url"
 	"os"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/hako/durafmt"
@@ -18,7 +18,7 @@ import (
 	c "github.com/ugjka/newyearsbot/common"
 )
 
-var target = time.Date(2017, time.March, 14, 0, 0, 0, 0, time.UTC)
+var target = time.Date(2017, time.March, 15, 0, 0, 0, 0, time.UTC)
 
 const ircNick = "HNYbot18"
 const ircName = "newyears"
@@ -26,42 +26,57 @@ const ircServer = "irc.freenode.net:7000"
 
 var ircChannel = []string{"#ugjka", "#ugjkatest", "#ugjkatest2"}
 
+var start = make(chan bool)
+var once sync.Once
+
 func main() {
 	ircobj := irc.New(ircNick, ircName, ircServer, true)
 	ircobj.AddCallback(irc.WELCOME, func(msg irc.Message) {
 		ircobj.Join(ircChannel)
+		//Prevent early start
+		once.Do(func() {
+			start <- true
+		})
 	})
-
+	//Reply ping messages with pong
 	ircobj.AddCallback(irc.PING, func(msg irc.Message) {
 		ircobj.Pong()
 	})
-
+	//Change nick if taken
 	ircobj.AddCallback(irc.NICKTAKEN, func(msg irc.Message) {
 		ircobj.Nick += "_"
 		ircobj.NewNick(ircobj.Nick)
 	})
+	//Handler for Location queries
 	ircobj.AddCallback(irc.PRIVMSG, func(msg irc.Message) {
-		post := msg.Trailing
-		if strings.HasPrefix(post, "hny ") {
-			tz, err := getTimeZone(post[4:])
+		if strings.HasPrefix(msg.Trailing, "hny ") {
+			tz, err := getTimeZone(msg.Trailing[4:])
 			if err != nil {
-				ircobj.PrivMsg(ircChannel[0], err.Error())
+				ircobj.Reply(msg, err.Error())
+				return
 			}
-			ircobj.PrivMsg(ircChannel[0], tz)
+			ircobj.Reply(msg, tz)
+			return
 		}
 	})
 	ircobj.Start()
+	//IRC pinger
 	go func() {
 		for {
 			time.Sleep(time.Minute)
 			ircobj.Ping()
 		}
 	}()
+	//Reconnect logic
 	go func() {
-		log.Println(<-ircobj.Errchan)
-		os.Exit(1)
+		for {
+			log.Println(<-ircobj.Errchan)
+			time.Sleep(time.Second * 30)
+			ircobj.Start()
+		}
 	}()
-	time.Sleep(time.Second * 30)
+	//Starts when joined, see once.Do
+	<-start
 	var zones c.TZS
 	file, err := os.Open("./tz.json")
 	if err != nil {
@@ -71,103 +86,84 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	json.Unmarshal(content, &zones)
+	if err := json.Unmarshal(content, &zones); err != nil {
+		log.Fatal(err)
+	}
 	sort.Sort(sort.Reverse(zones))
 	for i := 0; i < len(zones); i++ {
 		dur, err := time.ParseDuration(zones[i].Offset + "h")
 		if err != nil {
 			log.Fatal(err)
 		}
+		//Check if zone is past target
 		if time.Now().UTC().Add(dur).Before(target) {
 			time.Sleep(time.Second * 2)
 			humandur, err := durafmt.ParseString(target.Sub(time.Now().UTC().Add(dur)).String())
 			if err != nil {
 				log.Fatal(err)
 			}
-			tmp := fmt.Sprint("Next New Year in ", humandur, " in ", zones[i])
-			for _, k := range ircChannel {
-				ircobj.PrivMsg(k, tmp)
-			}
+			msg := fmt.Sprintf("Next New Year in %s in %s", humandur, zones[i])
+			ircobj.PrivMsgBulk(ircChannel, msg)
+			//Wait till Target in Timezone
 			time.Sleep(target.Sub(time.Now().UTC().Add(dur)))
-			tmp = fmt.Sprint("Happy New Year in ", zones[i])
-			for _, k := range ircChannel {
-				ircobj.PrivMsg(k, tmp)
-			}
+			msg = fmt.Sprintf("Happy New Year in %s", zones[i])
+			ircobj.PrivMsgBulk(ircChannel, msg)
 		}
 	}
-	for _, k := range ircChannel {
-		ircobj.PrivMsg(k, "That's it, the New Year is here across the globe!")
-	}
+	ircobj.PrivMsgBulk(ircChannel, "That's it, the New Year is here across the globe!")
+
 }
 
 func getTimeZone(loc string) (string, error) {
-	client := http.Client{}
 	maps := url.Values{}
 	maps.Add("address", loc)
 	maps.Add("sensor", "false")
 	maps.Add("language", "en")
-	req, err := http.NewRequest("GET", c.Geocode+maps.Encode(), nil)
-	if err != nil {
-		return "", err
-	}
-	req.Header.Set("User-Agent", "Mozilla")
-	get, err := client.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer get.Body.Close()
-	text, err := ioutil.ReadAll(get.Body)
+	data, err := c.Getter(c.Geocode + maps.Encode())
 	if err != nil {
 		return "", err
 	}
 	var mapj c.Gmap
-	json.Unmarshal(text, &mapj)
-	log.Println(mapj)
+	if err = json.Unmarshal(data, &mapj); err != nil {
+		return "", err
+	}
 	if mapj.Status != "OK" {
 		return "", errors.New("I don't know that place.")
 	}
 	adress := mapj.Results[0].FormattedAddress
-	tmzone := url.Values{}
 	location := fmt.Sprintf("%.6f,%.6f", mapj.Results[0].Geometry.Location.Lat, mapj.Results[0].Geometry.Location.Lng)
+	tmzone := url.Values{}
 	tmzone.Add("location", location)
 	tmzone.Add("timestamp", fmt.Sprintf("%d", time.Now().Unix()))
 	tmzone.Add("sensor", "false")
-
-	req2, err := http.NewRequest("GET", c.Timezone+tmzone.Encode(), nil)
-	if err != nil {
-		return "", err
-	}
-	req2.Header.Set("User-Agent", "Mozilla")
-	get2, err := client.Do(req2)
-	if err != nil {
-		return "", err
-	}
-	defer get2.Body.Close()
-	text, err = ioutil.ReadAll(get2.Body)
+	data, err = c.Getter(c.Timezone + tmzone.Encode())
 	if err != nil {
 		return "", err
 	}
 	var timej c.Gtime
-	json.Unmarshal(text, &timej)
+	if err = json.Unmarshal(data, &timej); err != nil {
+		return "", err
+	}
 	if timej.Status != "OK" {
 		return "", errors.New("Couldn't get timezone info.")
 	}
-	log.Println(timej)
+	//RawOffset
 	raw, err := time.ParseDuration(fmt.Sprintf("%ds", timej.RawOffset))
 	if err != nil {
 		log.Fatal(err)
 	}
+	//DstOffset
 	dst, err := time.ParseDuration(fmt.Sprintf("%ds", timej.DstOffset))
 	if err != nil {
 		log.Fatal(err)
 	}
+	//Check if past target
 	if time.Now().UTC().Add(raw + dst).Before(target) {
-		time.Sleep(time.Second * 2)
 		humandur, err := durafmt.ParseString(target.Sub(time.Now().UTC().Add(raw + dst)).String())
 		if err != nil {
 			log.Fatal(err)
 		}
-		return fmt.Sprint("New Year in ", adress, " will happen in ", humandur), nil
+		return fmt.Sprintf("New Year in %s will happen in %s", adress, humandur), nil
 	}
 	return fmt.Sprintf("New year in %s already happened.", adress), nil
 }

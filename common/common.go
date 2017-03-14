@@ -2,7 +2,9 @@ package common
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"strconv"
 )
 
@@ -91,4 +93,24 @@ func (t TZS) Less(i, j int) bool {
 		return true
 	}
 	return false
+}
+
+//Getter Gets "GET" DATA
+func Getter(url string) (data []byte, err error) {
+	client := http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return
+	}
+	req.Header.Set("User-Agent", "github.com/ugjka/newyearsbot")
+	get, err := client.Do(req)
+	if err != nil {
+		return
+	}
+	defer get.Body.Close()
+	data, err = ioutil.ReadAll(get.Body)
+	if err != nil {
+		return
+	}
+	return
 }

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"net/url"
 	"os"
 	"sort"
@@ -28,7 +27,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	json.Unmarshal(content, &zones)
+	if err := json.Unmarshal(content, &zones); err != nil {
+		log.Fatal(err)
+	}
 	sort.Sort(sort.Reverse(zones))
 	for _, k := range zones {
 		for _, k2 := range k.Countries {
@@ -63,52 +64,34 @@ func main() {
 }
 
 func getTimeZone(loc string) (string, error) {
-	client := http.Client{}
 	maps := url.Values{}
 	maps.Add("address", loc)
 	maps.Add("sensor", "false")
 	maps.Add("language", "en")
-	req, err := http.NewRequest("GET", c.Geocode+maps.Encode(), nil)
-	if err != nil {
-		return "", err
-	}
-	req.Header.Set("User-Agent", "Mozilla")
-	get, err := client.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer get.Body.Close()
-	text, err := ioutil.ReadAll(get.Body)
+	data, err := c.Getter(c.Geocode + maps.Encode())
 	if err != nil {
 		return "", err
 	}
 	var mapj c.Gmap
-	json.Unmarshal(text, &mapj)
+	if err = json.Unmarshal(data, &mapj); err != nil {
+		return "", err
+	}
 	if mapj.Status != "OK" {
 		return "", errors.New(loc + " Status not OK")
 	}
-	tmzone := url.Values{}
 	location := fmt.Sprintf("%.6f,%.6f", mapj.Results[0].Geometry.Location.Lat, mapj.Results[0].Geometry.Location.Lng)
+	tmzone := url.Values{}
 	tmzone.Add("location", location)
 	tmzone.Add("timestamp", fmt.Sprintf("%d", target.Unix()))
 	tmzone.Add("sensor", "false")
-
-	req2, err := http.NewRequest("GET", c.Timezone+tmzone.Encode(), nil)
-	if err != nil {
-		return "", err
-	}
-	req2.Header.Set("User-Agent", "Mozilla")
-	get2, err := client.Do(req2)
-	if err != nil {
-		return "", err
-	}
-	defer get2.Body.Close()
-	text, err = ioutil.ReadAll(get2.Body)
+	data, err = c.Getter(c.Timezone + tmzone.Encode())
 	if err != nil {
 		return "", err
 	}
 	var timej c.Gtime
-	json.Unmarshal(text, &timej)
+	if err = json.Unmarshal(data, &timej); err != nil {
+		return "", err
+	}
 	if timej.Status != "OK" {
 		return "", errors.New(loc + " Couldn't get timezone info.")
 	}
