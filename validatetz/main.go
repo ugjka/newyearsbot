@@ -12,22 +12,14 @@ import (
 	"sort"
 	"strconv"
 	"time"
+
+	c "github.com/ugjka/newyearsbot/common"
 )
 
 var target = time.Date(2017, time.December, 31, 0, 0, 0, 0, time.UTC)
 
-type tz struct {
-	Countries []struct {
-		Name   string   `json:"name"`
-		Cities []string `json:"cities"`
-	} `json:"countries"`
-	Offset string `json:"offset"`
-}
-
-type tzs []tz
-
 func main() {
-	var zones tzs
+	var zones c.TZS
 	file, err := os.Open("../tz.json")
 	if err != nil {
 		log.Fatal(err)
@@ -70,35 +62,13 @@ func main() {
 	}
 }
 
-const geocode = "http://maps.googleapis.com/maps/api/geocode/json?"
-const timezone = "https://maps.googleapis.com/maps/api/timezone/json?"
-
-type gmap struct {
-	Results []struct {
-		FormattedAddress string `json:"formatted_address"`
-		Geometry         struct {
-			Location struct {
-				Lat float64 `json:"lat"`
-				Lng float64 `json:"lng"`
-			}
-		}
-	}
-	Status string
-}
-
-type gtime struct {
-	Status    string
-	RawOffset int
-	DstOffset int
-}
-
 func getTimeZone(loc string) (string, error) {
 	client := http.Client{}
 	maps := url.Values{}
 	maps.Add("address", loc)
 	maps.Add("sensor", "false")
 	maps.Add("language", "en")
-	req, err := http.NewRequest("GET", geocode+maps.Encode(), nil)
+	req, err := http.NewRequest("GET", c.Geocode+maps.Encode(), nil)
 	if err != nil {
 		return "", err
 	}
@@ -112,7 +82,7 @@ func getTimeZone(loc string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var mapj gmap
+	var mapj c.Gmap
 	json.Unmarshal(text, &mapj)
 	if mapj.Status != "OK" {
 		return "", errors.New(loc + " Status not OK")
@@ -123,7 +93,7 @@ func getTimeZone(loc string) (string, error) {
 	tmzone.Add("timestamp", fmt.Sprintf("%d", target.Unix()))
 	tmzone.Add("sensor", "false")
 
-	req2, err := http.NewRequest("GET", timezone+tmzone.Encode(), nil)
+	req2, err := http.NewRequest("GET", c.Timezone+tmzone.Encode(), nil)
 	if err != nil {
 		return "", err
 	}
@@ -137,7 +107,7 @@ func getTimeZone(loc string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var timej gtime
+	var timej c.Gtime
 	json.Unmarshal(text, &timej)
 	if timej.Status != "OK" {
 		return "", errors.New(loc + " Couldn't get timezone info.")
@@ -145,27 +115,4 @@ func getTimeZone(loc string) (string, error) {
 	var offset float64
 	offset = (float64(timej.RawOffset) + float64(timej.DstOffset)) / 3600.0
 	return fmt.Sprintf("%f", offset), nil
-}
-
-func (t tzs) Len() int {
-	return len(t)
-}
-
-func (t tzs) Swap(i, j int) {
-	t[i], t[j] = t[j], t[i]
-}
-
-func (t tzs) Less(i, j int) bool {
-	x, err := strconv.ParseFloat(t[i].Offset, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
-	y, err := strconv.ParseFloat(t[j].Offset, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if x < y {
-		return true
-	}
-	return false
 }

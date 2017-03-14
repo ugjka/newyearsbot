@@ -10,12 +10,12 @@ import (
 	"net/url"
 	"os"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/hako/durafmt"
 	irc "github.com/ugjka/dumbirc"
+	c "github.com/ugjka/newyearsbot/common"
 )
 
 var target = time.Date(2017, time.March, 14, 0, 0, 0, 0, time.UTC)
@@ -26,63 +26,6 @@ const ircServer = "irc.freenode.net:7000"
 
 var ircChannel = []string{"#ugjka", "#ugjkatest", "#ugjkatest2"}
 
-type tz struct {
-	Countries []struct {
-		Name   string   `json:"name"`
-		Cities []string `json:"cities"`
-	} `json:"countries"`
-	Offset string `json:"offset"`
-}
-
-func (t tz) String() (x string) {
-	for i, k := range t.Countries {
-		x += fmt.Sprintf("%s", k.Name)
-		for i, k1 := range k.Cities {
-			if k1 == "" {
-				continue
-			}
-			if i == 0 {
-				x += " ("
-			}
-			x += fmt.Sprintf("%s", k1)
-			if i >= 0 && i < len(k.Cities)-1 {
-				x += ", "
-			}
-			if i == len(k.Cities)-1 {
-				x += ")"
-			}
-		}
-		if i < len(t.Countries)-1 {
-			x += ", "
-		}
-	}
-	return
-}
-
-type tzs []tz
-
-func (t tzs) Len() int {
-	return len(t)
-}
-
-func (t tzs) Swap(i, j int) {
-	t[i], t[j] = t[j], t[i]
-}
-
-func (t tzs) Less(i, j int) bool {
-	x, err := strconv.ParseFloat(t[i].Offset, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
-	y, err := strconv.ParseFloat(t[j].Offset, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if x < y {
-		return true
-	}
-	return false
-}
 func main() {
 	ircobj := irc.New(ircNick, ircName, ircServer, true)
 	ircobj.AddCallback(irc.WELCOME, func(msg irc.Message) {
@@ -119,7 +62,7 @@ func main() {
 		os.Exit(1)
 	}()
 	time.Sleep(time.Second * 30)
-	var zones tzs
+	var zones c.TZS
 	file, err := os.Open("./tz.json")
 	if err != nil {
 		log.Fatal(err)
@@ -157,35 +100,13 @@ func main() {
 	}
 }
 
-const geocode = "http://maps.googleapis.com/maps/api/geocode/json?"
-const timezone = "https://maps.googleapis.com/maps/api/timezone/json?"
-
-type gmap struct {
-	Results []struct {
-		FormattedAddress string `json:"formatted_address"`
-		Geometry         struct {
-			Location struct {
-				Lat float64 `json:"lat"`
-				Lng float64 `json:"lng"`
-			}
-		}
-	}
-	Status string
-}
-
-type gtime struct {
-	Status    string
-	RawOffset int
-	DstOffset int
-}
-
 func getTimeZone(loc string) (string, error) {
 	client := http.Client{}
 	maps := url.Values{}
 	maps.Add("address", loc)
 	maps.Add("sensor", "false")
 	maps.Add("language", "en")
-	req, err := http.NewRequest("GET", geocode+maps.Encode(), nil)
+	req, err := http.NewRequest("GET", c.Geocode+maps.Encode(), nil)
 	if err != nil {
 		return "", err
 	}
@@ -199,7 +120,7 @@ func getTimeZone(loc string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var mapj gmap
+	var mapj c.Gmap
 	json.Unmarshal(text, &mapj)
 	log.Println(mapj)
 	if mapj.Status != "OK" {
@@ -212,7 +133,7 @@ func getTimeZone(loc string) (string, error) {
 	tmzone.Add("timestamp", fmt.Sprintf("%d", time.Now().Unix()))
 	tmzone.Add("sensor", "false")
 
-	req2, err := http.NewRequest("GET", timezone+tmzone.Encode(), nil)
+	req2, err := http.NewRequest("GET", c.Timezone+tmzone.Encode(), nil)
 	if err != nil {
 		return "", err
 	}
@@ -226,7 +147,7 @@ func getTimeZone(loc string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var timej gtime
+	var timej c.Gtime
 	json.Unmarshal(text, &timej)
 	if timej.Status != "OK" {
 		return "", errors.New("Couldn't get timezone info.")
