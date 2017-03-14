@@ -44,6 +44,7 @@ func main() {
 	})
 	//Change nick if taken
 	ircobj.AddCallback(irc.NICKTAKEN, func(msg irc.Message) {
+		//TODO: Attempt regaining the original nick
 		ircobj.Nick += "_"
 		ircobj.NewNick(ircobj.Nick)
 	})
@@ -114,6 +115,7 @@ func main() {
 
 }
 
+//TODO: better name please?
 func getTimeZone(loc string) (string, error) {
 	maps := url.Values{}
 	maps.Add("address", loc)
