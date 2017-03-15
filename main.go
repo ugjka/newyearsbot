@@ -18,7 +18,7 @@ import (
 	c "github.com/ugjka/newyearsbot/common"
 )
 
-var target = time.Date(2017, time.March, 15, 0, 0, 0, 0, time.UTC)
+var target = time.Date(2017, time.March, 16, 0, 0, 0, 0, time.UTC)
 
 const ircNick = "HNYbot18"
 const ircName = "newyears"
