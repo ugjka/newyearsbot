@@ -1,3 +1,4 @@
+//This utility prints all zones in irc channels. Useful if you want to see how it will look
 package main
 
 import (

@@ -1,3 +1,4 @@
+//This utility prints lenghts of zones string representation. Useful for seeing if some zone exceeds irc limit
 package main
 
 import (

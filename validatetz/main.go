@@ -1,3 +1,4 @@
+//This utility validates Time Zone dataset against google maps api, double check the results, sometimes false positives
 package main
 
 import (

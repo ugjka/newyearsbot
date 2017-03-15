@@ -1,8 +1,8 @@
+//Irc Bot for New Years Eve Celebration. Posts to irc when new year happens in each timezone
 package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -51,9 +51,9 @@ func main() {
 	//Handler for Location queries
 	ircobj.AddCallback(irc.PRIVMSG, func(msg irc.Message) {
 		if strings.HasPrefix(msg.Trailing, "hny ") {
-			tz, err := getTimeZone(msg.Trailing[4:])
+			tz, err := getNewYear(msg.Trailing[4:])
 			if err != nil {
-				ircobj.Reply(msg, err.Error())
+				ircobj.Reply(msg, "Some error occurred!")
 				return
 			}
 			ircobj.Reply(msg, tz)
@@ -115,22 +115,23 @@ func main() {
 
 }
 
-//TODO: better name please?
-func getTimeZone(loc string) (string, error) {
+func getNewYear(loc string) (string, error) {
 	maps := url.Values{}
 	maps.Add("address", loc)
 	maps.Add("sensor", "false")
 	maps.Add("language", "en")
 	data, err := c.Getter(c.Geocode + maps.Encode())
 	if err != nil {
+		log.Println(err)
 		return "", err
 	}
 	var mapj c.Gmap
 	if err = json.Unmarshal(data, &mapj); err != nil {
+		log.Println(err)
 		return "", err
 	}
 	if mapj.Status != "OK" {
-		return "", errors.New("I don't know that place.")
+		return "I don't know that place.", nil
 	}
 	adress := mapj.Results[0].FormattedAddress
 	location := fmt.Sprintf("%.6f,%.6f", mapj.Results[0].Geometry.Location.Lat, mapj.Results[0].Geometry.Location.Lng)
@@ -140,14 +141,16 @@ func getTimeZone(loc string) (string, error) {
 	tmzone.Add("sensor", "false")
 	data, err = c.Getter(c.Timezone + tmzone.Encode())
 	if err != nil {
+		log.Println(err)
 		return "", err
 	}
 	var timej c.Gtime
 	if err = json.Unmarshal(data, &timej); err != nil {
+		log.Println(err)
 		return "", err
 	}
 	if timej.Status != "OK" {
-		return "", errors.New("Couldn't get timezone info.")
+		return "Couldn't get timezone info.", nil
 	}
 	//RawOffset
 	raw, err := time.ParseDuration(fmt.Sprintf("%ds", timej.RawOffset))
