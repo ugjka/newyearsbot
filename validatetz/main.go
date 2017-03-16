@@ -80,7 +80,7 @@ func getTimeZone(loc string) (string, error) {
 	if mapj.Status != "OK" {
 		return "", errors.New(loc + " Status not OK")
 	}
-	location := fmt.Sprintf("%.6f,%.6f", mapj.Results[0].Geometry.Location.Lat, mapj.Results[0].Geometry.Location.Lng)
+	location := fmt.Sprintf("%.7f,%.7f", mapj.Results[0].Geometry.Location.Lat, mapj.Results[0].Geometry.Location.Lng)
 	tmzone := url.Values{}
 	tmzone.Add("location", location)
 	tmzone.Add("timestamp", fmt.Sprintf("%d", target.Unix()))

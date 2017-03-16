@@ -18,7 +18,7 @@ import (
 	c "github.com/ugjka/newyearsbot/common"
 )
 
-var target = time.Date(2017, time.March, 16, 0, 0, 0, 0, time.UTC)
+var target = time.Date(2017, time.March, 17, 0, 0, 0, 0, time.UTC)
 
 const ircNick = "HNYbot18"
 const ircName = "newyears"
@@ -134,7 +134,7 @@ func getNewYear(loc string) (string, error) {
 		return "I don't know that place.", nil
 	}
 	adress := mapj.Results[0].FormattedAddress
-	location := fmt.Sprintf("%.6f,%.6f", mapj.Results[0].Geometry.Location.Lat, mapj.Results[0].Geometry.Location.Lng)
+	location := fmt.Sprintf("%.7f,%.7f", mapj.Results[0].Geometry.Location.Lat, mapj.Results[0].Geometry.Location.Lng)
 	tmzone := url.Values{}
 	tmzone.Add("location", location)
 	tmzone.Add("timestamp", fmt.Sprintf("%d", time.Now().Unix()))
