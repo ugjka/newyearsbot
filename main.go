@@ -44,8 +44,11 @@ func main() {
 	})
 	//Change nick if taken
 	ircobj.AddCallback(irc.NICKTAKEN, func(msg irc.Message) {
-		//TODO: Attempt regaining the original nick
-		ircobj.Nick += "_"
+		if strings.HasSuffix(ircobj.Nick, "_") {
+			ircobj.Nick = ircobj.Nick[:len(ircobj.Nick)-1]
+		} else {
+			ircobj.Nick += "_"
+		}
 		ircobj.NewNick(ircobj.Nick)
 	})
 	//Handler for Location queries
