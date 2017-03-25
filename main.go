@@ -158,18 +158,21 @@ func getNewYear(loc string) (string, error) {
 	//RawOffset
 	raw, err := time.ParseDuration(fmt.Sprintf("%ds", timej.RawOffset))
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return "", err
 	}
 	//DstOffset
 	dst, err := time.ParseDuration(fmt.Sprintf("%ds", timej.DstOffset))
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return "", err
 	}
 	//Check if past target
 	if time.Now().UTC().Add(raw + dst).Before(target) {
 		humandur, err := durafmt.ParseString(target.Sub(time.Now().UTC().Add(raw + dst)).String())
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
+			return "", err
 		}
 		return fmt.Sprintf("New Year in %s will happen in %s", adress, humandur), nil
 	}
