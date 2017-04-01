@@ -28,6 +28,7 @@ var ircChannel = []string{"#ugjka", "#ugjkatest", "#ugjkatest2"}
 
 var start = make(chan bool)
 var once sync.Once
+var next c.TZ
 
 func main() {
 	ircobj := irc.New(ircNick, ircName, ircServer, true)
@@ -53,6 +54,18 @@ func main() {
 	})
 	//Handler for Location queries
 	ircobj.AddCallback(irc.PRIVMSG, func(msg irc.Message) {
+		if strings.HasPrefix(msg.Trailing, "hny !next") {
+			dur, err := time.ParseDuration(next.Offset + "h")
+			if err != nil {
+				return
+			}
+			humandur, err := durafmt.ParseString(target.Sub(time.Now().UTC().Add(dur)).String())
+			if err != nil {
+				return
+			}
+			ircobj.Reply(msg, fmt.Sprintf("Next new year in %s in %s", humandur, next.String()))
+			return
+		}
 		if strings.HasPrefix(msg.Trailing, "hny ") {
 			tz, err := getNewYear(msg.Trailing[4:])
 			if err != nil {
@@ -62,6 +75,7 @@ func main() {
 			ircobj.Reply(msg, tz)
 			return
 		}
+
 	})
 	ircobj.Start()
 	//IRC pinger
@@ -101,6 +115,7 @@ func main() {
 		}
 		//Check if zone is past target
 		if time.Now().UTC().Add(dur).Before(target) {
+			next = zones[i]
 			time.Sleep(time.Second * 2)
 			humandur, err := durafmt.ParseString(target.Sub(time.Now().UTC().Add(dur)).String())
 			if err != nil {
