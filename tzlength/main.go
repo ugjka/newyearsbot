@@ -3,6 +3,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -14,8 +15,14 @@ import (
 )
 
 func main() {
+	tzdatapath := flag.String("tzpath", "../tz.json", "path to tz.json")
+	//Check if tz.json exists
+	if _, err := os.Stat(*tzdatapath); os.IsNotExist(err) {
+		fmt.Fprintf(os.Stderr, "Error: file %s does not exist\n", *tzdatapath)
+		os.Exit(1)
+	}
 	var zones c.TZS
-	file, err := os.Open("../tz.json")
+	file, err := os.Open(*tzdatapath)
 	if err != nil {
 		log.Fatal(err)
 	}
