@@ -49,6 +49,7 @@ func main() {
 	fmt.Println("Target:", target)
 	sort.Sort(sort.Reverse(zones))
 	for _, k := range zones {
+		fmt.Println("Zone:", k.Offset)
 		for _, k2 := range k.Countries {
 			if len(k2.Cities) == 0 {
 				res, err := getTimeZone(k2.Name)
