@@ -4,6 +4,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -16,11 +17,24 @@ import (
 	c "github.com/ugjka/newyearsbot/common"
 )
 
-var target = time.Date(2017, time.December, 31, 0, 0, 0, 0, time.UTC)
+//Set target year
+var target = func() time.Time {
+	tmp := time.Now().UTC()
+	if tmp.Month() == time.January && tmp.Day() < 2 {
+		return time.Date(tmp.Year()-1, time.January, 1, 0, 0, 0, 0, time.UTC)
+	}
+	return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
+}()
 
 func main() {
+	tzdatapath := flag.String("tzpath", "../tz.json", "path to tz.json")
+	//Check if tz.json exists
+	if _, err := os.Stat(*tzdatapath); os.IsNotExist(err) {
+		fmt.Fprintf(os.Stderr, "Error: file %s does not exist\n", *tzdatapath)
+		os.Exit(1)
+	}
 	var zones c.TZS
-	file, err := os.Open("../tz.json")
+	file, err := os.Open(*tzdatapath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -31,6 +45,8 @@ func main() {
 	if err := json.Unmarshal(content, &zones); err != nil {
 		log.Fatal(err)
 	}
+	//print target to be sure
+	fmt.Println("Target:", target)
 	sort.Sort(sort.Reverse(zones))
 	for _, k := range zones {
 		for _, k2 := range k.Countries {
