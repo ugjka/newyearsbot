@@ -3,6 +3,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -18,12 +19,35 @@ import (
 	c "github.com/ugjka/newyearsbot/common"
 )
 
-var target = time.Date(2018, time.January, 1, 0, 0, 0, 0, time.UTC)
+//Custom flag to get irc channelsn to join
+var ircChansFlag c.IrcChans
 
-const ircNick = "HNYbot18"
-const ircName = "newyears"
-const ircServer = "irc.freenode.net:7000"
+func init() {
+	flag.Var(&ircChansFlag, "chans", "comma seperated list of irc channels to join")
+}
 
+//Set target year
+var target = func() time.Time {
+	tmp := time.Now().UTC()
+	if tmp.Month() == time.January && tmp.Day() < 2 {
+		return time.Date(tmp.Year()-1, time.January, 1, 0, 0, 0, 0, time.UTC)
+	}
+	return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
+}()
+
+var usage = `New Year Eve Party Irc Bot
+This bot announces new years as they happen in each timezone
+You can query location using "hny" trigger for example "hny New York"
+
+CMD Options:
+-chans			comma seperated list of irc channels to join
+-tzpath			path to tz database (./tz.json)
+-ircserver		irc server to use irc.example.com:7000 (must be TLS enabled)
+-botnick		nick for the bot `
+
+const ircName = "nyebot"
+
+//Default channel list
 var ircChannel = []string{"#ugjka", "#ugjkatest", "#ugjkatest2"}
 
 var start = make(chan bool)
@@ -31,7 +55,27 @@ var once sync.Once
 var next c.TZ
 
 func main() {
-	ircobj := irc.New(ircNick, ircName, ircServer, true)
+	//flags
+	tzdatapath := flag.String("tzpath", "./tz.json", "path to tz.json")
+	ircServer := flag.String("ircserver", "irc.freenode.net:7000", "Irc server to use, must be TLS")
+	ircNick := flag.String("botnick", "HNYbot18", "Irc Nick for the bot")
+	flag.Usage = func() {
+		fmt.Fprint(os.Stderr, fmt.Sprintf(usage))
+	}
+	flag.Parse()
+	if len(ircChansFlag) > 0 {
+		ircChannel = ircChansFlag
+	}
+	//Check if tz.json exists
+	if _, err := os.Stat(*tzdatapath); os.IsNotExist(err) {
+		fmt.Fprintf(os.Stderr, "Error: %s does not exist\n", *tzdatapath)
+		os.Exit(1)
+	}
+
+	//
+	//Set up irc and its callbacks
+	//
+	ircobj := irc.New(*ircNick, ircName, *ircServer, true)
 	ircobj.AddCallback(irc.WELCOME, func(msg irc.Message) {
 		ircobj.Join(ircChannel)
 		//Prevent early start
@@ -96,7 +140,7 @@ func main() {
 	//Starts when joined, see once.Do
 	<-start
 	var zones c.TZS
-	file, err := os.Open("./tz.json")
+	file, err := os.Open(*tzdatapath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -129,10 +173,11 @@ func main() {
 			ircobj.PrivMsgBulk(ircChannel, msg)
 		}
 	}
-	ircobj.PrivMsgBulk(ircChannel, "That's it, the New Year is here across the globe!")
+	ircobj.PrivMsgBulk(ircChannel, fmt.Sprintf("That's it, year %d is here across the globe", target.Year()))
 
 }
 
+//Func for querying newyears in specified location
 func getNewYear(loc string) (string, error) {
 	maps := url.Values{}
 	maps.Add("address", loc)

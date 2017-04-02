@@ -1,11 +1,13 @@
 package common
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 //Geocode is Google maps api
@@ -113,4 +115,22 @@ func Getter(url string) (data []byte, err error) {
 		return
 	}
 	return
+}
+
+//IrcChans is a custom flag
+type IrcChans []string
+
+func (i *IrcChans) String() string {
+	return fmt.Sprint(*i)
+}
+
+//Set satisfies flag Interface?
+func (i *IrcChans) Set(value string) error {
+	if len(*i) > 0 {
+		return errors.New("interval flag already set")
+	}
+	for _, dt := range strings.Split(value, ",") {
+		*i = append(*i, dt)
+	}
+	return nil
 }
