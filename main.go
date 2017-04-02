@@ -68,7 +68,7 @@ func main() {
 	}
 	//Check if tz.json exists
 	if _, err := os.Stat(*tzdatapath); os.IsNotExist(err) {
-		fmt.Fprintf(os.Stderr, "Error: %s does not exist\n", *tzdatapath)
+		fmt.Fprintf(os.Stderr, "Error: file %s does not exist\n", *tzdatapath)
 		os.Exit(1)
 	}
 
