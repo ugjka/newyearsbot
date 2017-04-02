@@ -40,7 +40,7 @@ This bot announces new years as they happen in each timezone
 You can query location using "hny" trigger for example "hny New York"
 
 CMD Options:
--chans			comma seperated list of irc channels to join
+-chans			comma seperated list of irc channels to join eg. "#test, #test2"
 -tzpath			path to tz database (./tz.json)
 -ircserver		irc server to use irc.example.com:7000 (must be TLS enabled)
 -botnick		nick for the bot `
