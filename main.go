@@ -32,6 +32,7 @@ var target = func() time.Time {
 	if tmp.Month() == time.January && tmp.Day() < 2 {
 		return time.Date(tmp.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
 	}
+	//return time.Date(tmp.Year(), time.April, 4, 0, 0, 0, 0, time.UTC)
 	return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 }()
 
@@ -168,7 +169,8 @@ func main() {
 			msg := fmt.Sprintf("Next New Year in %s in %s", humandur, zones[i])
 			ircobj.PrivMsgBulk(ircChannel, msg)
 			//Wait till Target in Timezone
-			time.Sleep(target.Sub(time.Now().UTC().Add(dur)))
+			timer := time.NewTimer(target.Sub(time.Now().UTC().Add(dur)))
+			<-timer.C
 			msg = fmt.Sprintf("Happy New Year in %s", zones[i])
 			ircobj.PrivMsgBulk(ircChannel, msg)
 		}
