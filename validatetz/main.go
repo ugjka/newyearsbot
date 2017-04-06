@@ -4,17 +4,15 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/url"
-	"os"
 	"sort"
 	"strconv"
 	"time"
 
 	c "github.com/ugjka/newyearsbot/common"
+	nyb "github.com/ugjka/newyearsbot/nyb"
 )
 
 //Set target year
@@ -27,22 +25,8 @@ var target = func() time.Time {
 }()
 
 func main() {
-	tzdatapath := flag.String("tzpath", "../tz.json", "path to tz.json")
-	//Check if tz.json exists
-	if _, err := os.Stat(*tzdatapath); os.IsNotExist(err) {
-		fmt.Fprintf(os.Stderr, "Error: file %s does not exist\n", *tzdatapath)
-		os.Exit(1)
-	}
 	var zones c.TZS
-	file, err := os.Open(*tzdatapath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	content, err := ioutil.ReadAll(file)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if err := json.Unmarshal(content, &zones); err != nil {
+	if err := json.Unmarshal([]byte(nyb.TZ), &zones); err != nil {
 		log.Fatal(err)
 	}
 	//print target to be sure

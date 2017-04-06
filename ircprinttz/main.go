@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"sort"
@@ -14,6 +13,7 @@ import (
 
 	irc "github.com/ugjka/dumbirc"
 	c "github.com/ugjka/newyearsbot/common"
+	"github.com/ugjka/newyearsbot/nyb"
 )
 
 var usage = `Test utility for debugging that post all newyears on a specified channel
@@ -39,7 +39,6 @@ var start = make(chan bool)
 
 func main() {
 	//flags
-	tzdatapath := flag.String("tzpath", "../tz.json", "path to tz.json")
 	ircServer := flag.String("ircserver", "irc.freenode.net:7000", "Irc server to use, must be TLS")
 	ircNick := flag.String("botnick", "HNYbot18", "Irc Nick for the bot")
 	flag.Usage = func() {
@@ -49,21 +48,8 @@ func main() {
 	if len(ircChansFlag) > 0 {
 		ircChannel = ircChansFlag
 	}
-	//Check if tz.json exists
-	if _, err := os.Stat(*tzdatapath); os.IsNotExist(err) {
-		fmt.Fprintf(os.Stderr, "Error: file %s does not exist\n", *tzdatapath)
-		os.Exit(1)
-	}
 	var zones c.TZS
-	file, err := os.Open(*tzdatapath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	content, err := ioutil.ReadAll(file)
-	if err != nil {
-		log.Fatal(err)
-	}
-	json.Unmarshal(content, &zones)
+	json.Unmarshal([]byte(nyb.TZ), &zones)
 	sort.Sort(sort.Reverse(zones))
 
 	ircobj := irc.New(*ircNick, ircName, *ircServer, true)
