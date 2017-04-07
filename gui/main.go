@@ -2,11 +2,23 @@
 package main
 
 import (
+	"fmt"
+	"regexp"
+	"strings"
+
 	"github.com/gotk3/gotk3/gtk"
 )
 
+var st Status
+var mv Window
+
 func main() {
-	var mv Window
+
+	mv.ircServer = "irc.freenode.net:7000"
+	mv.ircUseTLS = true
+	st.onClose = func() {
+		st.Close()
+	}
 	mv.onClose = func() {
 		gtk.MainQuit()
 	}
@@ -40,6 +52,7 @@ func (w *Window) open() {
 		return
 	}
 	w.initWidgets()
+	w.fillInputs()
 	w.isOpen = true
 }
 
@@ -48,6 +61,20 @@ func (w *Window) close() {
 		return
 	}
 	w.window.Destroy()
+}
+
+func (w *Window) fillInputs() {
+	w.nick.SetText(w.ircNick)
+	chans := ""
+	for i, ch := range w.ircChannels {
+		chans += ch
+		if i != len(w.ircChannels)-1 {
+			chans += ", "
+		}
+	}
+	w.chans.SetText(chans)
+	w.server.SetText(w.ircServer)
+	w.tls.SetActive(w.ircUseTLS)
 }
 
 func (w *Window) initWidgets() {
@@ -86,12 +113,12 @@ func (w *Window) initWidgets() {
 	grid2.Attach(labelNew("Irc server (host:port):"), 0, 4, 1, 1)
 	w.server, err = gtk.EntryNew()
 	fatal(err)
-	w.server.SetText("irc.freenode.net:7000")
+	w.server.SetText(w.ircServer)
 	grid2.Attach(w.server, 0, 5, 1, 1)
 	grid2.Attach(labelNew("Use TLS:"), 0, 6, 1, 1)
 	w.tls, err = gtk.CheckButtonNew()
 	fatal(err)
-	w.tls.SetActive(true)
+	w.tls.SetActive(w.ircUseTLS)
 	w.tls.SetHAlign(gtk.ALIGN_END)
 	grid2.Attach(w.tls, 0, 6, 1, 1)
 	config.Add(grid2)
@@ -104,13 +131,67 @@ func (w *Window) initWidgets() {
 	w.window.ShowAll()
 }
 
+func (w *Window) setInactive() {
+	w.window.SetVisible(false)
+}
+
+func (w *Window) setActive() {
+	w.window.SetVisible(true)
+}
+
 func (w *Window) startClicked() {
-	msg := gtk.MessageDialogNew(w.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, "%s", "I gift you an error")
-	_, err := msg.Connect("response", func() {
-		msg.Destroy()
-	})
+	if err := w.validateInputs(); err != nil {
+		msg := gtk.MessageDialogNew(w.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR,
+			gtk.BUTTONS_CLOSE, "%s", err.Error())
+		_, err := msg.Connect("response", func() {
+			msg.Destroy()
+		})
+		fatal(err)
+		msg.ShowAll()
+	} else {
+		var err error
+		w.ircNick, err = w.nick.GetText()
+		fatal(err)
+		chans, err := w.chans.GetText()
+		fatal(err)
+		for _, ch := range strings.Split(chans, ",") {
+			w.ircChannels = append(w.ircChannels, ch)
+		}
+		w.ircServer, err = w.server.GetText()
+		fatal(err)
+		w.ircUseTLS = w.tls.GetActive()
+		fatal(err)
+		st.Open()
+		w.setInactive()
+	}
+
+}
+
+func (w *Window) validateInputs() error {
+	nickreg := regexp.MustCompile("^\\w*$")
+	nick, err := w.nick.GetText()
 	fatal(err)
-	msg.ShowAll()
+	if nick == "" {
+		return fmt.Errorf("Empty nick")
+	}
+	if !nickreg.MatchString(nick) {
+		return fmt.Errorf("Nick contains non alpha numeric characters")
+	}
+	chanreg := regexp.MustCompile("^#*\\w*$")
+	chans, err := w.chans.GetText()
+	fatal(err)
+	for _, ch := range strings.Split(chans, ",") {
+		if !chanreg.MatchString(ch) || len(ch) <= 1 {
+			return fmt.Errorf("Invalid channel name: %s", ch)
+		}
+	}
+	serverreg := regexp.MustCompile("^\\S*:\\d*$")
+	server, err := w.server.GetText()
+	fatal(err)
+	if !serverreg.MatchString(server) {
+		return fmt.Errorf("Invalid irc server name")
+	}
+	return nil
 }
 
 func (w *Window) windowDestroyed() {
