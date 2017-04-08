@@ -69,7 +69,7 @@ var target = func() time.Time {
 	if tmp.Month() == time.January && tmp.Day() < 2 {
 		return time.Date(tmp.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
 	}
-	//return time.Date(tmp.Year(), time.April, 4, 0, 0, 0, 0, time.UTC)
+	//return time.Date(tmp.Year(), time.April, 9, 0, 0, 0, 0, time.UTC)
 	return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 }()
 
@@ -171,11 +171,11 @@ func (s *Settings) Start() {
 		if time.Now().UTC().Add(dur).Before(target) {
 			next = zones[i]
 			time.Sleep(time.Second * 2)
+			log.Println("Zone pending:", zones[i].Offset)
 			humandur, err := durafmt.ParseString(target.Sub(time.Now().UTC().Add(dur)).String())
 			if err != nil {
 				log.Fatal(err)
 			}
-			log.Println("Zone pending:", zones[i].Offset)
 			msg := fmt.Sprintf("Next New Year in %s in %s", humandur, zones[i])
 			s.IrcObj.PrivMsgBulk(s.IrcChans, msg)
 			//Wait till Target in Timezone
@@ -183,9 +183,9 @@ func (s *Settings) Start() {
 
 			select {
 			case <-timer.C:
-				log.Println("Announcing zone:", zones[i].Offset)
 				msg = fmt.Sprintf("Happy New Year in %s", zones[i])
 				s.IrcObj.PrivMsgBulk(s.IrcChans, msg)
+				log.Println("Announcing zone:", zones[i].Offset)
 			case <-s.Stopper:
 				log.Println("Stopping the bot...")
 				timer.Stop()
