@@ -6,11 +6,14 @@ import (
 
 //Status shows bot status
 type Status struct {
-	isOpen  bool
-	onClose func()
-	stop    *gtk.Button
-	window  *gtk.Window
-	text    *gtk.TextView
+	logStopper chan bool
+	isOpen     bool
+	onClose    func()
+	stop       *gtk.Button
+	window     *gtk.Window
+	text       *gtk.TextView
+	buffer     *gtk.TextBuffer
+	scroll     *gtk.ScrolledWindow
 }
 
 //Open opens status window
@@ -22,6 +25,7 @@ func (w *Status) Open() {
 //Close closes the status window
 func (w *Status) Close() {
 	w.window.Destroy()
+	w.isOpen = false
 }
 
 func (w *Status) initWidgets() {
@@ -30,14 +34,15 @@ func (w *Status) initWidgets() {
 	fatal(err)
 	w.window.SetTitle("Bot Status")
 	w.window.SetPosition(gtk.WIN_POS_CENTER)
-	w.window.SetSizeRequest(200, 200)
+	w.window.SetSizeRequest(400, 200)
 	w.window.SetBorderWidth(6)
+	_, err = w.window.Connect("destroy", w.onClose)
+	fatal(err)
 	w.stop, err = gtk.ButtonNew()
 	fatal(err)
 	w.stop.SetLabel("Stop")
 	w.stop.Connect("clicked", func() {
 		w.window.Destroy()
-		mv.setActive()
 	})
 	grid, err := gtk.GridNew()
 	fatal(err)
@@ -46,9 +51,15 @@ func (w *Status) initWidgets() {
 	grid.SetRowSpacing(6)
 	w.text, err = gtk.TextViewNew()
 	fatal(err)
+	w.buffer, err = w.text.GetBuffer()
+	fatal(err)
 	w.text.SetVExpand(true)
 	w.text.SetEditable(false)
-	grid.Attach(w.text, 0, 0, 1, 1)
+	w.scroll, err = gtk.ScrolledWindowNew(nil, nil)
+	fatal(err)
+	w.scroll.SetVExpand(true)
+	w.scroll.Add(w.text)
+	grid.Attach(w.scroll, 0, 0, 1, 1)
 	grid.Attach(w.stop, 0, 1, 1, 1)
 
 	w.window.Add(grid)

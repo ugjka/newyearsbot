@@ -7,20 +7,56 @@ import (
 	"strings"
 
 	"github.com/gotk3/gotk3/gtk"
+	irc "github.com/ugjka/dumbirc"
+	"github.com/ugjka/newyearsbot/nyb"
 )
 
-var st Status
-var mv Window
-
 func main() {
-
+	var st Status
+	st.logStopper = make(chan bool)
+	var mv Window
 	mv.ircServer = "irc.freenode.net:7000"
 	mv.ircUseTLS = true
+	bot := &nyb.Settings{}
+
 	st.onClose = func() {
+		st.logStopper <- true
+		if !bot.Exited {
+			bot.Stop()
+		}
 		st.Close()
+		mv.setActive()
+	}
+
+	mv.startBot = func() {
+		bot = &nyb.Settings{}
+		bot.IrcChans = mv.ircChannels
+		bot.IrcNick = mv.ircNick
+		bot.IrcServer = mv.ircServer
+		bot.UseTLS = mv.ircUseTLS
+		bot.Stopper = make(chan bool)
+		bot.LogCh = nyb.NewLogChan()
+		bot.IrcObj = &irc.Connection{}
+		go bot.Start()
 	}
 	mv.onClose = func() {
 		gtk.MainQuit()
+	}
+	mv.onHide = func() {
+		mv.setInactive()
+		st.Open()
+		mv.startBot()
+		go func() {
+			for {
+				var logmsg string
+				select {
+				case <-st.logStopper:
+					return
+				case logmsg = <-bot.LogCh:
+					st.buffer.InsertAtCursor(logmsg)
+				}
+			}
+		}()
 	}
 	gtk.Init(nil)
 	mv.open()
@@ -34,7 +70,9 @@ type Window struct {
 	ircUseTLS   bool
 	ircNick     string
 
-	onClose func()
+	onClose  func()
+	onHide   func()
+	startBot func()
 
 	isOpen bool
 
@@ -61,6 +99,7 @@ func (w *Window) close() {
 		return
 	}
 	w.window.Destroy()
+	w.isOpen = false
 }
 
 func (w *Window) fillInputs() {
@@ -154,6 +193,7 @@ func (w *Window) startClicked() {
 		fatal(err)
 		chans, err := w.chans.GetText()
 		fatal(err)
+		w.ircChannels = make([]string, 0)
 		for _, ch := range strings.Split(chans, ",") {
 			w.ircChannels = append(w.ircChannels, ch)
 		}
@@ -161,8 +201,7 @@ func (w *Window) startClicked() {
 		fatal(err)
 		w.ircUseTLS = w.tls.GetActive()
 		fatal(err)
-		st.Open()
-		w.setInactive()
+		w.onHide()
 	}
 
 }

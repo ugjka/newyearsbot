@@ -15,12 +15,38 @@ import (
 	c "github.com/ugjka/newyearsbot/common"
 )
 
+const logChanLen = 100
+
+//LogChan is a channel that sends log messages
+type LogChan chan string
+
+func (l LogChan) Write(p []byte) (n int, err error) {
+	if len(l) < logChanLen {
+		l <- string(p)
+	}
+	return len(p), nil
+}
+
+//NewLogChan make new log channel
+func NewLogChan() LogChan {
+	return make(chan string, logChanLen)
+}
+
 //Settings for bot
 type Settings struct {
 	IrcNick   string
 	IrcChans  []string
 	IrcServer string
 	UseTLS    bool
+	LogCh     LogChan
+	Stopper   chan bool
+	IrcObj    *irc.Connection
+	Exited    bool
+}
+
+//Stop stops the bot
+func (s *Settings) Stop() {
+	s.Stopper <- true
 }
 
 //New creates new bot
@@ -30,6 +56,10 @@ func New(nick string, chans []string, server string, tls bool) *Settings {
 		chans,
 		server,
 		tls,
+		make(chan string, 100),
+		make(chan bool),
+		&irc.Connection{},
+		false,
 	}
 }
 
@@ -45,7 +75,9 @@ var target = func() time.Time {
 
 //Start starts the bot
 func (s *Settings) Start() {
-
+	//log.SetOutput(os.Stderr)
+	log.SetOutput(s.LogCh)
+	log.Println("Starting the bot...")
 	var start = make(chan bool)
 	var once sync.Once
 	var next c.TZ
@@ -53,29 +85,30 @@ func (s *Settings) Start() {
 	//
 	//Set up irc and its callbacks
 	//
-	ircobj := irc.New(s.IrcNick, "nyebot", s.IrcServer, s.UseTLS)
-	ircobj.AddCallback(irc.WELCOME, func(msg irc.Message) {
-		ircobj.Join(s.IrcChans)
+	s.IrcObj = irc.New(s.IrcNick, "nyebot", s.IrcServer, s.UseTLS)
+	s.IrcObj.AddCallback(irc.WELCOME, func(msg irc.Message) {
+		s.IrcObj.Join(s.IrcChans)
 		//Prevent early start
 		once.Do(func() {
 			start <- true
 		})
 	})
 	//Reply ping messages with pong
-	ircobj.AddCallback(irc.PING, func(msg irc.Message) {
-		ircobj.Pong()
+	s.IrcObj.AddCallback(irc.PING, func(msg irc.Message) {
+		log.Println("PING recieved, sending PONG")
+		s.IrcObj.Pong()
 	})
 	//Change nick if taken
-	ircobj.AddCallback(irc.NICKTAKEN, func(msg irc.Message) {
-		if strings.HasSuffix(ircobj.Nick, "_") {
-			ircobj.Nick = ircobj.Nick[:len(ircobj.Nick)-1]
+	s.IrcObj.AddCallback(irc.NICKTAKEN, func(msg irc.Message) {
+		if strings.HasSuffix(s.IrcObj.Nick, "_") {
+			s.IrcObj.Nick = s.IrcObj.Nick[:len(s.IrcObj.Nick)-1]
 		} else {
-			ircobj.Nick += "_"
+			s.IrcObj.Nick += "_"
 		}
-		ircobj.NewNick(ircobj.Nick)
+		s.IrcObj.NewNick(s.IrcObj.Nick)
 	})
 	//Handler for Location queries
-	ircobj.AddCallback(irc.PRIVMSG, func(msg irc.Message) {
+	s.IrcObj.AddCallback(irc.PRIVMSG, func(msg irc.Message) {
 		if strings.HasPrefix(msg.Trailing, "hny !next") {
 			dur, err := time.ParseDuration(next.Offset + "h")
 			if err != nil {
@@ -85,34 +118,41 @@ func (s *Settings) Start() {
 			if err != nil {
 				return
 			}
-			ircobj.Reply(msg, fmt.Sprintf("Next new year in %s in %s", humandur, next.String()))
+			s.IrcObj.Reply(msg, fmt.Sprintf("Next new year in %s in %s", humandur, next.String()))
 			return
 		}
 		if strings.HasPrefix(msg.Trailing, "hny ") {
 			tz, err := getNewYear(msg.Trailing[4:])
 			if err != nil {
-				ircobj.Reply(msg, "Some error occurred!")
+				s.IrcObj.Reply(msg, "Some error occurred!")
 				return
 			}
-			ircobj.Reply(msg, tz)
+			s.IrcObj.Reply(msg, tz)
 			return
 		}
 
 	})
-	ircobj.Start()
-	//IRC pinger
+	s.IrcObj.Start()
+	//Reconnect logic and Irc Pinger
+	stopper := make(chan bool)
 	go func() {
+		var err error
 		for {
-			time.Sleep(time.Minute)
-			ircobj.Ping()
-		}
-	}()
-	//Reconnect logic
-	go func() {
-		for {
-			log.Println(<-ircobj.Errchan)
-			time.Sleep(time.Second * 30)
-			ircobj.Start()
+			timer := time.NewTimer(time.Minute)
+			select {
+			case err = <-s.IrcObj.Errchan:
+				log.Println(err)
+				time.Sleep(time.Second * 30)
+				log.Println("Restarting the bot...")
+				s.IrcObj.Start()
+			case <-stopper:
+				s.IrcObj.Disconnect()
+				return
+			case <-timer.C:
+				log.Println("Sending PING...")
+				timer.Stop()
+				s.IrcObj.Ping()
+			}
 		}
 	}()
 	//Starts when joined, see once.Do
@@ -135,20 +175,36 @@ func (s *Settings) Start() {
 			if err != nil {
 				log.Fatal(err)
 			}
+			log.Println("Zone pending:", zones[i].Offset)
 			msg := fmt.Sprintf("Next New Year in %s in %s", humandur, zones[i])
-			ircobj.PrivMsgBulk(s.IrcChans, msg)
+			s.IrcObj.PrivMsgBulk(s.IrcChans, msg)
 			//Wait till Target in Timezone
 			timer := time.NewTimer(target.Sub(time.Now().UTC().Add(dur)))
-			<-timer.C
-			msg = fmt.Sprintf("Happy New Year in %s", zones[i])
-			ircobj.PrivMsgBulk(s.IrcChans, msg)
+
+			select {
+			case <-timer.C:
+				log.Println("Announcing zone:", zones[i].Offset)
+				msg = fmt.Sprintf("Happy New Year in %s", zones[i])
+				s.IrcObj.PrivMsgBulk(s.IrcChans, msg)
+			case <-s.Stopper:
+				log.Println("Stopping the bot...")
+				timer.Stop()
+				stopper <- true
+				log.Println("Disconnecting...")
+				s.IrcObj.Disconnect()
+				return
+			}
 		}
 	}
-	ircobj.PrivMsgBulk(s.IrcChans, fmt.Sprintf("That's it, year %d is here across the globe", target.Year()))
+	s.IrcObj.PrivMsgBulk(s.IrcChans, fmt.Sprintf("That's it, year %d is here across the globe", target.Year()))
+	log.Println("All zones finished...")
+	stopper <- true
+	s.Exited = true
 }
 
 //Func for querying newyears in specified location
 func getNewYear(loc string) (string, error) {
+	log.Println("Querying location:", loc)
 	maps := url.Values{}
 	maps.Add("address", loc)
 	maps.Add("sensor", "false")
