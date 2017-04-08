@@ -14,6 +14,7 @@ type Status struct {
 	text       *gtk.TextView
 	buffer     *gtk.TextBuffer
 	scroll     *gtk.ScrolledWindow
+	iter       *gtk.TextIter
 }
 
 //Open opens status window
@@ -53,8 +54,10 @@ func (w *Status) initWidgets() {
 	fatal(err)
 	w.buffer, err = w.text.GetBuffer()
 	fatal(err)
+	w.iter = w.buffer.GetEndIter()
 	w.text.SetVExpand(true)
 	w.text.SetEditable(false)
+	w.text.SetCursorVisible(false)
 	w.scroll, err = gtk.ScrolledWindowNew(nil, nil)
 	fatal(err)
 	w.scroll.SetVExpand(true)

@@ -53,7 +53,8 @@ func main() {
 				case <-st.logStopper:
 					return
 				case logmsg = <-bot.LogCh:
-					st.buffer.InsertAtCursor(logmsg)
+					st.iter.ForwardToEnd()
+					st.buffer.Insert(st.iter, logmsg)
 				}
 			}
 		}()
