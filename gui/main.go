@@ -55,7 +55,6 @@ func main() {
 				case logmsg = <-bot.LogCh:
 					st.iter.ForwardToEnd()
 					st.buffer.Insert(st.iter, logmsg)
-					st.text.ScrollToIter(st.iter, 0, false, 0, 0)
 				}
 			}
 		}()
