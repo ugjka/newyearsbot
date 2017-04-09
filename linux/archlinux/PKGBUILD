@@ -1,0 +1,42 @@
+# Maintainer: ugjka <ugis.germanis@gmail.com>
+
+_pkgname=newyearsbot
+pkgname="$_pkgname-git"
+pkgver=20170409.9a3b7c7
+pkgrel=1
+pkgdesc='New Year Eve Irc Party Bot'
+arch=('x86_64')
+url="https://github.com/ugjka/${_pkgname}"
+license=('MIT')
+depends=('gtk3' 'glib2')
+makedepends=('go' 'go-tools' 'git')
+source=("$_pkgname"::"git+http://github.com/ugjka/${_pkgname}.git"
+        "$_pkgname.desktop")
+md5sums=('SKIP'
+        '711a1455b9b7b233b78509bfc016e63b')
+
+pkgver() {
+    cd $_pkgname
+    echo "$(git log -1 --format="%cd" --date=short | tr -d '-').$(git log -1 --format="%h")"
+}
+build(){
+    cd $_pkgname
+    mkdir -p "$srcdir/$_pkgname/bin/"
+    export GOBIN="$srcdir/$_pkgname/bin"
+    export GOPATH="$srcdir/"
+    go get
+    go build
+    cd ./gui
+    go get
+    go build
+
+}
+
+package(){
+    cd $_pkgname
+    install -Dm755 bin/$_pkgname "$pkgdir/usr/bin/$_pkgname"
+    install -Dm755 bin/gui "$pkgdir/usr/bin/$_pkgname-gui"
+    install -Dm644 icon.png "$pkgdir/usr/share/icons/hicolor/256x256/apps/$_pkgname.png"
+    install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$_pkgname/LICENSE"
+    install -Dm644 $srcdir/$_pkgname.desktop "$pkgdir/usr/share/applications/$_pkgname.desktop"
+}
