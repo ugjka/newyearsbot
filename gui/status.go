@@ -64,7 +64,6 @@ func (w *Status) initWidgets() {
 	w.scroll.Add(w.text)
 	grid.Attach(w.scroll, 0, 0, 1, 1)
 	grid.Attach(w.stop, 0, 1, 1, 1)
-
 	w.window.Add(grid)
 	w.window.ShowAll()
 }

@@ -110,6 +110,9 @@ func Getter(url string) (data []byte, err error) {
 		return
 	}
 	defer get.Body.Close()
+	if get.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("Status: %d", get.StatusCode)
+	}
 	data, err = ioutil.ReadAll(get.Body)
 	if err != nil {
 		return

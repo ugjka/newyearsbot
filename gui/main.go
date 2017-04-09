@@ -1,4 +1,5 @@
 //GTK3 implementation of newyearsbot
+//Use GODEBUG=cgocheck=0
 package main
 
 import (
@@ -46,18 +47,21 @@ func main() {
 		mv.setInactive()
 		st.Open()
 		mv.startBot()
-		go func() {
+		go func(s *Status) {
 			for {
 				var logmsg string
 				select {
-				case <-st.logStopper:
+				case <-s.logStopper:
 					return
 				case logmsg = <-bot.LogCh:
-					st.iter.ForwardToEnd()
-					st.buffer.Insert(st.iter, logmsg)
+					s.iter.ForwardToEnd()
+					s.buffer.Insert(s.iter, logmsg)
+					s.text.Connect("size-allocate", s.text.ScrollToIter(s.buffer.GetEndIter(), 0, false, 0, 0))
+					//s.iter.ForwardToEnd()
+					//s.window.ShowAll()
 				}
 			}
-		}()
+		}(&st)
 	}
 	gtk.Init(nil)
 	mv.open()
