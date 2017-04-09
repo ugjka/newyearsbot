@@ -11,7 +11,6 @@ import (
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
-	irc "github.com/ugjka/dumbirc"
 	"github.com/ugjka/newyearsbot/nyb"
 )
 
@@ -40,7 +39,7 @@ func main() {
 		bot.UseTLS = mv.ircUseTLS
 		bot.Stopper = make(chan bool)
 		bot.LogCh = nyb.NewLogChan()
-		bot.IrcObj = &irc.Connection{}
+		bot.IrcObj = nyb.NewIrcObj()
 		go bot.Start()
 	}
 	mv.onClose = func() {

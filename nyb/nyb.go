@@ -49,6 +49,11 @@ func (s *Settings) Stop() {
 	s.Stopper <- true
 }
 
+//NewIrcObj return empty irc connection
+func NewIrcObj() *irc.Connection {
+	return &irc.Connection{}
+}
+
 //New creates new bot
 func New(nick string, chans []string, server string, tls bool) *Settings {
 	return &Settings{
@@ -56,7 +61,7 @@ func New(nick string, chans []string, server string, tls bool) *Settings {
 		chans,
 		server,
 		tls,
-		make(chan string, 100),
+		NewLogChan(),
 		make(chan bool),
 		&irc.Connection{},
 		false,
