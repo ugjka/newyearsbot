@@ -1,12 +1,15 @@
+//
 //GTK3 implementation of newyearsbot
-//Use GODEBUG=cgocheck=0
+//
 package main
 
 import (
 	"fmt"
 	"regexp"
+	"runtime"
 	"strings"
 
+	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	irc "github.com/ugjka/dumbirc"
 	"github.com/ugjka/newyearsbot/nyb"
@@ -52,13 +55,11 @@ func main() {
 				var logmsg string
 				select {
 				case <-s.logStopper:
+					runtime.KeepAlive(st)
 					return
 				case logmsg = <-bot.LogCh:
-					s.iter.ForwardToEnd()
-					s.buffer.Insert(s.iter, logmsg)
-					s.text.Connect("size-allocate", s.text.ScrollToIter(s.buffer.GetEndIter(), 0, false, 0, 0))
-					//s.iter.ForwardToEnd()
-					//s.window.ShowAll()
+					_, err := glib.IdleAdd(s.addMessage, logmsg)
+					fatal(err)
 				}
 			}
 		}(&st)

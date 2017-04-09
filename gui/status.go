@@ -58,6 +58,7 @@ func (w *Status) initWidgets() {
 	w.text.SetVExpand(true)
 	w.text.SetEditable(false)
 	w.text.SetCursorVisible(false)
+	w.text.Connect("size-allocate", w.toEnd)
 	w.scroll, err = gtk.ScrolledWindowNew(nil, nil)
 	fatal(err)
 	w.scroll.SetVExpand(true)
@@ -66,4 +67,16 @@ func (w *Status) initWidgets() {
 	grid.Attach(w.stop, 0, 1, 1, 1)
 	w.window.Add(grid)
 	w.window.ShowAll()
+}
+
+func (w *Status) toEnd() {
+	w.text.ScrollToIter(w.buffer.GetEndIter(), 0, false, 0, 0)
+}
+
+func (w *Status) addMessage(msg string) bool {
+	w.buffer.Insert(w.iter, msg)
+	if !w.iter.IsEnd() {
+		w.iter.ForwardToEnd()
+	}
+	return false
 }
