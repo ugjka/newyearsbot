@@ -2,18 +2,16 @@
 
 _pkgname=newyearsbot
 pkgname="$_pkgname-git"
-pkgver=20170410.e864a8e
+pkgver=20170410.95516ef
 pkgrel=1
 pkgdesc='New Year Eve Irc Party Bot'
 arch=('x86_64')
 url="https://github.com/ugjka/${_pkgname}"
 license=('MIT')
 depends=('gtk3' 'glib2')
-makedepends=('go' 'go-tools' 'git')
-source=("$_pkgname"::"git+http://github.com/ugjka/${_pkgname}.git"
-        "$_pkgname.desktop")
-md5sums=('SKIP'
-        '7cfea624a1ec87076509944ed9ec0188')
+makedepends=('go' 'go-tools' 'git' 'make')
+source=("$_pkgname"::"git+http://github.com/ugjka/${_pkgname}.git")
+md5sums=('SKIP')
 
 pkgver() {
     cd $_pkgname
@@ -21,22 +19,10 @@ pkgver() {
 }
 build(){
     cd $_pkgname
-    mkdir -p "$srcdir/$_pkgname/bin/"
-    export GOBIN="$srcdir/$_pkgname/bin"
-    export GOPATH="$srcdir/"
-    go get
-    go build
-    cd ./gui
-    go get
-    go build
-
+    make build
 }
 
 package(){
     cd $_pkgname
-    install -Dm755 bin/$_pkgname "$pkgdir/usr/bin/$_pkgname"
-    install -Dm755 bin/gui "$pkgdir/usr/bin/$_pkgname-gui"
-    install -Dm644 icon.png "$pkgdir/usr/share/icons/hicolor/256x256/apps/$_pkgname.png"
-    install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$_pkgname/LICENSE"
-    install -Dm644 $srcdir/$_pkgname.desktop "$pkgdir/usr/share/applications/$_pkgname.desktop"
+    make prefix="${pkgdir}"/usr install
 }
