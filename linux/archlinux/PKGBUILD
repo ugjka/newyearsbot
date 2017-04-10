@@ -2,7 +2,7 @@
 
 _pkgname=newyearsbot
 pkgname="$_pkgname-git"
-pkgver=20170409.9a3b7c7
+pkgver=20170410.e864a8e
 pkgrel=1
 pkgdesc='New Year Eve Irc Party Bot'
 arch=('x86_64')
@@ -13,7 +13,7 @@ makedepends=('go' 'go-tools' 'git')
 source=("$_pkgname"::"git+http://github.com/ugjka/${_pkgname}.git"
         "$_pkgname.desktop")
 md5sums=('SKIP'
-        '711a1455b9b7b233b78509bfc016e63b')
+        '7cfea624a1ec87076509944ed9ec0188')
 
 pkgver() {
     cd $_pkgname
