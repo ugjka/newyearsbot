@@ -6,7 +6,6 @@ package main
 import (
 	"fmt"
 	"regexp"
-	"runtime"
 	"strings"
 
 	"github.com/gotk3/gotk3/glib"
@@ -46,6 +45,9 @@ func main() {
 		gtk.MainQuit()
 	}
 	mv.onHide = func() {
+		if st.isOpen {
+			return
+		}
 		mv.setInactive()
 		st.Open()
 		mv.startBot()
@@ -54,7 +56,6 @@ func main() {
 				var logmsg string
 				select {
 				case <-s.logStopper:
-					runtime.KeepAlive(st)
 					return
 				case logmsg = <-bot.LogCh:
 					_, err := glib.IdleAdd(s.addMessage, logmsg)
@@ -199,7 +200,7 @@ func (w *Window) startClicked() {
 		chans, err := w.chans.GetText()
 		fatal(err)
 		w.ircChannels = make([]string, 0)
-		for _, ch := range strings.Split(chans, ",") {
+		for _, ch := range strings.Split(chans, ", ") {
 			w.ircChannels = append(w.ircChannels, ch)
 		}
 		w.ircServer, err = w.server.GetText()
@@ -224,7 +225,7 @@ func (w *Window) validateInputs() error {
 	chanreg := regexp.MustCompile("^#*\\w*$")
 	chans, err := w.chans.GetText()
 	fatal(err)
-	for _, ch := range strings.Split(chans, ",") {
+	for _, ch := range strings.Split(chans, ", ") {
 		if !chanreg.MatchString(ch) || len(ch) <= 1 {
 			return fmt.Errorf("Invalid channel name: %s", ch)
 		}

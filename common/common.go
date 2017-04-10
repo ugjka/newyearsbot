@@ -132,7 +132,7 @@ func (i *IrcChans) Set(value string) error {
 	if len(*i) > 0 {
 		return errors.New("interval flag already set")
 	}
-	for _, dt := range strings.Split(value, ",") {
+	for _, dt := range strings.Split(value, ", ") {
 		*i = append(*i, dt)
 	}
 	return nil

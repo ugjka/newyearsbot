@@ -74,7 +74,7 @@ var target = func() time.Time {
 	if tmp.Month() == time.January && tmp.Day() < 2 {
 		return time.Date(tmp.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
 	}
-	//return time.Date(tmp.Year(), time.April, 10, 0, 0, 0, 0, time.UTC)
+	//return time.Date(tmp.Year(), time.April, 11, 0, 0, 0, 0, time.UTC)
 	return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 }()
 
@@ -108,6 +108,7 @@ func (s *Settings) Start() {
 	})
 	//Change nick if taken
 	s.IrcObj.AddCallback(irc.NICKTAKEN, func(msg irc.Message) {
+		log.Println("Nick taken, changing...")
 		if strings.HasSuffix(s.IrcObj.Nick, "_") {
 			s.IrcObj.Nick = s.IrcObj.Nick[:len(s.IrcObj.Nick)-1]
 		} else {
@@ -133,6 +134,7 @@ func (s *Settings) Start() {
 		if strings.HasPrefix(msg.Trailing, "hny ") {
 			tz, err := getNewYear(msg.Trailing[4:])
 			if err != nil {
+				log.Println("Query error:", err)
 				s.IrcObj.Reply(msg, "Some error occurred!")
 				return
 			}
@@ -141,7 +143,6 @@ func (s *Settings) Start() {
 		}
 
 	})
-	s.IrcObj.Start()
 	//Reconnect logic and Irc Pinger
 	stopper := make(chan bool)
 	go func() {
@@ -151,21 +152,36 @@ func (s *Settings) Start() {
 			select {
 			case err = <-s.IrcObj.Errchan:
 				log.Println(err)
-				time.Sleep(time.Second * 30)
 				log.Println("Restarting the bot...")
-				s.IrcObj.Start()
-			case <-stopper:
+				time.AfterFunc(time.Second*30, func() {
+					if !s.Exited {
+						s.IrcObj.Start()
+					}
+				})
+			case <-s.Stopper:
+				timer.Stop()
+				log.Println("Stopping the bot...")
+				log.Println("Disconnecting...")
 				s.IrcObj.Disconnect()
+				s.Exited = true
+				stopper <- true
 				return
 			case <-timer.C:
 				log.Println("Sending PING...")
 				timer.Stop()
 				s.IrcObj.Ping()
 			}
+
 		}
 	}()
+	s.IrcObj.Start()
 	//Starts when joined, see once.Do
-	<-start
+	select {
+	case <-start:
+		log.Println("Got start...")
+	case <-stopper:
+		return
+	}
 	var zones c.TZS
 	if err := json.Unmarshal([]byte(TZ), &zones); err != nil {
 		log.Fatal(err)
@@ -195,20 +211,15 @@ func (s *Settings) Start() {
 				msg = fmt.Sprintf("Happy New Year in %s", zones[i])
 				s.IrcObj.PrivMsgBulk(s.IrcChans, msg)
 				log.Println("Announcing zone:", zones[i].Offset)
-			case <-s.Stopper:
-				log.Println("Stopping the bot...")
+			case <-stopper:
 				timer.Stop()
-				stopper <- true
-				log.Println("Disconnecting...")
-				s.IrcObj.Disconnect()
 				return
 			}
 		}
 	}
 	s.IrcObj.PrivMsgBulk(s.IrcChans, fmt.Sprintf("That's it, year %d is here across the globe", target.Year()))
 	log.Println("All zones finished...")
-	stopper <- true
-	s.Exited = true
+	<-stopper
 }
 
 //Func for querying newyears in specified location
