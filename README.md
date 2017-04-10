@@ -1,4 +1,4 @@
-# newyearsbot
+# NewYearsBot
 
 Preparing for 2018
 
@@ -15,3 +15,25 @@ Posts new years for each timezone
 <ugjka> hny Riga
 <HNYbot18> New Year in Riga, Latvia will happen in 6 hours 59 minutes 44 seconds
 ```
+
+# Has GTK3 gui (standalone cli tool also)
+
+![alt text](https://img.ugjka.net/Vgjk8gBB.png "Main window")
+
+![alt text](https://img.ugjka.net/8qZ4LBh0.png "Bot status")
+
+# Installation
+
+Arch linux PKGBUILD in archlinux folder
+
+RPM, DEB on releases page (not tested)
+
+## Using make
+
+You need make, go, go-tools, gtk3, glib2
+
+Build with `make build`
+
+Install with `make install`
+
+
