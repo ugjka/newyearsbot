@@ -216,7 +216,7 @@ func (s *Settings) Start() {
 			msg := fmt.Sprintf("Next New Year in %s in %s", humandur, zones[i])
 			s.IrcObj.PrivMsgBulk(s.IrcChans, msg)
 			//Wait till Target in Timezone
-			timer := time.NewTimer(target.Sub(time.Now().UTC().Add(dur)))
+			timer := c.NewTimer(target.Sub(time.Now().UTC().Add(dur)))
 
 			select {
 			case <-timer.C:

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 //Geocode is Google maps api
@@ -136,4 +137,40 @@ func (i *IrcChans) Set(value string) error {
 		*i = append(*i, dt)
 	}
 	return nil
+}
+
+//Timer struct
+type Timer struct {
+	C      chan bool
+	Target time.Time
+	stop   chan bool
+}
+
+//NewTimer returns ticker based timer
+//We need this to take into account time taken in suspend and hibernation
+//Golang time.Timers suck
+func NewTimer(dur time.Duration) *Timer {
+	t := &Timer{}
+	t.C = make(chan bool)
+	t.Target = time.Now().UTC().Add(dur)
+	t.stop = make(chan bool, 2)
+	go func(t *Timer) {
+		for _ = range time.Tick(time.Millisecond * 100) {
+			select {
+			case <-t.stop:
+				return
+			default:
+				if time.Now().UTC().After(t.Target) {
+					t.C <- true
+					return
+				}
+			}
+		}
+	}(t)
+	return t
+}
+
+//Stop stops the timer
+func (t *Timer) Stop() {
+	t.stop <- true
 }
