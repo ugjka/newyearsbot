@@ -34,14 +34,15 @@ func NewLogChan() LogChan {
 
 //Settings for bot
 type Settings struct {
-	IrcNick   string
-	IrcChans  []string
-	IrcServer string
-	UseTLS    bool
-	LogCh     LogChan
-	Stopper   chan bool
-	IrcObj    *irc.Connection
-	Exited    bool
+	IrcNick    string
+	IrcChans   []string
+	IrcServer  string
+	IrcTrigger string
+	UseTLS     bool
+	LogCh      LogChan
+	Stopper    chan bool
+	IrcObj     *irc.Connection
+	Exited     bool
 }
 
 //Stop stops the bot
@@ -55,11 +56,12 @@ func NewIrcObj() *irc.Connection {
 }
 
 //New creates new bot
-func New(nick string, chans []string, server string, tls bool) *Settings {
+func New(nick string, chans []string, trigger string, server string, tls bool) *Settings {
 	return &Settings{
 		nick,
 		chans,
 		server,
+		trigger,
 		tls,
 		NewLogChan(),
 		make(chan bool),
@@ -74,7 +76,7 @@ var target = func() time.Time {
 	if tmp.Month() == time.January && tmp.Day() < 2 {
 		return time.Date(tmp.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
 	}
-	//return time.Date(tmp.Year(), time.April, 11, 0, 0, 0, 0, time.UTC)
+	//return time.Date(tmp.Year(), time.April, 12, 0, 0, 0, 0, time.UTC)
 	return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 }()
 
@@ -118,10 +120,20 @@ func (s *Settings) Start() {
 	})
 	//Handler for Location queries
 	s.IrcObj.AddCallback(irc.PRIVMSG, func(msg irc.Message) {
-		if strings.HasPrefix(msg.Trailing, "hny !next") {
+		if strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !help", s.IrcTrigger)) ||
+			(strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s", s.IrcObj.Nick)) &&
+				strings.Contains(msg.Trailing, fmt.Sprintf("help"))) {
+			s.IrcObj.Reply(msg, fmt.Sprintf("Query location: '%s <location>', Next zone: '%s !next'", s.IrcTrigger, s.IrcTrigger))
+			return
+		}
+		if strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !next", s.IrcTrigger)) {
 			log.Println("Querying !next...")
 			dur, err := time.ParseDuration(next.Offset + "h")
 			if err != nil {
+				return
+			}
+			if time.Now().UTC().Add(dur).After(target) {
+				s.IrcObj.Reply(msg, fmt.Sprintf("No more next, %d is here AoE", target.Year()))
 				return
 			}
 			humandur, err := durafmt.ParseString(target.Sub(time.Now().UTC().Add(dur)).String())
@@ -131,8 +143,8 @@ func (s *Settings) Start() {
 			s.IrcObj.Reply(msg, fmt.Sprintf("Next new year in %s in %s", humandur, next.String()))
 			return
 		}
-		if strings.HasPrefix(msg.Trailing, "hny ") {
-			tz, err := getNewYear(msg.Trailing[4:])
+		if strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s ", s.IrcTrigger)) {
+			tz, err := getNewYear(msg.Trailing[len(s.IrcTrigger)+1:])
 			if err != nil {
 				log.Println("Query error:", err)
 				s.IrcObj.Reply(msg, "Some error occurred!")
@@ -193,8 +205,8 @@ func (s *Settings) Start() {
 			log.Fatal(err)
 		}
 		//Check if zone is past target
+		next = zones[i]
 		if time.Now().UTC().Add(dur).Before(target) {
-			next = zones[i]
 			time.Sleep(time.Second * 2)
 			log.Println("Zone pending:", zones[i].Offset)
 			humandur, err := durafmt.ParseString(target.Sub(time.Now().UTC().Add(dur)).String())
@@ -217,7 +229,7 @@ func (s *Settings) Start() {
 			}
 		}
 	}
-	s.IrcObj.PrivMsgBulk(s.IrcChans, fmt.Sprintf("That's it, year %d is here across the globe", target.Year()))
+	s.IrcObj.PrivMsgBulk(s.IrcChans, fmt.Sprintf("That's it, year %d is here AoE", target.Year()))
 	log.Println("All zones finished...")
 	<-stopper
 }

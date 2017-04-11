@@ -19,6 +19,7 @@ func main() {
 	var mv Window
 	mv.ircServer = "irc.freenode.net:7000"
 	mv.ircUseTLS = true
+	mv.ircTrigger = "hny"
 	bot := &nyb.Settings{}
 
 	st.onClose = func() {
@@ -34,6 +35,7 @@ func main() {
 		bot = &nyb.Settings{}
 		bot.IrcChans = mv.ircChannels
 		bot.IrcNick = mv.ircNick
+		bot.IrcTrigger = mv.ircTrigger
 		bot.IrcServer = mv.ircServer
 		bot.UseTLS = mv.ircUseTLS
 		bot.Stopper = make(chan bool)
@@ -75,6 +77,7 @@ type Window struct {
 	ircServer   string
 	ircUseTLS   bool
 	ircNick     string
+	ircTrigger  string
 
 	onClose  func()
 	onHide   func()
@@ -82,13 +85,14 @@ type Window struct {
 
 	isOpen bool
 
-	window *gtk.Window
-	chans  *gtk.Entry
-	server *gtk.Entry
-	nick   *gtk.Entry
-	tls    *gtk.CheckButton
-	start  *gtk.Button
-	stop   *gtk.Button
+	window  *gtk.Window
+	chans   *gtk.Entry
+	server  *gtk.Entry
+	nick    *gtk.Entry
+	trigger *gtk.Entry
+	tls     *gtk.CheckButton
+	start   *gtk.Button
+	stop    *gtk.Button
 }
 
 func (w *Window) open() {
@@ -118,6 +122,7 @@ func (w *Window) fillInputs() {
 		}
 	}
 	w.chans.SetText(chans)
+	w.trigger.SetText(w.ircTrigger)
 	w.server.SetText(w.ircServer)
 	w.tls.SetActive(w.ircUseTLS)
 }
@@ -151,21 +156,25 @@ func (w *Window) initWidgets() {
 	grid2.Attach(labelNew("Irc nick:"), 0, 0, 1, 1)
 	w.nick, err = gtk.EntryNew()
 	grid2.Attach(w.nick, 0, 1, 1, 1)
-	grid2.Attach(labelNew("Irc channels (comma seperated):"), 0, 2, 1, 1)
+	grid2.Attach(labelNew("Bot trigger for queries:"), 0, 2, 1, 1)
+	w.trigger, err = gtk.EntryNew()
+	fatal(err)
+	grid2.Attach(w.trigger, 0, 3, 1, 1)
+	grid2.Attach(labelNew("Irc channels (comma seperated):"), 0, 4, 1, 1)
 	w.chans, err = gtk.EntryNew()
 	fatal(err)
-	grid2.Attach(w.chans, 0, 3, 1, 1)
-	grid2.Attach(labelNew("Irc server (host:port):"), 0, 4, 1, 1)
+	grid2.Attach(w.chans, 0, 5, 1, 1)
+	grid2.Attach(labelNew("Irc server (host:port):"), 0, 6, 1, 1)
 	w.server, err = gtk.EntryNew()
 	fatal(err)
 	w.server.SetText(w.ircServer)
-	grid2.Attach(w.server, 0, 5, 1, 1)
-	grid2.Attach(labelNew("Use TLS:"), 0, 6, 1, 1)
+	grid2.Attach(w.server, 0, 7, 1, 1)
+	grid2.Attach(labelNew("Use TLS:"), 0, 8, 1, 1)
 	w.tls, err = gtk.CheckButtonNew()
 	fatal(err)
 	w.tls.SetActive(w.ircUseTLS)
 	w.tls.SetHAlign(gtk.ALIGN_END)
-	grid2.Attach(w.tls, 0, 6, 1, 1)
+	grid2.Attach(w.tls, 0, 9, 1, 1)
 	config.Add(grid2)
 	w.start, err = gtk.ButtonNew()
 	fatal(err)
@@ -207,6 +216,8 @@ func (w *Window) startClicked() {
 		fatal(err)
 		w.ircUseTLS = w.tls.GetActive()
 		fatal(err)
+		w.ircTrigger, err = w.trigger.GetText()
+		fatal(err)
 		w.onHide()
 	}
 
@@ -235,6 +246,15 @@ func (w *Window) validateInputs() error {
 	fatal(err)
 	if !serverreg.MatchString(server) {
 		return fmt.Errorf("Invalid irc server name")
+	}
+	triggerreg := regexp.MustCompile("^\\w*$")
+	trigger, err := w.trigger.GetText()
+	if len(trigger) <= 0 {
+		return fmt.Errorf("Empty trigger")
+	}
+	fatal(err)
+	if !triggerreg.MatchString(trigger) {
+		return (fmt.Errorf("Trigger contains nonalphanumeric characters"))
 	}
 	return nil
 }

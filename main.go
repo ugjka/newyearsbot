@@ -27,6 +27,7 @@ CMD Options:
 -tzpath			path to tz database (./tz.json)
 -ircserver		irc server to use irc.example.com:7000 (must be TLS enabled)
 -botnick		nick for the bot
+-trigger		trigger used for queries
 -usetls			use tls encryption for irc
 `
 
@@ -37,6 +38,7 @@ func main() {
 	//flags
 	ircServer := flag.String("ircserver", "irc.freenode.net:7000", "Irc server to use, must be TLS")
 	ircNick := flag.String("botnick", "", "Irc Nick for the bot")
+	ircTrigger := flag.String("trigger", "hny", "trigger for queries")
 	ircTLS := flag.Bool("usetls", true, "Use tls for irc")
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, fmt.Sprintf(usage))
@@ -57,7 +59,7 @@ func main() {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 
-	bot := nyb.New(*ircNick, ircChannel, *ircServer, *ircTLS)
+	bot := nyb.New(*ircNick, ircChannel, *ircTrigger, *ircServer, *ircTLS)
 	go func() {
 		for {
 			select {
