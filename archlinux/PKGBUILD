@@ -2,7 +2,7 @@
 
 _pkgname=newyearsbot
 pkgname="$_pkgname-git"
-pkgver=20170411.1081639
+pkgver=20170412.692fe48
 pkgrel=1
 pkgdesc='New Year Eve Irc Party Bot'
 arch=('x86_64')
@@ -19,7 +19,7 @@ pkgver() {
 }
 build(){
     cd $_pkgname
-    make build
+    make all
 }
 
 package(){

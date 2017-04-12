@@ -3,7 +3,7 @@ PWD := $(shell pwd)
 GOPATH :=$(PWD)/build
 appname = newyearsbot
 
-build:
+all:
 	go get github.com/ugjka/$(appname)
 	go get github.com/ugjka/$(appname)/gui
 
