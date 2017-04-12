@@ -26,7 +26,8 @@ Posts new years for each timezone
 
 Arch linux PKGBUILD in archlinux folder
 
-RPM, DEB on releases page (not tested)
+RPM on [releases page](https://github.com/ugjka/newyearsbot/releases) (not tested), 
+DEB on [releases page](https://github.com/ugjka/newyearsbot/releases) (Works on ubuntu 16.04 LTS, may work elsewhere too)
 
 ## Using make
 
