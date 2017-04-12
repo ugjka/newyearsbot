@@ -24,9 +24,7 @@ func main() {
 
 	st.onClose = func() {
 		st.logStopper <- true
-		if !bot.Exited {
-			bot.Stop()
-		}
+		bot.Stop()
 		st.Close()
 		mv.setActive()
 	}
@@ -224,7 +222,7 @@ func (w *Window) startClicked() {
 }
 
 func (w *Window) validateInputs() error {
-	nickreg := regexp.MustCompile("^\\w*$")
+	nickreg := regexp.MustCompile("^\\w+$")
 	nick, err := w.nick.GetText()
 	fatal(err)
 	if nick == "" {
@@ -233,7 +231,7 @@ func (w *Window) validateInputs() error {
 	if !nickreg.MatchString(nick) {
 		return fmt.Errorf("Nick contains non alpha numeric characters")
 	}
-	chanreg := regexp.MustCompile("^#*\\w*$")
+	chanreg := regexp.MustCompile("^#+\\w+$")
 	chans, err := w.chans.GetText()
 	fatal(err)
 	for _, ch := range strings.Split(chans, ", ") {
@@ -241,13 +239,13 @@ func (w *Window) validateInputs() error {
 			return fmt.Errorf("Invalid channel name: %s", ch)
 		}
 	}
-	serverreg := regexp.MustCompile("^\\S*:\\d*$")
+	serverreg := regexp.MustCompile("^\\S+:\\d+$")
 	server, err := w.server.GetText()
 	fatal(err)
 	if !serverreg.MatchString(server) {
 		return fmt.Errorf("Invalid irc server name")
 	}
-	triggerreg := regexp.MustCompile("^\\w*$")
+	triggerreg := regexp.MustCompile("^\\w+$")
 	trigger, err := w.trigger.GetText()
 	if len(trigger) <= 0 {
 		return fmt.Errorf("Empty trigger")

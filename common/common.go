@@ -152,8 +152,8 @@ type Timer struct {
 func NewTimer(dur time.Duration) *Timer {
 	t := &Timer{}
 	t.C = make(chan bool)
+	t.stop = make(chan bool)
 	t.Target = time.Now().UTC().Add(dur)
-	t.stop = make(chan bool, 2)
 	go func(t *Timer) {
 		for _ = range time.Tick(time.Millisecond * 100) {
 			select {
@@ -161,7 +161,7 @@ func NewTimer(dur time.Duration) *Timer {
 				return
 			default:
 				if time.Now().UTC().After(t.Target) {
-					t.C <- true
+					close(t.C)
 					return
 				}
 			}
@@ -172,5 +172,10 @@ func NewTimer(dur time.Duration) *Timer {
 
 //Stop stops the timer
 func (t *Timer) Stop() {
-	t.stop <- true
+	select {
+	case <-t.stop:
+		return
+	default:
+		close(t.stop)
+	}
 }

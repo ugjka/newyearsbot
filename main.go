@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"regexp"
+	"sync"
 
 	c "github.com/ugjka/newyearsbot/common"
 	nyb "github.com/ugjka/newyearsbot/nyb"
@@ -31,11 +33,10 @@ CMD Options:
 -usetls			use tls encryption for irc
 `
 
-//Default channel list
-var ircChannel = []string{}
-
 func main() {
-	//flags
+	//Syncing for graceful exit
+	var wait sync.WaitGroup
+	//Flags
 	ircServer := flag.String("ircserver", "irc.freenode.net:7000", "Irc server to use, must be TLS")
 	ircNick := flag.String("botnick", "", "Irc Nick for the bot")
 	ircTrigger := flag.String("trigger", "hny", "trigger for queries")
@@ -44,33 +45,78 @@ func main() {
 		fmt.Fprint(os.Stderr, fmt.Sprintf(usage))
 	}
 	flag.Parse()
-	if len(ircChansFlag) > 0 {
-		ircChannel = ircChansFlag
-	} else {
-		fmt.Fprintf(os.Stderr, "%s\n", "Error: No channels defined")
-		flag.Usage()
-		return
-	}
+	//Check inputs
 	if *ircNick == "" {
-		fmt.Fprintf(os.Stderr, "%s\n", "Error: No nick defined")
+		fmt.Fprintf(os.Stderr, "Error: No nick defined\n")
 		flag.Usage()
 		return
 	}
+	nickreg := regexp.MustCompile("^\\w+$")
+	if !nickreg.MatchString(*ircNick) {
+		fmt.Fprintf(os.Stderr, "Error: Nick contains non alpha numeric characters\n")
+		flag.Usage()
+		return
+	}
+	if len(ircChansFlag) <= 0 {
+		fmt.Fprintf(os.Stderr, "Error: No channels defined\n")
+		flag.Usage()
+		return
+	}
+	chanreg := regexp.MustCompile("^#+\\w+$")
+	for _, ch := range ircChansFlag {
+		if !chanreg.MatchString(ch) || len(ch) <= 1 {
+			fmt.Fprintf(os.Stderr, "Error: Invalid channel name: %s\n", ch)
+			flag.Usage()
+			return
+		}
+	}
+	if *ircServer == "" {
+		fmt.Fprintf(os.Stderr, "Error: No irc server defined\n")
+		flag.Usage()
+		return
+	}
+	serverreg := regexp.MustCompile("^\\S+:\\d+$")
+	if !serverreg.MatchString(*ircServer) {
+		fmt.Fprintf(os.Stderr, "Error: Invalid irc server name\n")
+		flag.Usage()
+		return
+	}
+	if len(*ircTrigger) <= 0 {
+		fmt.Fprintf(os.Stderr, "Error: No trigger defined\n")
+		flag.Usage()
+		return
+	}
+	triggerreg := regexp.MustCompile("^\\w+$")
+	if !triggerreg.MatchString(*ircTrigger) {
+		fmt.Fprintf(os.Stderr, "Error: Trigger contains nonalphanumeric characters\n")
+		return
+	}
+	//Catch interrupt ^C
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
-
-	bot := nyb.New(*ircNick, ircChannel, *ircTrigger, *ircServer, *ircTLS)
+	//New bot instance
+	bot := nyb.New(*ircNick, ircChansFlag, *ircTrigger, *ircServer, *ircTLS)
+	//Log printer
 	go func() {
+		wait.Add(1)
+		defer wait.Done()
 		for {
 			select {
-			case msg := <-bot.LogCh:
+			case msg, ok := <-bot.LogCh:
+				if !ok {
+					return
+				}
 				fmt.Fprintf(os.Stdout, "%s", msg)
 			}
 		}
 	}()
+	//Iterrupt catcher
 	go func() {
 		<-stop
 		bot.Stop()
 	}()
 	bot.Start()
+	//close and wait
+	close(bot.LogCh)
+	wait.Wait()
 }

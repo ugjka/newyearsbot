@@ -42,12 +42,16 @@ type Settings struct {
 	LogCh      LogChan
 	Stopper    chan bool
 	IrcObj     *irc.Connection
-	Exited     bool
 }
 
 //Stop stops the bot
 func (s *Settings) Stop() {
-	s.Stopper <- true
+	select {
+	case <-s.Stopper:
+		return
+	default:
+		close(s.Stopper)
+	}
 }
 
 //NewIrcObj return empty irc connection
@@ -66,7 +70,6 @@ func New(nick string, chans []string, trigger string, server string, tls bool) *
 		NewLogChan(),
 		make(chan bool),
 		&irc.Connection{},
-		false,
 	}
 }
 
@@ -76,7 +79,7 @@ var target = func() time.Time {
 	if tmp.Month() == time.January && tmp.Day() < 2 {
 		return time.Date(tmp.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
 	}
-	//return time.Date(tmp.Year(), time.April, 12, 0, 0, 0, 0, time.UTC)
+	//return time.Date(tmp.Year(), time.April, 13, 0, 0, 0, 0, time.UTC)
 	return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 }()
 
@@ -88,6 +91,11 @@ func (s *Settings) Start() {
 	var start = make(chan bool)
 	var once sync.Once
 	var next c.TZ
+	//To exit gracefully we need to wait
+	var wait sync.WaitGroup
+	wait.Add(1)
+	defer wait.Wait()
+	defer wait.Done()
 
 	//
 	//Set up irc and its callbacks
@@ -97,7 +105,7 @@ func (s *Settings) Start() {
 		s.IrcObj.Join(s.IrcChans)
 		//Prevent early start
 		once.Do(func() {
-			start <- true
+			close(start)
 		})
 	})
 	//Reply ping messages with pong
@@ -156,17 +164,21 @@ func (s *Settings) Start() {
 
 	})
 	//Reconnect logic and Irc Pinger
-	stopper := make(chan bool)
 	go func() {
 		var err error
+		wait.Add(1)
+		defer wait.Done()
 		for {
 			timer := time.NewTimer(time.Minute)
 			select {
 			case err = <-s.IrcObj.Errchan:
-				log.Println(err)
+				log.Println("Error:", err)
 				log.Println("Restarting the bot...")
 				time.AfterFunc(time.Second*30, func() {
-					if !s.Exited {
+					select {
+					case <-s.Stopper:
+						return
+					default:
 						s.IrcObj.Start()
 					}
 				})
@@ -175,8 +187,6 @@ func (s *Settings) Start() {
 				log.Println("Stopping the bot...")
 				log.Println("Disconnecting...")
 				s.IrcObj.Disconnect()
-				s.Exited = true
-				stopper <- true
 				return
 			case <-timer.C:
 				log.Println("Sending PING...")
@@ -191,7 +201,7 @@ func (s *Settings) Start() {
 	select {
 	case <-start:
 		log.Println("Got start...")
-	case <-stopper:
+	case <-s.Stopper:
 		return
 	}
 	var zones c.TZS
@@ -223,7 +233,7 @@ func (s *Settings) Start() {
 				msg = fmt.Sprintf("Happy New Year in %s", zones[i])
 				s.IrcObj.PrivMsgBulk(s.IrcChans, msg)
 				log.Println("Announcing zone:", zones[i].Offset)
-			case <-stopper:
+			case <-s.Stopper:
 				timer.Stop()
 				return
 			}
@@ -231,7 +241,6 @@ func (s *Settings) Start() {
 	}
 	s.IrcObj.PrivMsgBulk(s.IrcChans, fmt.Sprintf("That's it, year %d is here AoE", target.Year()))
 	log.Println("All zones finished...")
-	<-stopper
 }
 
 //Func for querying newyears in specified location
