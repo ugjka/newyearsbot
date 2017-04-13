@@ -167,7 +167,7 @@ func (s *Settings) Start() {
 		wait.Add(1)
 		defer wait.Done()
 		for {
-			timer := time.NewTimer(time.Minute)
+			timer := time.NewTimer(time.Minute * 2)
 			select {
 			case err = <-s.IrcObj.Errchan:
 				log.Println("Error:", err)
