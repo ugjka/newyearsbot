@@ -144,6 +144,7 @@ type Timer struct {
 	C      chan bool
 	Target time.Time
 	stop   chan bool
+	ticker *time.Ticker
 }
 
 //NewTimer returns ticker based timer
@@ -154,8 +155,10 @@ func NewTimer(dur time.Duration) *Timer {
 	t.C = make(chan bool)
 	t.stop = make(chan bool)
 	t.Target = time.Now().UTC().Add(dur)
+	t.ticker = time.NewTicker(time.Millisecond * 100)
 	go func(t *Timer) {
-		for _ = range time.Tick(time.Millisecond * 100) {
+		defer t.ticker.Stop()
+		for range t.ticker.C {
 			select {
 			case <-t.stop:
 				return

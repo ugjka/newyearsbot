@@ -79,7 +79,7 @@ var target = func() time.Time {
 	if tmp.Month() == time.January && tmp.Day() < 2 {
 		return time.Date(tmp.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
 	}
-	//return time.Date(tmp.Year(), time.April, 13, 0, 0, 0, 0, time.UTC)
+	//return time.Date(tmp.Year(), time.April, 14, 0, 0, 0, 0, time.UTC)
 	return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 }()
 
@@ -93,9 +93,7 @@ func (s *Settings) Start() {
 	var next c.TZ
 	//To exit gracefully we need to wait
 	var wait sync.WaitGroup
-	wait.Add(1)
 	defer wait.Wait()
-	defer wait.Done()
 
 	//
 	//Set up irc and its callbacks
@@ -230,6 +228,7 @@ func (s *Settings) Start() {
 
 			select {
 			case <-timer.C:
+				timer.Stop()
 				msg = fmt.Sprintf("Happy New Year in %s", zones[i])
 				s.IrcObj.PrivMsgBulk(s.IrcChans, msg)
 				log.Println("Announcing zone:", zones[i].Offset)
