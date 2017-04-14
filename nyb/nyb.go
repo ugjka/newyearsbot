@@ -85,12 +85,17 @@ var target = func() time.Time {
 
 //Start starts the bot
 func (s *Settings) Start() {
-	//log.SetOutput(os.Stderr)
 	log.SetOutput(s.LogCh)
 	log.Println("Starting the bot...")
 	var start = make(chan bool)
 	var once sync.Once
 	var next c.TZ
+
+	//This is used to prevent sending ping before we
+	//have response from previous ping (any activity on irc)
+	//pingpong(pp) sends a signal to ping timer
+	pp := make(chan bool, 1)
+
 	//To exit gracefully we need to wait
 	var wait sync.WaitGroup
 	defer wait.Wait()
@@ -99,6 +104,13 @@ func (s *Settings) Start() {
 	//Set up irc and its callbacks
 	//
 	s.IrcObj = irc.New(s.IrcNick, "nyebot", s.IrcServer, s.UseTLS)
+
+	//On any message send a signal to ping timer to be ready
+	s.IrcObj.AddCallback(irc.ANYMESSAGE, func(msg irc.Message) {
+		pingpong(pp)
+	})
+
+	//Join channels on WELCOME
 	s.IrcObj.AddCallback(irc.WELCOME, func(msg irc.Message) {
 		s.IrcObj.Join(s.IrcChans)
 		//Prevent early start
@@ -111,6 +123,7 @@ func (s *Settings) Start() {
 		log.Println("PING recieved, sending PONG")
 		s.IrcObj.Pong()
 	})
+	//Log pongs
 	s.IrcObj.AddCallback(irc.PONG, func(msg irc.Message) {
 		log.Println("Got PONG...")
 	})
@@ -124,7 +137,7 @@ func (s *Settings) Start() {
 		}
 		s.IrcObj.NewNick(s.IrcObj.Nick)
 	})
-	//Handler for Location queries
+	//Callback for queries
 	s.IrcObj.AddCallback(irc.PRIVMSG, func(msg irc.Message) {
 		if strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !help", s.IrcTrigger)) ||
 			(strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s", s.IrcObj.Nick)) &&
@@ -167,7 +180,7 @@ func (s *Settings) Start() {
 		var err error
 		defer wait.Done()
 		for {
-			timer := time.NewTimer(time.Minute * 2)
+			timer := time.NewTimer(time.Minute * 1)
 			select {
 			case err = <-s.IrcObj.Errchan:
 				log.Println("Error:", err)
@@ -186,10 +199,17 @@ func (s *Settings) Start() {
 				log.Println("Disconnecting...")
 				s.IrcObj.Disconnect()
 				return
+			//ping timer
 			case <-timer.C:
-				log.Println("Sending PING...")
 				timer.Stop()
-				s.IrcObj.Ping()
+				//pingpong stuff
+				select {
+				case <-pp:
+					log.Println("Sending PING...")
+					s.IrcObj.Ping()
+				default:
+					log.Println("Got no Response...")
+				}
 			}
 
 		}
@@ -240,6 +260,14 @@ func (s *Settings) Start() {
 	}
 	s.IrcObj.PrivMsgBulk(s.IrcChans, fmt.Sprintf("That's it, year %d is here AoE", target.Year()))
 	log.Println("All zones finished...")
+}
+
+func pingpong(c chan bool) {
+	select {
+	case c <- true:
+	default:
+		return
+	}
 }
 
 //Func for querying newyears in specified location
