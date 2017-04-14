@@ -128,7 +128,7 @@ func (s *Settings) Start() {
 	s.IrcObj.AddCallback(irc.PRIVMSG, func(msg irc.Message) {
 		if strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !help", s.IrcTrigger)) ||
 			(strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s", s.IrcObj.Nick)) &&
-				strings.Contains(msg.Trailing, fmt.Sprintf("help"))) {
+				strings.HasSuffix(msg.Trailing, fmt.Sprintf("help"))) {
 			s.IrcObj.Reply(msg, fmt.Sprintf("Query location: '%s <location>', Next zone: '%s !next', Source code: https://github.com/ugjka/newyearsbot", s.IrcTrigger, s.IrcTrigger))
 			return
 		}
