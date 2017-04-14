@@ -162,9 +162,9 @@ func (s *Settings) Start() {
 
 	})
 	//Reconnect logic and Irc Pinger
+	wait.Add(1)
 	go func() {
 		var err error
-		wait.Add(1)
 		defer wait.Done()
 		for {
 			timer := time.NewTimer(time.Minute * 2)
