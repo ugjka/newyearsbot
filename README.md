@@ -34,7 +34,7 @@ DEB on [releases page](https://github.com/ugjka/newyearsbot/releases) (Works on 
 
 You need make, go, go-tools, gtk3, glib2
 
-Build with `make` (`make cli` if you just want the commandline utility)
+Build with `make all` (`make cli` if you just want the commandline utility)
 
 Install with `make install`
 
