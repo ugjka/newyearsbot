@@ -27,14 +27,14 @@ Posts new years for each timezone
 Arch linux PKGBUILD in archlinux folder
 
 RPM on [releases page](https://github.com/ugjka/newyearsbot/releases) (not tested),
- 
+
 DEB on [releases page](https://github.com/ugjka/newyearsbot/releases) (Works on ubuntu 16.04 LTS, may work elsewhere too)
 
 ## Using make
 
 You need make, go, go-tools, gtk3, glib2
 
-Build with `make build`
+Build with `make` (`make cli` if you just want the commandline utility)
 
 Install with `make install`
 
