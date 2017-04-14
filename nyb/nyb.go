@@ -129,7 +129,7 @@ func (s *Settings) Start() {
 		if strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !help", s.IrcTrigger)) ||
 			(strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s", s.IrcObj.Nick)) &&
 				strings.Contains(msg.Trailing, fmt.Sprintf("help"))) {
-			s.IrcObj.Reply(msg, fmt.Sprintf("Query location: '%s <location>', Next zone: '%s !next'", s.IrcTrigger, s.IrcTrigger))
+			s.IrcObj.Reply(msg, fmt.Sprintf("Query location: '%s <location>', Next zone: '%s !next', Source code: https://github.com/ugjka/newyearsbot", s.IrcTrigger, s.IrcTrigger))
 			return
 		}
 		if strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !next", s.IrcTrigger)) {
