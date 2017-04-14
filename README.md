@@ -14,6 +14,7 @@ Posts new years for each timezone
 <HNYbot18> Next New Year in 14 minutes 57 seconds in Australia (Eucla, Madura, Mundrabilla)
 <ugjka> hny Riga
 <HNYbot18> New Year in Riga, Latvia will happen in 6 hours 59 minutes 44 seconds
+<HNYbot18> Happy New Year in Australia (Brisbane, Gold Coast, Queensland), Guam (Hagåtña), Micronesia (Moen), Northern Mariana Islands, Papua New Guinea (Lae, Port Moresby), Russia (Khabarovsk, Vladivostok)
 ```
 
 # Has GTK3 gui (standalone cli tool also)
