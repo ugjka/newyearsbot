@@ -37,6 +37,7 @@ func (w *Status) initWidgets() {
 	w.window.SetPosition(gtk.WIN_POS_CENTER)
 	w.window.SetSizeRequest(400, 200)
 	w.window.SetBorderWidth(6)
+	w.window.SetIconFromFile(icon)
 	_, err = w.window.Connect("destroy", w.onClose)
 	fatal(err)
 	w.stop, err = gtk.ButtonNew()

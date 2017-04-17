@@ -13,6 +13,8 @@ import (
 	"github.com/ugjka/newyearsbot/nyb"
 )
 
+var icon = "../icon.png"
+
 func main() {
 	var st Status
 	st.logStopper = make(chan bool)
@@ -133,6 +135,7 @@ func (w *Window) initWidgets() {
 	w.window.SetPosition(gtk.WIN_POS_CENTER)
 	w.window.SetSizeRequest(640, 320)
 	w.window.SetBorderWidth(6)
+	w.window.SetIconFromFile(icon)
 	_, err = w.window.Connect("destroy", w.windowDestroyed)
 	fatal(err)
 	grid, err := gtk.GridNew()
