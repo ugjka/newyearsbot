@@ -33,9 +33,11 @@ type Gmap struct {
 
 //Gtime holds location tz info
 type Gtime struct {
-	Status    string
-	RawOffset int
-	DstOffset int
+	Status       string
+	RawOffset    int
+	DstOffset    int
+	TimeZoneId   string
+	TimeZoneName string
 }
 
 //TZ holds infor for Time Zone
