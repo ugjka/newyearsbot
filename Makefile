@@ -5,7 +5,8 @@ appname = newyearsbot
 
 all: cli
 	GOPATH=$(GOPATH) go get -d github.com/ugjka/$(appname)/gui
-	GOPATH=$(GOPATH) go build -ldflags="-X main.icon=$(prefix)/share/icons/hicolor/256x256/apps/$(appname).png" -o ./newyearsbot-gui gui/*
+	GOPATH=$(GOPATH) go install -tags gtk_3_18 github.com/gotk3/gotk3/gtk
+	GOPATH=$(GOPATH) go build -v -tags gtk_3_18 -gcflags "-N -l" -ldflags="-X main.icon=$(prefix)/share/icons/hicolor/256x256/apps/$(appname).png" -o ./newyearsbot-gui gui/*
 
 cli:
 	GOPATH=$(GOPATH) go get -d github.com/ugjka/$(appname)
