@@ -159,7 +159,7 @@ func (s *Settings) Start() {
 			if err != nil {
 				return
 			}
-			s.IrcObj.Reply(msg, fmt.Sprintf("Next new year in %s in %s", humandur, next.String()))
+			s.IrcObj.Reply(msg, fmt.Sprintf("Next new year in %s in %s", removeMilliseconds(humandur.String()), next.String()))
 			return
 		}
 		if strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s ", s.IrcTrigger)) {
@@ -241,7 +241,7 @@ func (s *Settings) Start() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			msg := fmt.Sprintf("Next New Year in %s in %s", humandur, zones[i])
+			msg := fmt.Sprintf("Next New Year in %s in %s", removeMilliseconds(humandur.String()), zones[i])
 			s.IrcObj.PrivMsgBulk(s.IrcChans, msg)
 			//Wait till Target in Timezone
 			timer := c.NewTimer(target.Sub(time.Now().UTC().Add(dur)))
@@ -328,7 +328,12 @@ func getNewYear(loc string) (string, error) {
 			log.Println(err)
 			return "", err
 		}
-		return fmt.Sprintf("New Year in %s will happen in %s", adress, humandur), nil
+		return fmt.Sprintf("New Year in %s will happen in %s", adress, removeMilliseconds(humandur.String())), nil
 	}
 	return fmt.Sprintf("New year in %s already happened.", adress), nil
+}
+
+func removeMilliseconds(dur string) string {
+	arr := strings.Split(dur, " ")
+	return strings.Join(arr[:len(arr)-2], " ")
 }
