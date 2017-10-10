@@ -9,7 +9,7 @@ all: cli
 
 cli:
 	GOPATH=$(GOPATH) go get -d github.com/ugjka/$(appname)
-	GOPATH=$(GOPATH) go build
+	GOPATH=$(GOPATH) go build -v
 install:
 	install -Dm755 $(appname) $(prefix)/bin/$(appname)
 	install -Dm644 LICENSE "$(prefix)/share/licenses/$(appname)/LICENSE"
