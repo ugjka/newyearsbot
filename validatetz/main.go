@@ -4,9 +4,11 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"flag"
 	"fmt"
 	"log"
 	"net/url"
+	"os"
 	"sort"
 	"strconv"
 	"time"
@@ -24,7 +26,15 @@ var target = func() time.Time {
 	return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 }()
 
+var ircEmail *string
+
 func main() {
+	ircEmail = flag.String("email", "", "Email for Open Street Map")
+	flag.Parse()
+	if *ircEmail == "" {
+		fmt.Fprintf(os.Stderr, "%s", "provide email with -email flag")
+		return
+	}
 	var zones c.TZS
 	if err := json.Unmarshal([]byte(nyb.TZ), &zones); err != nil {
 		log.Fatal(err)
@@ -37,7 +47,7 @@ func main() {
 		for _, k2 := range k.Countries {
 			if len(k2.Cities) == 0 {
 				res, err := getTimeZone(k2.Name)
-				time.Sleep(time.Second * 2)
+				time.Sleep(time.Second * 5)
 				if err != nil {
 					log.Println(err)
 				} else {
@@ -50,7 +60,7 @@ func main() {
 			}
 			for _, k3 := range k2.Cities {
 				res, err := getTimeZone(k2.Name + " " + k3)
-				time.Sleep(time.Second * 2)
+				time.Sleep(time.Second * 5)
 				if err != nil {
 					log.Println(err)
 				} else {
@@ -67,21 +77,23 @@ func main() {
 
 func getTimeZone(loc string) (string, error) {
 	maps := url.Values{}
-	maps.Add("address", loc)
-	maps.Add("sensor", "false")
-	maps.Add("language", "en")
-	data, err := c.Getter(c.Geocode + maps.Encode())
+	maps.Add("q", loc)
+	maps.Add("format", "json")
+	maps.Add("accept-language", "en")
+	maps.Add("limit", "1")
+	maps.Add("email", *ircEmail)
+	data, err := c.OSMGetter(c.OSMGeocode + maps.Encode())
 	if err != nil {
 		return "", err
 	}
-	var mapj c.Gmap
+	var mapj c.OSMmapResults
 	if err = json.Unmarshal(data, &mapj); err != nil {
 		return "", err
 	}
-	if mapj.Status != "OK" {
+	if len(mapj) == 0 {
 		return "", errors.New(loc + " Status not OK")
 	}
-	location := fmt.Sprintf("%.7f,%.7f", mapj.Results[0].Geometry.Location.Lat, mapj.Results[0].Geometry.Location.Lng)
+	location := fmt.Sprintf("%s,%s", mapj[0].Lat, mapj[0].Lon)
 	tmzone := url.Values{}
 	tmzone.Add("location", location)
 	tmzone.Add("timestamp", fmt.Sprintf("%d", target.Unix()))
