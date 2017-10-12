@@ -1469,7 +1469,7 @@ var TZ = `[
       {
         "name": "Nepal",
         "cities": [
-          "Biratnagur",
+          "Biratnagar",
           "Kathmandu",
           "Pokhara"
         ]
