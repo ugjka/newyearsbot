@@ -42,6 +42,8 @@ type Settings struct {
 	LogCh      LogChan
 	Stopper    chan bool
 	IrcObj     *irc.Connection
+	OSM        bool
+	Email      string
 }
 
 //Stop stops the bot
@@ -60,7 +62,7 @@ func NewIrcObj() *irc.Connection {
 }
 
 //New creates new bot
-func New(nick string, chans []string, trigger string, server string, tls bool) *Settings {
+func New(nick string, chans []string, trigger string, server string, tls bool, osm bool, email string) *Settings {
 	return &Settings{
 		nick,
 		chans,
@@ -70,6 +72,8 @@ func New(nick string, chans []string, trigger string, server string, tls bool) *
 		NewLogChan(),
 		make(chan bool),
 		&irc.Connection{},
+		osm,
+		email,
 	}
 }
 
@@ -163,7 +167,7 @@ func (s *Settings) Start() {
 			return
 		}
 		if strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s ", s.IrcTrigger)) {
-			tz, err := getNewYear(msg.Trailing[len(s.IrcTrigger)+1:])
+			tz, err := getNewYear(msg.Trailing[len(s.IrcTrigger)+1:], s.OSM, s.Email)
 			if err != nil {
 				log.Println("Query error:", err)
 				s.IrcObj.Reply(msg, "Some error occurred!")
@@ -271,32 +275,59 @@ func pingpong(c chan bool) {
 }
 
 //Func for querying newyears in specified location
-func getNewYear(loc string) (string, error) {
-	log.Println("Querying location:", loc)
-	maps := url.Values{}
-	maps.Add("address", loc)
-	maps.Add("sensor", "false")
-	maps.Add("language", "en")
-	data, err := c.Getter(c.Geocode + maps.Encode())
-	if err != nil {
-		log.Println(err)
-		return "", err
+func getNewYear(loc string, osm bool, email string) (string, error) {
+	var adress string
+	var location string
+	if osm {
+		log.Println("Querying location:", loc)
+		maps := url.Values{}
+		maps.Add("q", loc)
+		maps.Add("format", "json")
+		maps.Add("accept-language", "en")
+		maps.Add("limit", "1")
+		maps.Add("email", email)
+		data, err := c.OSMGetter(c.OSMGeocode + maps.Encode())
+		if err != nil {
+			log.Println(err)
+			return "", err
+		}
+		var mapj c.OSMmapResults
+		if err = json.Unmarshal(data, &mapj); err != nil {
+			log.Println(err)
+			return "", err
+		}
+		if len(mapj) == 0 {
+			return "I don't know that place.", nil
+		}
+		adress = mapj[0].Display_name
+		location = fmt.Sprintf("%s,%s", mapj[0].Lat, mapj[0].Lon)
+	} else {
+		log.Println("Querying location:", loc)
+		maps := url.Values{}
+		maps.Add("address", loc)
+		maps.Add("sensor", "false")
+		maps.Add("language", "en")
+		data, err := c.Getter(c.Geocode + maps.Encode())
+		if err != nil {
+			log.Println(err)
+			return "", err
+		}
+		var mapj c.Gmap
+		if err = json.Unmarshal(data, &mapj); err != nil {
+			log.Println(err)
+			return "", err
+		}
+		if mapj.Status != "OK" {
+			return "I don't know that place.", nil
+		}
+		adress = mapj.Results[0].FormattedAddress
+		location = fmt.Sprintf("%.7f,%.7f", mapj.Results[0].Geometry.Location.Lat, mapj.Results[0].Geometry.Location.Lng)
 	}
-	var mapj c.Gmap
-	if err = json.Unmarshal(data, &mapj); err != nil {
-		log.Println(err)
-		return "", err
-	}
-	if mapj.Status != "OK" {
-		return "I don't know that place.", nil
-	}
-	adress := mapj.Results[0].FormattedAddress
-	location := fmt.Sprintf("%.7f,%.7f", mapj.Results[0].Geometry.Location.Lat, mapj.Results[0].Geometry.Location.Lng)
 	tmzone := url.Values{}
 	tmzone.Add("location", location)
 	tmzone.Add("timestamp", fmt.Sprintf("%d", time.Now().Unix()))
 	tmzone.Add("sensor", "false")
-	data, err = c.Getter(c.Timezone + tmzone.Encode())
+	data, err := c.Getter(c.Timezone + tmzone.Encode())
 	if err != nil {
 		log.Println(err)
 		return "", err

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -183,4 +184,49 @@ func (t *Timer) Stop() {
 	default:
 		close(t.stop)
 	}
+}
+
+//OSMmapResult
+type OSMmapResult struct {
+	Lat          string
+	Lon          string
+	Display_name string
+}
+
+//OSMmapResults
+type OSMmapResults []OSMmapResult
+
+//OSMGeocode const
+const OSMGeocode = "http://nominatim.openstreetmap.org/search?"
+
+var osmCache = make(map[string][]byte)
+var osmCacheMutex sync.Mutex
+
+//OSMGetter Gets OSM DATA
+func OSMGetter(url string) (data []byte, err error) {
+	osmCacheMutex.Lock()
+	defer osmCacheMutex.Unlock()
+	if v, ok := osmCache[url]; ok {
+		return v, nil
+	}
+	client := http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return
+	}
+	req.Header.Set("User-Agent", "newyearsbot (irc bot) https://github.com/ugjka/newyearsbot")
+	get, err := client.Do(req)
+	if err != nil {
+		return
+	}
+	defer get.Body.Close()
+	if get.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("Status: %d", get.StatusCode)
+	}
+	data, err = ioutil.ReadAll(get.Body)
+	if err != nil {
+		return
+	}
+	osmCache[url] = data
+	return
 }

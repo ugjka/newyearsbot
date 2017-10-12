@@ -38,6 +38,8 @@ func main() {
 		bot.IrcTrigger = mv.ircTrigger
 		bot.IrcServer = mv.ircServer
 		bot.UseTLS = mv.ircUseTLS
+		bot.OSM = mv.ircOSM
+		bot.Email = mv.ircEmail
 		bot.Stopper = make(chan bool)
 		bot.LogCh = nyb.NewLogChan()
 		bot.IrcObj = nyb.NewIrcObj()
@@ -78,6 +80,8 @@ type Window struct {
 	ircUseTLS   bool
 	ircNick     string
 	ircTrigger  string
+	ircOSM      bool
+	ircEmail    string
 
 	onClose  func()
 	onHide   func()
@@ -93,6 +97,8 @@ type Window struct {
 	tls     *gtk.CheckButton
 	start   *gtk.Button
 	stop    *gtk.Button
+	osm     *gtk.CheckButton
+	email   *gtk.Entry
 }
 
 func (w *Window) open() {
@@ -176,6 +182,17 @@ func (w *Window) initWidgets() {
 	w.tls.SetActive(w.ircUseTLS)
 	w.tls.SetHAlign(gtk.ALIGN_END)
 	grid2.Attach(w.tls, 0, 9, 1, 1)
+	grid2.Attach(labelNew("Use Open Street Map:"), 0, 10, 1, 1)
+	w.osm, err = gtk.CheckButtonNew()
+	fatal(err)
+	w.osm.SetActive(w.ircOSM)
+	w.osm.SetHAlign(gtk.ALIGN_END)
+	grid2.Attach(w.osm, 0, 11, 1, 1)
+	grid2.Attach(labelNew("Open Street Map refferer Email:"), 0, 12, 1, 1)
+	w.email, err = gtk.EntryNew()
+	fatal(err)
+	w.email.SetText(w.ircEmail)
+	grid2.Attach(w.email, 0, 13, 1, 1)
 	config.Add(grid2)
 	w.start, err = gtk.ButtonNew()
 	fatal(err)
@@ -216,8 +233,10 @@ func (w *Window) startClicked() {
 		w.ircServer, err = w.server.GetText()
 		fatal(err)
 		w.ircUseTLS = w.tls.GetActive()
-		fatal(err)
 		w.ircTrigger, err = w.trigger.GetText()
+		fatal(err)
+		w.ircOSM = w.osm.GetActive()
+		w.ircEmail, err = w.email.GetText()
 		fatal(err)
 		w.onHide()
 	}

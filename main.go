@@ -31,6 +31,8 @@ CMD Options:
 -botnick		nick for the bot
 -trigger		trigger used for queries
 -usetls			use tls encryption for irc
+-osm			use Open Street Map
+-email			email to identify with Open Street Map
 `
 
 func main() {
@@ -41,11 +43,20 @@ func main() {
 	ircNick := flag.String("botnick", "", "Irc Nick for the bot")
 	ircTrigger := flag.String("trigger", "hny", "trigger for queries")
 	ircTLS := flag.Bool("usetls", true, "Use tls for irc")
+	ircOSM := flag.Bool("osm", false, "Use Open Street Map")
+	ircEmail := flag.String("email", "", "Email for Open Street Map")
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, fmt.Sprintf(usage))
 	}
 	flag.Parse()
 	//Check inputs
+	if *ircOSM {
+		if *ircEmail == "" {
+			fmt.Fprint(os.Stderr, "Error: Need to provide Email if using OSM")
+			flag.Usage()
+			return
+		}
+	}
 	if *ircNick == "" {
 		fmt.Fprintf(os.Stderr, "Error: No nick defined\n")
 		flag.Usage()
@@ -95,7 +106,7 @@ func main() {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 	//New bot instance
-	bot := nyb.New(*ircNick, ircChansFlag, *ircTrigger, *ircServer, *ircTLS)
+	bot := nyb.New(*ircNick, ircChansFlag, *ircTrigger, *ircServer, *ircTLS, *ircOSM, *ircEmail)
 	//Log printer
 	go func() {
 		wait.Add(1)
