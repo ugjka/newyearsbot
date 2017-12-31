@@ -73,7 +73,7 @@ func main() {
 		flag.Usage()
 		return
 	}
-	chanreg := regexp.MustCompile("^#+\\w+$")
+	chanreg := regexp.MustCompile("^#+.+$")
 	for _, ch := range ircChansFlag {
 		if !chanreg.MatchString(ch) || len(ch) <= 1 {
 			fmt.Fprintf(os.Stderr, "Error: Invalid channel name: %s\n", ch)
