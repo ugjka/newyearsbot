@@ -13,6 +13,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/ugjka/go-tz"
+
 	c "github.com/ugjka/newyearsbot/common"
 	nyb "github.com/ugjka/newyearsbot/nyb"
 )
@@ -93,23 +95,23 @@ func getTimeZone(loc string) (string, error) {
 	if len(mapj) == 0 {
 		return "", errors.New(loc + " Status not OK")
 	}
-	location := fmt.Sprintf("%s,%s", mapj[0].Lat, mapj[0].Lon)
-	tmzone := url.Values{}
-	tmzone.Add("location", location)
-	tmzone.Add("timestamp", fmt.Sprintf("%d", target.Unix()))
-	tmzone.Add("sensor", "false")
-	data, err = c.Getter(c.Timezone + tmzone.Encode())
+	lat, err := strconv.ParseFloat(mapj[0].Lat, 64)
 	if err != nil {
 		return "", err
 	}
-	var timej c.Gtime
-	if err = json.Unmarshal(data, &timej); err != nil {
+	lon, err := strconv.ParseFloat(mapj[0].Lon, 64)
+	if err != nil {
 		return "", err
 	}
-	if timej.Status != "OK" {
-		return "", errors.New(loc + " Couldn't get timezone info.")
+	location := gotz.Point{
+		Lat: lat,
+		Lng: lon,
 	}
-	var offset float64
-	offset = (float64(timej.RawOffset) + float64(timej.DstOffset)) / 3600.0
-	return fmt.Sprintf("%f", offset), nil
+	zone, err := gotz.GetZone(location)
+	if err != nil {
+		return "", err
+	}
+	_, offset := time.Date(target.Year(), target.Month(), target.Day(), target.Hour(), target.Minute(),
+		target.Second(), target.Nanosecond(), zone).Zone()
+	return fmt.Sprintf("%f", float64(offset)/60/60), nil
 }
