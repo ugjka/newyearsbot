@@ -140,8 +140,7 @@ var TZ = `[
           "San Diego",
           "San Francisco",
           "San Jose",
-          "Seattle",
-          "Washington"
+          "Seattle"
         ]
       }
     ],
@@ -746,12 +745,6 @@ var TZ = `[
         ]
       },
       {
-        "name": "São Tomé and Príncipe",
-        "cities": [
-
-        ]
-      },
-      {
         "name": "Togo",
         "cities": [
         ]
@@ -971,6 +964,12 @@ var TZ = `[
       },
       {
         "name": "Vatican City",
+        "cities": [
+
+        ]
+      },
+      {
+        "name": "São Tomé and Príncipe",
         "cities": [
 
         ]
@@ -1969,6 +1968,12 @@ var TZ = `[
         "cities": [
 
         ]
+      },
+      {
+        "name": "Tonga",
+        "cities": [
+          "Nuku'alofa"
+        ]
       }
     ],
     "offset": "13"
@@ -1996,12 +2001,6 @@ var TZ = `[
         "name": "Samoa",
         "cities": [
           "Apia"
-        ]
-      },
-      {
-        "name": "Tonga",
-        "cities": [
-          "Nuku'alofa"
         ]
       }
     ],
