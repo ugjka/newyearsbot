@@ -5,7 +5,7 @@ var TZ = `[
   {
     "countries": [
       {
-        "name": "U.S. Minor Outlying Islands",
+        "name": "United States of America (Minor Outlying Islands)",
         "cities": [
           "Baker Island",
           "Howland Island"
@@ -29,9 +29,9 @@ var TZ = `[
         ]
       },
       {
-        "name": "U.S. Minor Outlying Islands",
+        "name": "United States of America",
         "cities": [
-          "Midway Island"
+          "Midway Atoll"
         ]
       }
     ],
@@ -54,9 +54,8 @@ var TZ = `[
         ]
       },
       {
-        "name": "U.S. Minor Outlying Islands",
+        "name": "United States of America",
         "cities": [
-          "Palmyra Atoll",
           "Johnston Atoll"
         ]
       },
@@ -80,7 +79,6 @@ var TZ = `[
           "Atuona",
           "Eiao",
           "Taiohae",
-          "Hatutu",
           "Fatu Huku"
         ]
       }
@@ -354,7 +352,7 @@ var TZ = `[
           "Vermont",
           "Virginia",
           "Virginia Beach",
-          "Washington, D.C.",
+          "Washington",
           "West Virginia"
         ]
       }
@@ -660,18 +658,6 @@ var TZ = `[
         ]
       },
       {
-        "name": "Greenland",
-        "cities": [
-
-        ]
-      },
-      {
-        "name": "Guernsey",
-        "cities": [
-
-        ]
-      },
-      {
         "name": "Guinea",
         "cities": [
         ]
@@ -696,11 +682,6 @@ var TZ = `[
         "name": "Isle of Man",
         "cities": [
 
-        ]
-      },
-      {
-        "name": "Ivory Coast",
-        "cities": [
         ]
       },
       {
@@ -1088,7 +1069,7 @@ var TZ = `[
         ]
       },
       {
-        "name": "Palestine",
+        "name": "Palestinian Territories",
         "cities": [
         ]
       },
@@ -1111,6 +1092,7 @@ var TZ = `[
       {
         "name": "South Africa",
         "cities": [
+          "Cape Town"
         ]
       },
       {
@@ -1136,6 +1118,11 @@ var TZ = `[
       },
       {
         "name": "Zimbabwe",
+        "cities": [
+        ]
+      },
+      {
+        "name": "Sudan",
         "cities": [
         ]
       },
@@ -1209,12 +1196,6 @@ var TZ = `[
         ]
       },
       {
-        "name": "Mayotte",
-        "cities": [
-          "Mamoutzou"
-        ]
-      },
-      {
         "name": "Qatar",
         "cities": [
           "Doha"
@@ -1245,11 +1226,6 @@ var TZ = `[
         "cities": [
           "Juba",
           "Malakal"
-        ]
-      },
-      {
-        "name": "Sudan",
-        "cities": [
         ]
       },
       {
@@ -1324,7 +1300,6 @@ var TZ = `[
       {
         "name": "Oman",
         "cities": [
-          "As Sīb al Jadīdah",
           "Muscat"
         ]
       },
@@ -1456,8 +1431,7 @@ var TZ = `[
       {
         "name": "Sri Lanka",
         "cities": [
-          "Colombo",
-          "Galkissa"
+          "Colombo"
         ]
       }
     ],
@@ -1603,7 +1577,6 @@ var TZ = `[
           "Bangkok",
           "Chon Buri",
           "Mueang Nonthaburi",
-          "Mueang Samut Prakan",
           "Udon Thani"
         ]
       },
@@ -1656,7 +1629,7 @@ var TZ = `[
         "name": "Indonesia",
         "cities": [
           "Banjarmasin",
-          "City of Balikpapan",
+          "Balikpapan",
           "Makassar"
         ]
       },
@@ -1750,7 +1723,7 @@ var TZ = `[
       {
         "name": "Japan",
         "cities": [
-          "Osaka",
+          "Osaka Prefecture",
           "Tokyo",
           "Yokohama"
         ]
@@ -1842,7 +1815,6 @@ var TZ = `[
         "name": "Australia",
         "cities": [
           "Adelaide",
-          "Adelaide Hills",
           "South Australia"
         ]
       }
@@ -1928,7 +1900,7 @@ var TZ = `[
         ]
       },
       {
-        "name": "U.S. Minor Outlying Islands",
+        "name": "United States of America (Minor Outlying Islands)",
         "cities": [
           "Wake Island"
         ]
