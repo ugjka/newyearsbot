@@ -55,12 +55,12 @@ func getLocationInfo(loc string) (string, error) {
 	maps.Add("email", *email)
 	var data []byte
 	var err error
-	data, err = c.OSMGetter(c.OSMGeocode + maps.Encode())
+	data, err = c.NominatimGetter(c.NominatimGeoCode + maps.Encode())
 	if err != nil {
 		return "", err
 	}
 
-	var mapj c.OSMmapResults
+	var mapj c.NominatimResults
 	if err = json.Unmarshal(data, &mapj); err != nil {
 		return "", err
 	}
@@ -84,7 +84,7 @@ func getLocationInfo(loc string) (string, error) {
 		return "", err
 	}
 	offset := getOffset(target, zone)
-	return fmt.Sprintf("%s, Offset %v", mapj[0].Display_name, float64(offset)/60/60), nil
+	return fmt.Sprintf("%s, Offset %v", mapj[0].DisplayName, float64(offset)/60/60), nil
 }
 
 func getOffset(target time.Time, zone *time.Location) int {

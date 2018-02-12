@@ -87,11 +87,11 @@ func getTimeZone(loc string) (float64, error) {
 	var data []byte
 	var err error
 	time.Sleep(time.Second * 5)
-	data, err = c.OSMGetter(c.OSMGeocode + maps.Encode())
+	data, err = c.NominatimGetter(c.NominatimGeoCode + maps.Encode())
 	if err != nil {
 		return 0, err
 	}
-	var mapj c.OSMmapResults
+	var mapj c.NominatimResults
 	if err = json.Unmarshal(data, &mapj); err != nil {
 		return 0, err
 	}
