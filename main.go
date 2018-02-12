@@ -9,8 +9,10 @@ import (
 	"regexp"
 	"sync"
 
+	"github.com/badoux/checkmail"
 	c "github.com/ugjka/newyearsbot/common"
 	nyb "github.com/ugjka/newyearsbot/nyb"
+	"mvdan.cc/xurls"
 )
 
 //Custom flag to get irc channelsn to join
@@ -31,8 +33,8 @@ CMD Options:
 -botnick		nick for the bot
 -trigger		trigger used for queries
 -usetls			use tls encryption for irc
--osm			use Open Street Map
--email			email to identify with Open Street Map
+-email			Refferer Email for Nominatim
+-nominatim		Nominatim server to use (Default: http://nominatim.openstreetmap.org)
 `
 
 func main() {
@@ -43,28 +45,42 @@ func main() {
 	ircNick := flag.String("botnick", "", "Irc Nick for the bot")
 	ircTrigger := flag.String("trigger", "hny", "trigger for queries")
 	ircTLS := flag.Bool("usetls", true, "Use tls for irc")
-	ircOSM := flag.Bool("osm", false, "Use Open Street Map")
 	ircEmail := flag.String("email", "", "Email for Open Street Map")
+	ircNominatim := flag.String("nominatim", "http://nominatim.openstreetmap.org", "Nominatim server to use")
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, fmt.Sprintf(usage))
 	}
 	flag.Parse()
+
 	//Check inputs
-	if *ircOSM {
-		if *ircEmail == "" {
-			fmt.Fprint(os.Stderr, "Error: Need to provide Email if using OSM")
-			flag.Usage()
-			return
-		}
+	if *ircNominatim == "" {
+		fmt.Fprint(os.Stderr, "Error: Need to provide Nominatim Server url\n")
+		flag.Usage()
+		return
+	}
+	if !xurls.Strict().MatchString(*ircNominatim) {
+		fmt.Fprint(os.Stderr, "Error: Invalid Nominatim Server url\n")
+		flag.Usage()
+		return
+	}
+	if *ircEmail == "" {
+		fmt.Fprint(os.Stderr, "Error: Need to provide refferer Email for Nominatim\n")
+		flag.Usage()
+		return
+	}
+	if err := checkmail.ValidateFormat(*ircEmail); err != nil {
+		fmt.Fprint(os.Stderr, "Error: Invalid email format\n")
+		flag.Usage()
+		return
 	}
 	if *ircNick == "" {
 		fmt.Fprintf(os.Stderr, "Error: No nick defined\n")
 		flag.Usage()
 		return
 	}
-	nickreg := regexp.MustCompile("^\\w+$")
+	nickreg := regexp.MustCompile("^\\S+$")
 	if !nickreg.MatchString(*ircNick) {
-		fmt.Fprintf(os.Stderr, "Error: Nick contains non alpha numeric characters\n")
+		fmt.Fprintf(os.Stderr, "Error: Nick contains whitespace\n")
 		flag.Usage()
 		return
 	}
@@ -73,7 +89,7 @@ func main() {
 		flag.Usage()
 		return
 	}
-	chanreg := regexp.MustCompile("^#+.+$")
+	chanreg := regexp.MustCompile("^#+\\S+$")
 	for _, ch := range ircChansFlag {
 		if !chanreg.MatchString(ch) || len(ch) <= 1 {
 			fmt.Fprintf(os.Stderr, "Error: Invalid channel name: %s\n", ch)
@@ -97,16 +113,16 @@ func main() {
 		flag.Usage()
 		return
 	}
-	triggerreg := regexp.MustCompile("^\\w+$")
+	triggerreg := regexp.MustCompile("^\\S+$")
 	if !triggerreg.MatchString(*ircTrigger) {
-		fmt.Fprintf(os.Stderr, "Error: Trigger contains nonalphanumeric characters\n")
+		fmt.Fprintf(os.Stderr, "Error: Trigger contains white space\n")
 		return
 	}
 	//Catch interrupt ^C
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 	//New bot instance
-	bot := nyb.New(*ircNick, ircChansFlag, *ircTrigger, *ircServer, *ircTLS, *ircOSM, *ircEmail)
+	bot := nyb.New(*ircNick, ircChansFlag, *ircTrigger, *ircServer, *ircTLS, *ircEmail, *ircNominatim)
 	//Log printer
 	go func() {
 		wait.Add(1)
