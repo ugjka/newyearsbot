@@ -948,12 +948,6 @@ var TZ = `[
         "cities": [
 
         ]
-      },
-      {
-        "name": "São Tomé and Príncipe",
-        "cities": [
-
-        ]
       }
     ],
     "offset": "1"
@@ -976,12 +970,6 @@ var TZ = `[
         "name": "Burundi",
         "cities": [
           "Bujumbura"
-        ]
-      },
-      {
-        "name": "Congo-Kinshasa",
-        "cities": [
-          "Kisangani"
         ]
       },
       {
@@ -1123,11 +1111,6 @@ var TZ = `[
       },
       {
         "name": "Sudan",
-        "cities": [
-        ]
-      },
-      {
-        "name": "Åland",
         "cities": [
         ]
       }
