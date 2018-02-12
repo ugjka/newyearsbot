@@ -1,5 +1,5 @@
 # Contributor Covenant Code of Conduct
 
-## WE NEED NO COCK
+## No CoC Zone
 
 ![](https://i.imgur.com/QTDsOus.jpg)
