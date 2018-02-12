@@ -1,4 +1,5 @@
-//This utility validates Time Zone dataset against google maps api, double check the results, sometimes false positives
+//This utility validates Time Zone dataset against osm database and tz shapefile,
+//double check the results, sometimes false positives
 package main
 
 import (
@@ -44,32 +45,30 @@ func main() {
 	//print target to be sure
 	fmt.Println("Target:", target)
 	sort.Sort(sort.Reverse(zones))
-	for _, k := range zones {
-		fmt.Println("Zone:", k.Offset)
-		for _, k2 := range k.Countries {
-			if len(k2.Cities) == 0 {
-				res, err := getTimeZone(k2.Name)
-				time.Sleep(time.Second * 5)
+	for _, zone := range zones {
+		fmt.Println("Zone:", zone.Offset)
+		for _, country := range zone.Countries {
+			if len(country.Cities) == 0 {
+				remoteOffset, err := getTimeZone(country.Name)
 				if err != nil {
-					log.Println(err)
+					log.Println(country.Name, err)
 				} else {
-					res, _ := strconv.ParseFloat(res, 64)
-					koff, _ := strconv.ParseFloat(k.Offset, 64)
-					if res != koff {
-						fmt.Println(k2.Name, k.Offset, res)
+					localOffset, _ := strconv.ParseFloat(zone.Offset, 64)
+					if remoteOffset != localOffset {
+						fmt.Printf("%s: Offset mismatch Loc: %v, Rem: %v\n",
+							country.Name, localOffset, remoteOffset)
 					}
 				}
 			}
-			for _, k3 := range k2.Cities {
-				res, err := getTimeZone(k2.Name + " " + k3)
-				time.Sleep(time.Second * 5)
+			for _, city := range country.Cities {
+				remoteOffset, err := getTimeZone(city + " " + country.Name)
 				if err != nil {
-					log.Println(err)
+					log.Println(city+" "+country.Name, err)
 				} else {
-					res, _ := strconv.ParseFloat(res, 64)
-					koff, _ := strconv.ParseFloat(k.Offset, 64)
-					if res != koff {
-						fmt.Println(k2.Name, k3, k.Offset, res)
+					localOffset, _ := strconv.ParseFloat(zone.Offset, 64)
+					if remoteOffset != localOffset {
+						fmt.Printf("%s, %s: Offset mismatch Loc: %v, Rem: %v\n",
+							city, country.Name, localOffset, remoteOffset)
 					}
 				}
 			}
@@ -77,31 +76,35 @@ func main() {
 	}
 }
 
-func getTimeZone(loc string) (string, error) {
+//Get Timezone Offset
+func getTimeZone(loc string) (float64, error) {
 	maps := url.Values{}
 	maps.Add("q", loc)
 	maps.Add("format", "json")
 	maps.Add("accept-language", "en")
 	maps.Add("limit", "1")
 	maps.Add("email", *ircEmail)
-	data, err := c.OSMGetter(c.OSMGeocode + maps.Encode())
+	var data []byte
+	var err error
+	time.Sleep(time.Second * 5)
+	data, err = c.OSMGetter(c.OSMGeocode + maps.Encode())
 	if err != nil {
-		return "", err
+		return 0, err
 	}
 	var mapj c.OSMmapResults
 	if err = json.Unmarshal(data, &mapj); err != nil {
-		return "", err
+		return 0, err
 	}
 	if len(mapj) == 0 {
-		return "", errors.New(loc + " Status not OK")
+		return 0, errors.New("could not find location")
 	}
 	lat, err := strconv.ParseFloat(mapj[0].Lat, 64)
 	if err != nil {
-		return "", err
+		return 0, err
 	}
 	lon, err := strconv.ParseFloat(mapj[0].Lon, 64)
 	if err != nil {
-		return "", err
+		return 0, err
 	}
 	location := gotz.Point{
 		Lat: lat,
@@ -109,9 +112,15 @@ func getTimeZone(loc string) (string, error) {
 	}
 	zone, err := gotz.GetZone(location)
 	if err != nil {
-		return "", err
+		return 0, err
 	}
-	_, offset := time.Date(target.Year(), target.Month(), target.Day(), target.Hour(), target.Minute(),
-		target.Second(), target.Nanosecond(), zone).Zone()
-	return fmt.Sprintf("%f", float64(offset)/60/60), nil
+	offset := getOffset(target, zone)
+	return float64(offset) / 60 / 60, nil
+}
+
+func getOffset(target time.Time, zone *time.Location) int {
+	_, offset := time.Date(target.Year(), target.Month(), target.Day(),
+		target.Hour(), target.Minute(), target.Second(),
+		target.Nanosecond(), zone).Zone()
+	return offset
 }
