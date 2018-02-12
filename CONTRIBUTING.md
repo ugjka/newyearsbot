@@ -1,1 +1,3 @@
-sphagethi magethi
+# sphagethi magethi
+
+mom's sphagethi code ftw
