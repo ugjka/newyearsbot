@@ -35,7 +35,7 @@ Posts New Years for each timezone when they happen
 * timezone shapefile is loaded in memory which increases ram usage by 60 to 80MB
 * timezone lookup on slow hardware might be slow
 
-# Installation
+# Installation (WARNING: deb and rpm packages are not updated yet for 2019 version)
 
 Arch linux PKGBUILD in archlinux folder
 
