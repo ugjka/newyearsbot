@@ -54,18 +54,18 @@ var TZ = `[
         ]
       },
       {
-        "name": "United States of America",
-        "cities": [
-          "Johnston Atoll"
-        ]
-      },
-      {
         "name": "United States",
         "cities": [
           "Hawaii",
-          "Honolulu",
           "Hilo",
+          "Honolulu",
           "Wailuku"
+        ]
+      },
+      {
+        "name": "United States of America",
+        "cities": [
+          "Johnston Atoll"
         ]
       }
     ],
@@ -78,8 +78,8 @@ var TZ = `[
         "cities": [
           "Atuona",
           "Eiao",
-          "Taiohae",
-          "Fatu Huku"
+          "Fatu Huku",
+          "Taiohae"
         ]
       }
     ],
@@ -452,10 +452,10 @@ var TZ = `[
       {
         "name": "Canada",
         "cities": [
-          "St Johns",
-          "Stephenville",
+          "Grand Falls-Windsor",
           "Paradise",
-          "Grand Falls-Windsor"
+          "St Johns",
+          "Stephenville"
         ]
       }
     ],
@@ -959,6 +959,10 @@ var TZ = `[
         ]
       },
       {
+        "name": "Sudan",
+        "cities": []
+      },
+      {
         "name": "Swaziland",
         "cities": []
       },
@@ -978,10 +982,6 @@ var TZ = `[
       },
       {
         "name": "Zimbabwe",
-        "cities": []
-      },
-      {
-        "name": "Sudan",
         "cities": []
       }
     ],
@@ -1409,8 +1409,8 @@ var TZ = `[
         "name": "Russia",
         "cities": [
           "Krasnoyarsk",
-          "Novosibirsk",
-          "Novokuznetsk"
+          "Novokuznetsk",
+          "Novosibirsk"
         ]
       },
       {
@@ -1467,8 +1467,8 @@ var TZ = `[
       {
         "name": "Indonesia",
         "cities": [
-          "Banjarmasin",
           "Balikpapan",
+          "Banjarmasin",
           "Makassar"
         ]
       },
