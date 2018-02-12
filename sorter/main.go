@@ -30,6 +30,7 @@ func main() {
 	enc.Encode(v)
 }
 
+//Cities ...
 type Cities []string
 
 //TZ holds infor for Time Zone
