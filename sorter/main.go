@@ -1,3 +1,5 @@
+//Util for sorting the TZ json
+//To make it neat and nice after manual edits
 package main
 
 import (
