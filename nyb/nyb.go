@@ -170,7 +170,7 @@ func (s *Settings) Start() {
 			if err != nil {
 				return
 			}
-			s.IrcObj.Reply(msg, fmt.Sprintf("Next new year in %s in %s",
+			s.IrcObj.Reply(msg, fmt.Sprintf("Next New Year in %s in %s",
 				removeMilliseconds(humandur.String()), next.String()))
 			return
 		}
@@ -191,7 +191,7 @@ func (s *Settings) Start() {
 					return
 				}
 			}
-			s.IrcObj.Reply(msg, fmt.Sprintf("Last newyear %s ago in %s",
+			s.IrcObj.Reply(msg, fmt.Sprintf("Last NewYear %s ago in %s",
 				removeMilliseconds(humandur.String()), last.String()))
 			return
 		}
@@ -298,7 +298,7 @@ wrap:
 			}
 		}
 	}
-	s.IrcObj.PrivMsgBulk(s.IrcChans, fmt.Sprintf("That's it, year %d is here AoE", target.Year()))
+	s.IrcObj.PrivMsgBulk(s.IrcChans, fmt.Sprintf("That's it, Year %d is here AoE", target.Year()))
 	log.Println("All zones finished...")
 	target = target.AddDate(1, 0, 0)
 	log.Printf("Wrapping target date around to %d\n", target.Year())
@@ -368,7 +368,7 @@ func getNewYear(loc string, email string, server string) (string, error) {
 		}
 		return fmt.Sprintf("New Year in %s will happen in %s", adress, removeMilliseconds(humandur.String())), nil
 	}
-	return fmt.Sprintf("New year in %s already happened.", adress), nil
+	return fmt.Sprintf("New Year in %s already happened.", adress), nil
 }
 
 func removeMilliseconds(dur string) string {
