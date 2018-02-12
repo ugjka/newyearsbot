@@ -18,6 +18,7 @@ import (
 )
 
 var email *string
+var ircNominatim *string
 
 //Set target year
 var target = func() time.Time {
@@ -30,6 +31,7 @@ var target = func() time.Time {
 
 func main() {
 	email = flag.String("email", "", "Email for Open Street Map")
+	ircNominatim = flag.String("nominatim", "http://nominatim.openstreetmap.org", "Nominatim server to use")
 	flag.Parse()
 	if *email == "" {
 		fmt.Fprintf(os.Stderr, "%s", "provide email with -email flag")
@@ -55,7 +57,7 @@ func getLocationInfo(loc string) (string, error) {
 	maps.Add("email", *email)
 	var data []byte
 	var err error
-	data, err = c.NominatimGetter(c.NominatimGeoCode + maps.Encode())
+	data, err = c.NominatimGetter(*ircNominatim + c.NominatimGeoCode + maps.Encode())
 	if err != nil {
 		return "", err
 	}

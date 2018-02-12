@@ -30,9 +30,11 @@ var target = func() time.Time {
 }()
 
 var ircEmail *string
+var ircNominatim *string
 
 func main() {
 	ircEmail = flag.String("email", "", "Email for Open Street Map")
+	ircNominatim = flag.String("nominatim", "http://nominatim.openstreetmap.org", "Nominatim server to use")
 	flag.Parse()
 	if *ircEmail == "" {
 		fmt.Fprintf(os.Stderr, "%s", "provide email with -email flag")
@@ -87,7 +89,7 @@ func getTimeZone(loc string) (float64, error) {
 	var data []byte
 	var err error
 	time.Sleep(time.Second * 5)
-	data, err = c.NominatimGetter(c.NominatimGeoCode + maps.Encode())
+	data, err = c.NominatimGetter(*ircNominatim + c.NominatimGeoCode + maps.Encode())
 	if err != nil {
 		return 0, err
 	}
