@@ -28,7 +28,6 @@ You can query location using "hny" trigger for example "hny New York"
 
 CMD Options:
 -chans			comma seperated list of irc channels to join eg. "#test, #test2"
--tzpath			path to tz database (./tz.json)
 -ircserver		irc server to use irc.example.com:7000 (must be TLS enabled)
 -botnick		nick for the bot
 -trigger		trigger used for queries
@@ -45,7 +44,7 @@ func main() {
 	ircNick := flag.String("botnick", "", "Irc Nick for the bot")
 	ircTrigger := flag.String("trigger", "hny", "trigger for queries")
 	ircTLS := flag.Bool("usetls", true, "Use tls for irc")
-	ircEmail := flag.String("email", "", "Email for Open Street Map")
+	ircEmail := flag.String("email", "", "Refferer email for Nominatim")
 	ircNominatim := flag.String("nominatim", "http://nominatim.openstreetmap.org", "Nominatim server to use")
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, fmt.Sprintf(usage))
