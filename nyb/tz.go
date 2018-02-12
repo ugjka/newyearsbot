@@ -185,8 +185,7 @@ var TZ = `[
     "countries": [
       {
         "name": "Belize",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Canada",
@@ -196,8 +195,7 @@ var TZ = `[
       },
       {
         "name": "Costa Rica",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Ecuador",
@@ -207,18 +205,15 @@ var TZ = `[
       },
       {
         "name": "El Salvador",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Guatemala",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Honduras",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Mexico",
@@ -228,8 +223,7 @@ var TZ = `[
       },
       {
         "name": "Nicaragua",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "United States",
@@ -268,8 +262,7 @@ var TZ = `[
     "countries": [
       {
         "name": "Bahamas",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Brazil",
@@ -287,18 +280,15 @@ var TZ = `[
       },
       {
         "name": "Cayman Islands",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Colombia",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Cuba",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Ecuador",
@@ -308,13 +298,11 @@ var TZ = `[
       },
       {
         "name": "Haiti",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Jamaica",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Mexico",
@@ -324,13 +312,11 @@ var TZ = `[
       },
       {
         "name": "Panama",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Peru",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "United States",
@@ -362,53 +348,32 @@ var TZ = `[
   {
     "countries": [
       {
-        "name": "Canada",
-        "cities": [
-          "St Johns",
-          "Stephenville",
-          "Paradise",
-          "Grand Falls-Windsor"
-        ]
-      }
-    ],
-    "offset": "-3.5"
-  },
-  {
-    "countries": [
-      {
         "name": "Anguilla",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Antigua and Barbuda",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Aruba",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Barbados",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Bermuda",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Bolivia",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Bonaire, Sint Eustatius and Saba",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Brazil",
@@ -418,8 +383,7 @@ var TZ = `[
       },
       {
         "name": "British Virgin Islands",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Canada",
@@ -430,71 +394,72 @@ var TZ = `[
       },
       {
         "name": "Curaçao",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Dominica",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Dominican Republic",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Grenada",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Guadeloupe",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Guyana",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Martinique",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Montserrat",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Puerto Rico",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Saint Lucia",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Trinidad and Tobago",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "U.S. Virgin Islands",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Venezuela",
-        "cities": [
-        ]
+        "cities": []
       }
     ],
     "offset": "-4"
+  },
+  {
+    "countries": [
+      {
+        "name": "Canada",
+        "cities": [
+          "St Johns",
+          "Stephenville",
+          "Paradise",
+          "Grand Falls-Windsor"
+        ]
+      }
+    ],
+    "offset": "-3.5"
   },
   {
     "countries": [
@@ -539,13 +504,11 @@ var TZ = `[
       },
       {
         "name": "Falkland Islands",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "French Guiana",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Greenland",
@@ -555,23 +518,19 @@ var TZ = `[
       },
       {
         "name": "Paraguay",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Saint Pierre and Miquelon",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Suriname",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Uruguay",
-        "cities": [
-        ]
+        "cities": []
       }
     ],
     "offset": "-3"
@@ -598,9 +557,7 @@ var TZ = `[
       },
       {
         "name": "South Georgia and South Sandwich Islands",
-        "cities": [
-
-        ]
+        "cities": []
       }
     ],
     "offset": "-2"
@@ -639,38 +596,31 @@ var TZ = `[
       },
       {
         "name": "Canary Islands",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Faroe Islands",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Gambia",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Ghana",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Guinea",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Guinea-Bissau",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Iceland",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Ireland",
@@ -680,55 +630,43 @@ var TZ = `[
       },
       {
         "name": "Isle of Man",
-        "cities": [
-
-        ]
+        "cities": []
       },
       {
         "name": "Jersey",
-        "cities": [
-
-        ]
+        "cities": []
       },
       {
         "name": "Liberia",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Mali",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Mauritania",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Morocco",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Portugal",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Senegal",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Sierra Leone",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Togo",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "United Kingdom",
@@ -738,9 +676,7 @@ var TZ = `[
       },
       {
         "name": "Western Sahara",
-        "cities": [
-
-        ]
+        "cities": []
       }
     ],
     "offset": "0"
@@ -749,205 +685,159 @@ var TZ = `[
     "countries": [
       {
         "name": "Albania",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Andorra",
-        "cities": [
-
-        ]
+        "cities": []
       },
       {
         "name": "Angola",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Austria",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Belgium",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Benin",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Bosnia and Herzegovina",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Cameroon",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Chad",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Croatia",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Czechia",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Denmark",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Equatorial Guinea",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "France",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Gabon",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Germany",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Gibraltar",
-        "cities": [
-
-        ]
+        "cities": []
       },
       {
         "name": "Hungary",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Italy",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Liechtenstein",
-        "cities": [
-
-        ]
+        "cities": []
       },
       {
         "name": "Luxembourg",
-        "cities": [
-
-        ]
+        "cities": []
       },
       {
         "name": "Macedonia",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Malta",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Monaco",
-        "cities": [
-
-        ]
+        "cities": []
       },
       {
         "name": "Montenegro",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Netherlands",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Niger",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Nigeria",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Norway",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Poland",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "San Marino",
-        "cities": [
-
-        ]
+        "cities": []
       },
       {
         "name": "Serbia",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Slovakia",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Slovenia",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Spain",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Sweden",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Switzerland",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Tunisia",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Vatican City",
-        "cities": [
-
-        ]
+        "cities": []
       }
     ],
     "offset": "1"
@@ -974,43 +864,35 @@ var TZ = `[
       },
       {
         "name": "Cyprus",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Egypt",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Estonia",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Finland",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Greece",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Israel",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Jordan",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Latvia",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Lebanon",
@@ -1032,8 +914,7 @@ var TZ = `[
       },
       {
         "name": "Lithuania",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Malawi",
@@ -1043,28 +924,23 @@ var TZ = `[
       },
       {
         "name": "Moldova",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Mozambique",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Namibia",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Palestinian Territories",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Romania",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Russia",
@@ -1074,8 +950,7 @@ var TZ = `[
       },
       {
         "name": "Rwanda",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "South Africa",
@@ -1085,13 +960,11 @@ var TZ = `[
       },
       {
         "name": "Swaziland",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Syria",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Ukraine",
@@ -1101,18 +974,15 @@ var TZ = `[
       },
       {
         "name": "Zambia",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Zimbabwe",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Sudan",
-        "cities": [
-        ]
+        "cities": []
       }
     ],
     "offset": "2"
@@ -1145,8 +1015,7 @@ var TZ = `[
       },
       {
         "name": "Eritrea",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Ethiopia",
@@ -1213,23 +1082,19 @@ var TZ = `[
       },
       {
         "name": "Tanzania",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Turkey",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Uganda",
-        "cities": [
-        ]
+        "cities": []
       },
       {
         "name": "Yemen",
-        "cities": [
-        ]
+        "cities": []
       }
     ],
     "offset": "3"
@@ -1458,9 +1323,7 @@ var TZ = `[
       },
       {
         "name": "British Indian Ocean Territory",
-        "cities": [
-
-        ]
+        "cities": []
       },
       {
         "name": "Kazakhstan",
@@ -1496,9 +1359,7 @@ var TZ = `[
       },
       {
         "name": "Cocos [Keeling,] Islands",
-        "cities": [
-
-        ]
+        "cities": []
       }
     ],
     "offset": "6.5"
@@ -1514,9 +1375,7 @@ var TZ = `[
       },
       {
         "name": "Christmas Island",
-        "cities": [
-
-        ]
+        "cities": []
       },
       {
         "name": "Indonesia",
@@ -1565,8 +1424,7 @@ var TZ = `[
       },
       {
         "name": "Vietnam",
-        "cities": [
-        ]
+        "cities": []
       }
     ],
     "offset": "7"
@@ -1604,9 +1462,7 @@ var TZ = `[
       },
       {
         "name": "Hong Kong",
-        "cities": [
-
-        ]
+        "cities": []
       },
       {
         "name": "Indonesia",
@@ -1618,9 +1474,7 @@ var TZ = `[
       },
       {
         "name": "Macau",
-        "cities": [
-
-        ]
+        "cities": []
       },
       {
         "name": "Malaysia",
@@ -1651,14 +1505,11 @@ var TZ = `[
       },
       {
         "name": "Singapore",
-        "cities": [
-
-        ]
+        "cities": []
       },
       {
         "name": "Taiwan",
-        "cities": [
-        ]
+        "cities": []
       }
     ],
     "offset": "8"
@@ -1713,9 +1564,7 @@ var TZ = `[
       },
       {
         "name": "Palau",
-        "cities": [
-
-        ]
+        "cities": []
       },
       {
         "name": "Russia",
@@ -1771,9 +1620,7 @@ var TZ = `[
       },
       {
         "name": "Northern Mariana Islands",
-        "cities": [
-
-        ]
+        "cities": []
       },
       {
         "name": "Papua New Guinea",
@@ -1866,9 +1713,7 @@ var TZ = `[
       },
       {
         "name": "Nauru",
-        "cities": [
-
-        ]
+        "cities": []
       },
       {
         "name": "Russia",
@@ -1878,9 +1723,7 @@ var TZ = `[
       },
       {
         "name": "Tuvalu",
-        "cities": [
-
-        ]
+        "cities": []
       },
       {
         "name": "United States of America (Minor Outlying Islands)",
@@ -1920,9 +1763,7 @@ var TZ = `[
       },
       {
         "name": "Tokelau",
-        "cities": [
-
-        ]
+        "cities": []
       },
       {
         "name": "Tonga",
