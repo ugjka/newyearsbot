@@ -17,6 +17,12 @@ func main() {
 		panic(err)
 	}
 	sort.Sort(v)
+	for i := range v {
+		sort.Sort(v[i])
+		for j := range v[i].Countries {
+			sort.Sort(v[i].Countries[j].Cities)
+		}
+	}
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
 	enc.Encode(v)
