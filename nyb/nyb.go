@@ -191,7 +191,7 @@ func (s *Settings) Start() {
 					return
 				}
 			}
-			s.IrcObj.Reply(msg, fmt.Sprintf("Last new year was %s ago in %s",
+			s.IrcObj.Reply(msg, fmt.Sprintf("Last newyear %s ago in %s",
 				removeMilliseconds(humandur.String()), last.String()))
 			return
 		}
