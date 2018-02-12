@@ -8,9 +8,11 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/badoux/checkmail"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/ugjka/newyearsbot/nyb"
+	"mvdan.cc/xurls"
 )
 
 var icon = "../icon.png"
@@ -22,6 +24,7 @@ func main() {
 	mv.ircServer = "irc.freenode.net:7000"
 	mv.ircUseTLS = true
 	mv.ircTrigger = "hny"
+	mv.ircNominatim = "http://nominatim.openstreetmap.org"
 	bot := &nyb.Settings{}
 
 	st.onClose = func() {
@@ -38,11 +41,11 @@ func main() {
 		bot.IrcTrigger = mv.ircTrigger
 		bot.IrcServer = mv.ircServer
 		bot.UseTLS = mv.ircUseTLS
-		bot.OSM = mv.ircOSM
 		bot.Email = mv.ircEmail
 		bot.Stopper = make(chan bool)
 		bot.LogCh = nyb.NewLogChan()
 		bot.IrcObj = nyb.NewIrcObj()
+		bot.Nominatim = mv.ircNominatim
 		go bot.Start()
 	}
 	mv.onClose = func() {
@@ -75,13 +78,13 @@ func main() {
 
 //Window contains top level window
 type Window struct {
-	ircChannels []string
-	ircServer   string
-	ircUseTLS   bool
-	ircNick     string
-	ircTrigger  string
-	ircOSM      bool
-	ircEmail    string
+	ircChannels  []string
+	ircServer    string
+	ircUseTLS    bool
+	ircNick      string
+	ircTrigger   string
+	ircEmail     string
+	ircNominatim string
 
 	onClose  func()
 	onHide   func()
@@ -89,16 +92,16 @@ type Window struct {
 
 	isOpen bool
 
-	window  *gtk.Window
-	chans   *gtk.Entry
-	server  *gtk.Entry
-	nick    *gtk.Entry
-	trigger *gtk.Entry
-	tls     *gtk.CheckButton
-	start   *gtk.Button
-	stop    *gtk.Button
-	osm     *gtk.CheckButton
-	email   *gtk.Entry
+	window    *gtk.Window
+	chans     *gtk.Entry
+	server    *gtk.Entry
+	nick      *gtk.Entry
+	trigger   *gtk.Entry
+	tls       *gtk.CheckButton
+	start     *gtk.Button
+	stop      *gtk.Button
+	email     *gtk.Entry
+	nominatim *gtk.Entry
 }
 
 func (w *Window) open() {
@@ -131,6 +134,7 @@ func (w *Window) fillInputs() {
 	w.trigger.SetText(w.ircTrigger)
 	w.server.SetText(w.ircServer)
 	w.tls.SetActive(w.ircUseTLS)
+	w.nominatim.SetText(w.ircNominatim)
 }
 
 func (w *Window) initWidgets() {
@@ -182,13 +186,12 @@ func (w *Window) initWidgets() {
 	w.tls.SetActive(w.ircUseTLS)
 	w.tls.SetHAlign(gtk.ALIGN_END)
 	grid2.Attach(w.tls, 0, 9, 1, 1)
-	grid2.Attach(labelNew("Use Open Street Map:"), 0, 10, 1, 1)
-	w.osm, err = gtk.CheckButtonNew()
+	grid2.Attach(labelNew("Nominatim server:"), 0, 10, 1, 1)
+	w.nominatim, err = gtk.EntryNew()
 	fatal(err)
-	w.osm.SetActive(w.ircOSM)
-	w.osm.SetHAlign(gtk.ALIGN_END)
-	grid2.Attach(w.osm, 0, 11, 1, 1)
-	grid2.Attach(labelNew("Open Street Map refferer Email:"), 0, 12, 1, 1)
+	w.nominatim.SetText(w.ircNominatim)
+	grid2.Attach(w.nominatim, 0, 11, 1, 1)
+	grid2.Attach(labelNew("Nominatim refferer Email:"), 0, 12, 1, 1)
 	w.email, err = gtk.EntryNew()
 	fatal(err)
 	w.email.SetText(w.ircEmail)
@@ -235,8 +238,9 @@ func (w *Window) startClicked() {
 		w.ircUseTLS = w.tls.GetActive()
 		w.ircTrigger, err = w.trigger.GetText()
 		fatal(err)
-		w.ircOSM = w.osm.GetActive()
 		w.ircEmail, err = w.email.GetText()
+		fatal(err)
+		w.ircNominatim, err = w.nominatim.GetText()
 		fatal(err)
 		w.onHide()
 	}
@@ -244,16 +248,16 @@ func (w *Window) startClicked() {
 }
 
 func (w *Window) validateInputs() error {
-	nickreg := regexp.MustCompile("^\\w+$")
+	nickreg := regexp.MustCompile("^\\S+$")
 	nick, err := w.nick.GetText()
 	fatal(err)
 	if nick == "" {
 		return fmt.Errorf("Empty nick")
 	}
 	if !nickreg.MatchString(nick) {
-		return fmt.Errorf("Nick contains non alpha numeric characters")
+		return fmt.Errorf("Nick contains whitespace characters")
 	}
-	chanreg := regexp.MustCompile("^#+\\w+$")
+	chanreg := regexp.MustCompile("^#+\\S+$")
 	chans, err := w.chans.GetText()
 	fatal(err)
 	for _, ch := range strings.Split(chans, ", ") {
@@ -267,14 +271,30 @@ func (w *Window) validateInputs() error {
 	if !serverreg.MatchString(server) {
 		return fmt.Errorf("Invalid irc server name")
 	}
-	triggerreg := regexp.MustCompile("^\\w+$")
+	triggerreg := regexp.MustCompile("^\\S+$")
 	trigger, err := w.trigger.GetText()
+	fatal(err)
 	if len(trigger) <= 0 {
 		return fmt.Errorf("Empty trigger")
 	}
-	fatal(err)
 	if !triggerreg.MatchString(trigger) {
-		return (fmt.Errorf("Trigger contains nonalphanumeric characters"))
+		return (fmt.Errorf("Trigger contains whitespace characters"))
+	}
+	nominatim, err := w.nominatim.GetText()
+	fatal(err)
+	if nominatim == "" {
+		return fmt.Errorf("No nominatim server defined")
+	}
+	if !xurls.Strict().MatchString(nominatim) {
+		return fmt.Errorf("Invalid nominatim server url")
+	}
+	email, err := w.email.GetText()
+	fatal(err)
+	if email == "" {
+		return fmt.Errorf("You must enter valid email")
+	}
+	if err := checkmail.ValidateFormat(email); err != nil {
+		return fmt.Errorf("Invalid email adress")
 	}
 	return nil
 }
