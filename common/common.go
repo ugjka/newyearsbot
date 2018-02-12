@@ -12,35 +12,6 @@ import (
 	"time"
 )
 
-//Geocode is Google maps api
-const Geocode = "http://maps.googleapis.com/maps/api/geocode/json?"
-
-//Timezone is Google maps time api
-const Timezone = "https://maps.googleapis.com/maps/api/timezone/json?"
-
-//Gmap holds map json
-type Gmap struct {
-	Results []struct {
-		FormattedAddress string `json:"formatted_address"`
-		Geometry         struct {
-			Location struct {
-				Lat float64 `json:"lat"`
-				Lng float64 `json:"lng"`
-			}
-		}
-	}
-	Status string
-}
-
-//Gtime holds location tz info
-type Gtime struct {
-	Status       string
-	RawOffset    int
-	DstOffset    int
-	TimeZoneId   string
-	TimeZoneName string
-}
-
 //TZ holds infor for Time Zone
 type TZ struct {
 	Countries []struct {
@@ -99,29 +70,6 @@ func (t TZS) Less(i, j int) bool {
 		return true
 	}
 	return false
-}
-
-//Getter Gets "GET" DATA
-func Getter(url string) (data []byte, err error) {
-	client := http.Client{}
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return
-	}
-	req.Header.Set("User-Agent", "github.com/ugjka/newyearsbot")
-	get, err := client.Do(req)
-	if err != nil {
-		return
-	}
-	defer get.Body.Close()
-	if get.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("Status: %d", get.StatusCode)
-	}
-	data, err = ioutil.ReadAll(get.Body)
-	if err != nil {
-		return
-	}
-	return
 }
 
 //IrcChans is a custom flag
@@ -186,27 +134,28 @@ func (t *Timer) Stop() {
 	}
 }
 
-//OSMmapResult
-type OSMmapResult struct {
-	Lat          string
-	Lon          string
-	Display_name string
+//NominatimResult ...
+type NominatimResult struct {
+	Lat         string
+	Lon         string
+	DisplayName string `json:"Display_name"`
 }
 
-//OSMmapResults
-type OSMmapResults []OSMmapResult
+//NominatimResults ...
+type NominatimResults []NominatimResult
 
-//OSMGeocode const
-const OSMGeocode = "http://nominatim.openstreetmap.org/search?"
+//NominatimGeoCode const
+const NominatimGeoCode = "/search?"
 
-var osmCache = make(map[string][]byte)
-var osmCacheMutex sync.Mutex
+var nominatimCache = make(map[string][]byte)
+var nominatimCacheMutex sync.Mutex
 
-//OSMGetter Gets OSM DATA
-func OSMGetter(url string) (data []byte, err error) {
-	osmCacheMutex.Lock()
-	defer osmCacheMutex.Unlock()
-	if v, ok := osmCache[url]; ok {
+//NominatimGetter make an api request
+func NominatimGetter(url string) (data []byte, err error) {
+	nominatimCacheMutex.Lock()
+	defer nominatimCacheMutex.Unlock()
+	if v, ok := nominatimCache[url]; ok {
+		log.Println("Nominatim: using cached result")
 		return v, nil
 	}
 	client := http.Client{}
@@ -227,6 +176,6 @@ func OSMGetter(url string) (data []byte, err error) {
 	if err != nil {
 		return
 	}
-	osmCache[url] = data
+	nominatimCache[url] = data
 	return
 }

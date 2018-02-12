@@ -6,9 +6,12 @@ import (
 	"log"
 	"net/url"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/ugjka/go-tz"
 
 	"github.com/hako/durafmt"
 	irc "github.com/ugjka/dumbirc"
@@ -42,8 +45,8 @@ type Settings struct {
 	LogCh      LogChan
 	Stopper    chan bool
 	IrcObj     *irc.Connection
-	OSM        bool
 	Email      string
+	Nominatim  string
 }
 
 //Stop stops the bot
@@ -62,7 +65,7 @@ func NewIrcObj() *irc.Connection {
 }
 
 //New creates new bot
-func New(nick string, chans []string, trigger string, server string, tls bool, osm bool, email string) *Settings {
+func New(nick string, chans []string, trigger string, server string, tls bool, email string, nominatim string) *Settings {
 	return &Settings{
 		nick,
 		chans,
@@ -72,8 +75,8 @@ func New(nick string, chans []string, trigger string, server string, tls bool, o
 		NewLogChan(),
 		make(chan bool),
 		&irc.Connection{},
-		osm,
 		email,
+		nominatim,
 	}
 }
 
@@ -83,7 +86,7 @@ var target = func() time.Time {
 	if tmp.Month() == time.January && tmp.Day() < 2 {
 		return time.Date(tmp.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
 	}
-	//return time.Date(tmp.Year(), time.April, 14, 0, 0, 0, 0, time.UTC)
+	//return time.Date(tmp.Year(), time.February, 13, 0, 0, 0, 0, time.UTC)
 	return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 }()
 
@@ -94,6 +97,7 @@ func (s *Settings) Start() {
 	var start = make(chan bool)
 	var once sync.Once
 	var next c.TZ
+	var last c.TZ
 
 	//This is used to prevent sending ping before we
 	//have response from previous ping (any activity on irc)
@@ -143,12 +147,15 @@ func (s *Settings) Start() {
 	})
 	//Callback for queries
 	s.IrcObj.AddCallback(irc.PRIVMSG, func(msg irc.Message) {
+		//Help
 		if strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !help", s.IrcTrigger)) ||
 			(strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s", s.IrcObj.Nick)) &&
 				strings.HasSuffix(msg.Trailing, fmt.Sprintf("help"))) {
-			s.IrcObj.Reply(msg, fmt.Sprintf("Query location: '%s <location>', Next zone: '%s !next', Source code: https://github.com/ugjka/newyearsbot", s.IrcTrigger, s.IrcTrigger))
+			s.IrcObj.Reply(msg, fmt.Sprintf("%s: Query location: '%s <location>', Next zone: '%s !next', Last zone: '%s !last', Source code: https://github.com/ugjka/newyearsbot",
+				msg.Name, s.IrcTrigger, s.IrcTrigger, s.IrcTrigger))
 			return
 		}
+		//Next
 		if strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !next", s.IrcTrigger)) {
 			log.Println("Querying !next...")
 			dur, err := time.ParseDuration(next.Offset + "h")
@@ -163,17 +170,40 @@ func (s *Settings) Start() {
 			if err != nil {
 				return
 			}
-			s.IrcObj.Reply(msg, fmt.Sprintf("Next new year in %s in %s", removeMilliseconds(humandur.String()), next.String()))
+			s.IrcObj.Reply(msg, fmt.Sprintf("Next new year in %s in %s",
+				removeMilliseconds(humandur.String()), next.String()))
 			return
 		}
+		//Last
+		if strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !last", s.IrcTrigger)) {
+			log.Println("Querying !last...")
+			dur, err := time.ParseDuration(last.Offset + "h")
+			if err != nil {
+				return
+			}
+			humandur, err := durafmt.ParseString(time.Now().UTC().Add(dur).Sub(target).String())
+			if err != nil {
+				return
+			}
+			if last.Offset == "-12" {
+				humandur, err = durafmt.ParseString(time.Now().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)).String())
+				if err != nil {
+					return
+				}
+			}
+			s.IrcObj.Reply(msg, fmt.Sprintf("Last new year was %s ago in %s",
+				removeMilliseconds(humandur.String()), last.String()))
+			return
+		}
+		//hny Location Query
 		if strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s ", s.IrcTrigger)) {
-			tz, err := getNewYear(msg.Trailing[len(s.IrcTrigger)+1:], s.OSM, s.Email)
+			tz, err := getNewYear(msg.Trailing[len(s.IrcTrigger)+1:], s.Email, s.Nominatim)
 			if err != nil {
 				log.Println("Query error:", err)
 				s.IrcObj.Reply(msg, "Some error occurred!")
 				return
 			}
-			s.IrcObj.Reply(msg, tz)
+			s.IrcObj.Reply(msg, fmt.Sprintf("%s: %s", msg.Name, tz))
 			return
 		}
 
@@ -231,6 +261,7 @@ func (s *Settings) Start() {
 		log.Fatal(err)
 	}
 	sort.Sort(sort.Reverse(zones))
+wrap:
 	for i := 0; i < len(zones); i++ {
 		dur, err := time.ParseDuration(zones[i].Offset + "h")
 		if err != nil {
@@ -238,6 +269,11 @@ func (s *Settings) Start() {
 		}
 		//Check if zone is past target
 		next = zones[i]
+		if i == 0 {
+			last = zones[len(zones)-1]
+		} else {
+			last = zones[i-1]
+		}
 		if time.Now().UTC().Add(dur).Before(target) {
 			time.Sleep(time.Second * 2)
 			log.Println("Zone pending:", zones[i].Offset)
@@ -264,6 +300,9 @@ func (s *Settings) Start() {
 	}
 	s.IrcObj.PrivMsgBulk(s.IrcChans, fmt.Sprintf("That's it, year %d is here AoE", target.Year()))
 	log.Println("All zones finished...")
+	target = target.AddDate(1, 0, 0)
+	log.Printf("Wrapping target date around to %d\n", target.Year())
+	goto wrap
 }
 
 func pingpong(c chan bool) {
@@ -275,86 +314,54 @@ func pingpong(c chan bool) {
 }
 
 //Func for querying newyears in specified location
-func getNewYear(loc string, osm bool, email string) (string, error) {
+func getNewYear(loc string, email string, server string) (string, error) {
 	var adress string
-	var location string
-	if osm {
-		log.Println("Querying location:", loc)
-		maps := url.Values{}
-		maps.Add("q", loc)
-		maps.Add("format", "json")
-		maps.Add("accept-language", "en")
-		maps.Add("limit", "1")
-		maps.Add("email", email)
-		data, err := c.OSMGetter(c.OSMGeocode + maps.Encode())
-		if err != nil {
-			log.Println(err)
-			return "", err
-		}
-		var mapj c.OSMmapResults
-		if err = json.Unmarshal(data, &mapj); err != nil {
-			log.Println(err)
-			return "", err
-		}
-		if len(mapj) == 0 {
-			return "I don't know that place.", nil
-		}
-		adress = mapj[0].Display_name
-		location = fmt.Sprintf("%s,%s", mapj[0].Lat, mapj[0].Lon)
-	} else {
-		log.Println("Querying location:", loc)
-		maps := url.Values{}
-		maps.Add("address", loc)
-		maps.Add("sensor", "false")
-		maps.Add("language", "en")
-		data, err := c.Getter(c.Geocode + maps.Encode())
-		if err != nil {
-			log.Println(err)
-			return "", err
-		}
-		var mapj c.Gmap
-		if err = json.Unmarshal(data, &mapj); err != nil {
-			log.Println(err)
-			return "", err
-		}
-		if mapj.Status != "OK" {
-			return "I don't know that place.", nil
-		}
-		adress = mapj.Results[0].FormattedAddress
-		location = fmt.Sprintf("%.7f,%.7f", mapj.Results[0].Geometry.Location.Lat, mapj.Results[0].Geometry.Location.Lng)
-	}
-	tmzone := url.Values{}
-	tmzone.Add("location", location)
-	tmzone.Add("timestamp", fmt.Sprintf("%d", time.Now().Unix()))
-	tmzone.Add("sensor", "false")
-	data, err := c.Getter(c.Timezone + tmzone.Encode())
+	log.Println("Querying location:", loc)
+	maps := url.Values{}
+	maps.Add("q", loc)
+	maps.Add("format", "json")
+	maps.Add("accept-language", "en")
+	maps.Add("limit", "1")
+	maps.Add("email", email)
+	data, err := c.NominatimGetter(server + c.NominatimGeoCode + maps.Encode())
 	if err != nil {
 		log.Println(err)
 		return "", err
 	}
-	var timej c.Gtime
-	if err = json.Unmarshal(data, &timej); err != nil {
+	var mapj c.NominatimResults
+	if err = json.Unmarshal(data, &mapj); err != nil {
 		log.Println(err)
 		return "", err
 	}
-	if timej.Status != "OK" {
-		return "Couldn't get timezone info.", nil
+	if len(mapj) == 0 {
+		return "Couldn't find that place.", nil
+	}
+	adress = mapj[0].DisplayName
+	lat, err := strconv.ParseFloat(mapj[0].Lat, 64)
+	if err != nil {
+		return "", err
+	}
+	lon, err := strconv.ParseFloat(mapj[0].Lon, 64)
+	if err != nil {
+		return "", err
+	}
+	p := gotz.Point{
+		Lat: lat,
+		Lng: lon,
+	}
+	zone, err := gotz.GetZone(p)
+	if err != nil {
+		return "Couldn't get the timezone for that location.", nil
 	}
 	//RawOffset
-	raw, err := time.ParseDuration(fmt.Sprintf("%ds", timej.RawOffset))
-	if err != nil {
-		log.Println(err)
-		return "", err
-	}
-	//DstOffset
-	dst, err := time.ParseDuration(fmt.Sprintf("%ds", timej.DstOffset))
+	offset, err := time.ParseDuration(fmt.Sprintf("%ds", getOffset(target, zone)))
 	if err != nil {
 		log.Println(err)
 		return "", err
 	}
 	//Check if past target
-	if time.Now().UTC().Add(raw + dst).Before(target) {
-		humandur, err := durafmt.ParseString(target.Sub(time.Now().UTC().Add(raw + dst)).String())
+	if time.Now().UTC().Add(offset).Before(target) {
+		humandur, err := durafmt.ParseString(target.Sub(time.Now().UTC().Add(offset)).String())
 		if err != nil {
 			log.Println(err)
 			return "", err
@@ -366,5 +373,15 @@ func getNewYear(loc string, osm bool, email string) (string, error) {
 
 func removeMilliseconds(dur string) string {
 	arr := strings.Split(dur, " ")
+	if len(arr) < 3 {
+		return dur
+	}
 	return strings.Join(arr[:len(arr)-2], " ")
+}
+
+func getOffset(target time.Time, zone *time.Location) int {
+	_, offset := time.Date(target.Year(), target.Month(), target.Day(),
+		target.Hour(), target.Minute(), target.Second(),
+		target.Nanosecond(), zone).Zone()
+	return offset
 }
