@@ -32,7 +32,7 @@ func (t TZ) String() (x string) {
 				x += " ("
 			}
 			x += fmt.Sprintf("%s", city)
-			if i >= 0 && i < len(country.Cities)-1 {
+			if i < len(country.Cities)-1 {
 				x += ", "
 			}
 			if i == len(country.Cities)-1 {
