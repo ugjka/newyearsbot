@@ -76,7 +76,7 @@ func (s *Settings) Start() {
 	//Set up irc
 	//
 	s.IrcObj = irc.New(s.IrcNick, "nyebot", s.IrcServer, s.UseTLS)
-
+	bot := s.IrcObj
 	//Add Callbacs
 	s.addCallbacks()
 	//Add Triggers
@@ -86,7 +86,7 @@ func (s *Settings) Start() {
 	s.extra.wait.Add(1)
 	go s.ircControl()
 	//Start irc
-	s.IrcObj.Start()
+	bot.Start()
 
 	//Starts when joined, see once.Do
 	select {
@@ -110,7 +110,7 @@ func (s *Settings) Start() {
 			return
 		default:
 		}
-		s.IrcObj.PrivMsgBulk(s.IrcChans, fmt.Sprintf("That's it, Year %d is here AoE", target.Year()))
+		bot.PrivMsgBulk(s.IrcChans, fmt.Sprintf("That's it, Year %d is here AoE", target.Year()))
 		log.Println("All zones finished...")
 		target = target.AddDate(1, 0, 0)
 		log.Printf("Wrapping target date around to %d\n", target.Year())
@@ -128,12 +128,13 @@ func (s *Settings) Stop() {
 }
 
 func (s *Settings) ircControl() {
+	bot := s.IrcObj
 	var err error
 	defer s.extra.wait.Done()
 	for {
 		timer := time.NewTimer(time.Minute * 1)
 		select {
-		case err = <-s.IrcObj.Errchan:
+		case err = <-bot.Errchan:
 			log.Println("Error:", err)
 			log.Println("Restarting the bot...")
 			time.AfterFunc(time.Second*30, func() {
@@ -141,14 +142,14 @@ func (s *Settings) ircControl() {
 				case <-s.Stopper:
 					return
 				default:
-					s.IrcObj.Start()
+					bot.Start()
 				}
 			})
 		case <-s.Stopper:
 			timer.Stop()
 			log.Println("Stopping the bot...")
 			log.Println("Disconnecting...")
-			s.IrcObj.Disconnect()
+			bot.Disconnect()
 			return
 		//ping timer
 		case <-timer.C:
@@ -157,7 +158,7 @@ func (s *Settings) ircControl() {
 			select {
 			case <-s.extra.pp:
 				log.Println("Sending PING...")
-				s.IrcObj.Ping()
+				bot.Ping()
 			default:
 				log.Println("Got no Response...")
 			}
@@ -167,6 +168,7 @@ func (s *Settings) ircControl() {
 }
 
 func (s *Settings) loopTimeZones() {
+	bot := s.IrcObj
 	for i := 0; i < len(s.extra.zones); i++ {
 		dur, err := time.ParseDuration(s.extra.zones[i].Offset + "h")
 		if err != nil {
@@ -187,7 +189,7 @@ func (s *Settings) loopTimeZones() {
 				log.Fatal(err)
 			}
 			msg := fmt.Sprintf("Next New Year in %s in %s", removeMilliseconds(humandur.String()), s.extra.zones[i])
-			s.IrcObj.PrivMsgBulk(s.IrcChans, msg)
+			bot.PrivMsgBulk(s.IrcChans, msg)
 			//Wait till Target in Timezone
 			timer := c.NewTimer(target.Sub(time.Now().UTC().Add(dur)))
 
@@ -195,7 +197,7 @@ func (s *Settings) loopTimeZones() {
 			case <-timer.C:
 				timer.Stop()
 				msg = fmt.Sprintf("Happy New Year in %s", s.extra.zones[i])
-				s.IrcObj.PrivMsgBulk(s.IrcChans, msg)
+				bot.PrivMsgBulk(s.IrcChans, msg)
 				log.Println("Announcing zone:", s.extra.zones[i].Offset)
 			case <-s.Stopper:
 				timer.Stop()
