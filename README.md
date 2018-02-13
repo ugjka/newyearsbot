@@ -31,6 +31,7 @@ Posts New Years for each timezone when they happen
 * uses Nominatim for geocoding (no more google api)
 * you can specify different Nominatim server if you want
 * timezone lookup is done from tz shapefile (no more google api)
+* code much more readable
 
 ## What's not so great
 
