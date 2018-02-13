@@ -145,18 +145,24 @@ func (s *Settings) Start() {
 		}
 		s.IrcObj.NewNick(s.IrcObj.Nick)
 	})
-	//Callback for queries
-	s.IrcObj.AddCallback(irc.PRIVMSG, func(msg irc.Message) {
-		//Help
-		if strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !help", s.IrcTrigger)) ||
-			(strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s", s.IrcObj.Nick)) &&
-				strings.HasSuffix(msg.Trailing, fmt.Sprintf("help"))) {
+	//Trigger for !help
+	s.IrcObj.AddTrigger(irc.Trigger{
+		Condition: func(msg irc.Message) bool {
+			return msg.Command == "PRIVMSG" &&
+				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !help", s.IrcTrigger))
+		},
+		Response: func(msg irc.Message) {
 			s.IrcObj.Reply(msg, fmt.Sprintf("%s: Query location: '%s <location>', Next zone: '%s !next', Last zone: '%s !last', Source code: https://github.com/ugjka/newyearsbot",
 				msg.Name, s.IrcTrigger, s.IrcTrigger, s.IrcTrigger))
-			return
-		}
-		//Next
-		if strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !next", s.IrcTrigger)) {
+		},
+	})
+	//Trigger for !next
+	s.IrcObj.AddTrigger(irc.Trigger{
+		Condition: func(msg irc.Message) bool {
+			return msg.Command == "PRIVMSG" &&
+				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !next", s.IrcTrigger))
+		},
+		Response: func(msg irc.Message) {
 			log.Println("Querying !next...")
 			dur, err := time.ParseDuration(next.Offset + "h")
 			if err != nil {
@@ -172,10 +178,15 @@ func (s *Settings) Start() {
 			}
 			s.IrcObj.Reply(msg, fmt.Sprintf("Next New Year in %s in %s",
 				removeMilliseconds(humandur.String()), next.String()))
-			return
-		}
-		//Last
-		if strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !last", s.IrcTrigger)) {
+		},
+	})
+	//Trigger for !last
+	s.IrcObj.AddTrigger(irc.Trigger{
+		Condition: func(msg irc.Message) bool {
+			return msg.Command == "PRIVMSG" &&
+				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !last", s.IrcTrigger))
+		},
+		Response: func(msg irc.Message) {
 			log.Println("Querying !last...")
 			dur, err := time.ParseDuration(last.Offset + "h")
 			if err != nil {
@@ -193,10 +204,18 @@ func (s *Settings) Start() {
 			}
 			s.IrcObj.Reply(msg, fmt.Sprintf("Last NewYear %s ago in %s",
 				removeMilliseconds(humandur.String()), last.String()))
-			return
-		}
-		//hny Location Query
-		if strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s ", s.IrcTrigger)) {
+		},
+	})
+	//Trigger for location queries
+	s.IrcObj.AddTrigger(irc.Trigger{
+		Condition: func(msg irc.Message) bool {
+			return msg.Command == "PRIVMSG" &&
+				!strings.Contains(msg.Trailing, "!next") &&
+				!strings.Contains(msg.Trailing, "!last") &&
+				!strings.Contains(msg.Trailing, "!help") &&
+				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s ", s.IrcTrigger))
+		},
+		Response: func(msg irc.Message) {
 			tz, err := getNewYear(msg.Trailing[len(s.IrcTrigger)+1:], s.Email, s.Nominatim)
 			if err != nil {
 				log.Println("Query error:", err)
@@ -204,9 +223,7 @@ func (s *Settings) Start() {
 				return
 			}
 			s.IrcObj.Reply(msg, fmt.Sprintf("%s: %s", msg.Name, tz))
-			return
-		}
-
+		},
 	})
 	//Reconnect logic and Irc Pinger
 	wait.Add(1)
