@@ -60,11 +60,6 @@ func New(nick string, chans []string, trigger string, server string, tls bool, e
 	}
 }
 
-//NewIrcObj return empty irc connection
-func NewIrcObj() *irc.Connection {
-	return &irc.Connection{}
-}
-
 //Start starts the bot
 func (s *Settings) Start() {
 	log.SetOutput(s.LogCh)
