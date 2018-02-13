@@ -24,6 +24,15 @@ Posts New Years for each timezone when they happen
 
 ![alt text](https://i.imgur.com/ze0V82J.png "Bot status")
 
+## Bot's commands
+
+* `hny !next` upcoming new year
+* `hny !last` previous new year
+* `hny <location>` query location
+* `hny !help` show help
+
+The `hny` part can be changed by defining a different trigger
+
 ## What's new and great in 2018/2019
 
 * target date wraps around after last zone
