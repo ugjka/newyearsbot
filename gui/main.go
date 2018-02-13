@@ -35,17 +35,8 @@ func main() {
 	}
 
 	mv.startBot = func() {
-		bot = &nyb.Settings{}
-		bot.IrcChans = mv.ircChannels
-		bot.IrcNick = mv.ircNick
-		bot.IrcTrigger = mv.ircTrigger
-		bot.IrcServer = mv.ircServer
-		bot.UseTLS = mv.ircUseTLS
-		bot.Email = mv.ircEmail
-		bot.Stopper = make(chan bool)
-		bot.LogCh = nyb.NewLogChan()
-		bot.IrcObj = nyb.NewIrcObj()
-		bot.Nominatim = mv.ircNominatim
+		bot = nyb.New(mv.ircNick, mv.ircChannels, mv.ircTrigger,
+			mv.ircServer, mv.ircUseTLS, mv.ircEmail, mv.ircNominatim)
 		go bot.Start()
 	}
 	mv.onClose = func() {
@@ -230,8 +221,8 @@ func (w *Window) startClicked() {
 		chans, err := w.chans.GetText()
 		fatal(err)
 		w.ircChannels = make([]string, 0)
-		for _, ch := range strings.Split(chans, ", ") {
-			w.ircChannels = append(w.ircChannels, ch)
+		for _, ch := range strings.Split(chans, ",") {
+			w.ircChannels = append(w.ircChannels, strings.TrimSpace(ch))
 		}
 		w.ircServer, err = w.server.GetText()
 		fatal(err)
@@ -260,9 +251,10 @@ func (w *Window) validateInputs() error {
 	chanreg := regexp.MustCompile("^#+\\S+$")
 	chans, err := w.chans.GetText()
 	fatal(err)
-	for _, ch := range strings.Split(chans, ", ") {
-		if !chanreg.MatchString(ch) || len(ch) <= 1 {
-			return fmt.Errorf("Invalid channel name: %s", ch)
+	for _, ch := range strings.Split(chans, ",") {
+		chClean := strings.TrimSpace(ch)
+		if !chanreg.MatchString(chClean) || len(chClean) <= 1 {
+			return fmt.Errorf("Invalid channel name: %s", chClean)
 		}
 	}
 	serverreg := regexp.MustCompile("^\\S+:\\d+$")
