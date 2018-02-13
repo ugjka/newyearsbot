@@ -148,16 +148,17 @@ type NominatimResults []NominatimResult
 const NominatimGeoCode = "/search?"
 
 var nominatimCache = make(map[string][]byte)
-var nominatimCacheMutex sync.Mutex
+var nominatimCacheMutex sync.RWMutex
 
 //NominatimGetter make an api request
 func NominatimGetter(url string) (data []byte, err error) {
-	nominatimCacheMutex.Lock()
-	defer nominatimCacheMutex.Unlock()
+	nominatimCacheMutex.RLock()
 	if v, ok := nominatimCache[url]; ok {
+		nominatimCacheMutex.RUnlock()
 		log.Println("Nominatim: using cached result")
 		return v, nil
 	}
+	nominatimCacheMutex.RUnlock()
 	client := http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -176,6 +177,8 @@ func NominatimGetter(url string) (data []byte, err error) {
 	if err != nil {
 		return
 	}
+	nominatimCacheMutex.Lock()
 	nominatimCache[url] = data
+	nominatimCacheMutex.Unlock()
 	return
 }
