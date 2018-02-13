@@ -145,6 +145,8 @@ func (s *Settings) Start() {
 		}
 		s.IrcObj.NewNick(s.IrcObj.Nick)
 	})
+	//Using triggers for stuff
+	//////////////////////////
 	//Trigger for !help
 	s.IrcObj.AddTrigger(irc.Trigger{
 		Condition: func(msg irc.Message) bool {
