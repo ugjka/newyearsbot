@@ -86,7 +86,7 @@ var target = func() time.Time {
 	if tmp.Month() == time.January && tmp.Day() < 2 {
 		return time.Date(tmp.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
 	}
-	//return time.Date(tmp.Year(), time.February, 13, 0, 0, 0, 0, time.UTC)
+	//return time.Date(tmp.Year(), time.February, 14, 0, 0, 0, 0, time.UTC)
 	return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 }()
 
@@ -368,7 +368,12 @@ func getNewYear(loc string, email string, server string) (string, error) {
 		}
 		return fmt.Sprintf("New Year in %s will happen in %s", adress, removeMilliseconds(humandur.String())), nil
 	}
-	return fmt.Sprintf("New Year in %s already happened.", adress), nil
+	humandur, err := durafmt.ParseString(time.Now().UTC().Add(offset).Sub(target).String())
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+	return fmt.Sprintf("New Year in %s happened %s ago", adress, removeMilliseconds(humandur.String())), nil
 }
 
 func removeMilliseconds(dur string) string {
