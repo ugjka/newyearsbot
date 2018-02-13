@@ -4,36 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/url"
 	"sort"
-	"strconv"
-	"strings"
 	"sync"
 	"time"
-
-	"github.com/ugjka/go-tz"
 
 	"github.com/hako/durafmt"
 	irc "github.com/ugjka/dumbirc"
 	c "github.com/ugjka/newyearsbot/common"
 )
-
-const logChanLen = 100
-
-//LogChan is a channel that sends log messages
-type LogChan chan string
-
-func (l LogChan) Write(p []byte) (n int, err error) {
-	if len(l) < logChanLen {
-		l <- string(p)
-	}
-	return len(p), nil
-}
-
-//NewLogChan make new log channel
-func NewLogChan() LogChan {
-	return make(chan string, logChanLen)
-}
 
 //Settings for bot
 type Settings struct {
@@ -47,21 +25,20 @@ type Settings struct {
 	IrcObj     *irc.Connection
 	Email      string
 	Nominatim  string
+	extra      extra
 }
 
-//Stop stops the bot
-func (s *Settings) Stop() {
-	select {
-	case <-s.Stopper:
-		return
-	default:
-		close(s.Stopper)
-	}
-}
-
-//NewIrcObj return empty irc connection
-func NewIrcObj() *irc.Connection {
-	return &irc.Connection{}
+type extra struct {
+	zones c.TZS
+	last  c.TZ
+	next  c.TZ
+	start chan bool
+	once  sync.Once
+	//This is used to prevent sending ping before we
+	//have response from previous ping (any activity on irc)
+	//pingpong(pp) sends a signal to ping timer
+	pp   chan bool
+	wait sync.WaitGroup
 }
 
 //New creates new bot
@@ -77,230 +54,139 @@ func New(nick string, chans []string, trigger string, server string, tls bool, e
 		&irc.Connection{},
 		email,
 		nominatim,
+		extra{start: make(chan bool),
+			pp: make(chan bool, 1),
+		},
 	}
 }
 
-//Set target year
-var target = func() time.Time {
-	tmp := time.Now().UTC()
-	if tmp.Month() == time.January && tmp.Day() < 2 {
-		return time.Date(tmp.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
-	}
-	//return time.Date(tmp.Year(), time.February, 14, 0, 0, 0, 0, time.UTC)
-	return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
-}()
+//NewIrcObj return empty irc connection
+func NewIrcObj() *irc.Connection {
+	return &irc.Connection{}
+}
 
 //Start starts the bot
 func (s *Settings) Start() {
 	log.SetOutput(s.LogCh)
 	log.Println("Starting the bot...")
-	var start = make(chan bool)
-	var once sync.Once
-	var next c.TZ
-	var last c.TZ
-
-	//This is used to prevent sending ping before we
-	//have response from previous ping (any activity on irc)
-	//pingpong(pp) sends a signal to ping timer
-	pp := make(chan bool, 1)
 
 	//To exit gracefully we need to wait
-	var wait sync.WaitGroup
-	defer wait.Wait()
-
+	defer s.extra.wait.Wait()
 	//
-	//Set up irc and its callbacks
+	//Set up irc
 	//
 	s.IrcObj = irc.New(s.IrcNick, "nyebot", s.IrcServer, s.UseTLS)
 
-	//On any message send a signal to ping timer to be ready
-	s.IrcObj.AddCallback(irc.ANYMESSAGE, func(msg irc.Message) {
-		pingpong(pp)
-	})
+	//Add Callbacs
+	s.addCallbacks()
+	//Add Triggers
+	s.addTriggers()
 
-	//Join channels on WELCOME
-	s.IrcObj.AddCallback(irc.WELCOME, func(msg irc.Message) {
-		s.IrcObj.Join(s.IrcChans)
-		//Prevent early start
-		once.Do(func() {
-			close(start)
-		})
-	})
-	//Reply ping messages with pong
-	s.IrcObj.AddCallback(irc.PING, func(msg irc.Message) {
-		log.Println("PING recieved, sending PONG")
-		s.IrcObj.Pong()
-	})
-	//Log pongs
-	s.IrcObj.AddCallback(irc.PONG, func(msg irc.Message) {
-		log.Println("Got PONG...")
-	})
-	//Change nick if taken
-	s.IrcObj.AddCallback(irc.NICKTAKEN, func(msg irc.Message) {
-		log.Println("Nick taken, changing...")
-		if strings.HasSuffix(s.IrcObj.Nick, "_") {
-			s.IrcObj.Nick = s.IrcObj.Nick[:len(s.IrcObj.Nick)-1]
-		} else {
-			s.IrcObj.Nick += "_"
-		}
-		s.IrcObj.NewNick(s.IrcObj.Nick)
-	})
-	//Using triggers for stuff
-	//////////////////////////
-	//Trigger for !help
-	s.IrcObj.AddTrigger(irc.Trigger{
-		Condition: func(msg irc.Message) bool {
-			return msg.Command == "PRIVMSG" &&
-				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !help", s.IrcTrigger))
-		},
-		Response: func(msg irc.Message) {
-			s.IrcObj.Reply(msg, fmt.Sprintf("%s: Query location: '%s <location>', Next zone: '%s !next', Last zone: '%s !last', Source code: https://github.com/ugjka/newyearsbot",
-				msg.Name, s.IrcTrigger, s.IrcTrigger, s.IrcTrigger))
-		},
-	})
-	//Trigger for !next
-	s.IrcObj.AddTrigger(irc.Trigger{
-		Condition: func(msg irc.Message) bool {
-			return msg.Command == "PRIVMSG" &&
-				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !next", s.IrcTrigger))
-		},
-		Response: func(msg irc.Message) {
-			log.Println("Querying !next...")
-			dur, err := time.ParseDuration(next.Offset + "h")
-			if err != nil {
-				return
-			}
-			if time.Now().UTC().Add(dur).After(target) {
-				s.IrcObj.Reply(msg, fmt.Sprintf("No more next, %d is here AoE", target.Year()))
-				return
-			}
-			humandur, err := durafmt.ParseString(target.Sub(time.Now().UTC().Add(dur)).String())
-			if err != nil {
-				return
-			}
-			s.IrcObj.Reply(msg, fmt.Sprintf("Next New Year in %s in %s",
-				removeMilliseconds(humandur.String()), next.String()))
-		},
-	})
-	//Trigger for !last
-	s.IrcObj.AddTrigger(irc.Trigger{
-		Condition: func(msg irc.Message) bool {
-			return msg.Command == "PRIVMSG" &&
-				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !last", s.IrcTrigger))
-		},
-		Response: func(msg irc.Message) {
-			log.Println("Querying !last...")
-			dur, err := time.ParseDuration(last.Offset + "h")
-			if err != nil {
-				return
-			}
-			humandur, err := durafmt.ParseString(time.Now().UTC().Add(dur).Sub(target).String())
-			if err != nil {
-				return
-			}
-			if last.Offset == "-12" {
-				humandur, err = durafmt.ParseString(time.Now().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)).String())
-				if err != nil {
-					return
-				}
-			}
-			s.IrcObj.Reply(msg, fmt.Sprintf("Last NewYear %s ago in %s",
-				removeMilliseconds(humandur.String()), last.String()))
-		},
-	})
-	//Trigger for location queries
-	s.IrcObj.AddTrigger(irc.Trigger{
-		Condition: func(msg irc.Message) bool {
-			return msg.Command == "PRIVMSG" &&
-				!strings.Contains(msg.Trailing, "!next") &&
-				!strings.Contains(msg.Trailing, "!last") &&
-				!strings.Contains(msg.Trailing, "!help") &&
-				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s ", s.IrcTrigger))
-		},
-		Response: func(msg irc.Message) {
-			tz, err := getNewYear(msg.Trailing[len(s.IrcTrigger)+1:], s.Email, s.Nominatim)
-			if err != nil {
-				log.Println("Query error:", err)
-				s.IrcObj.Reply(msg, "Some error occurred!")
-				return
-			}
-			s.IrcObj.Reply(msg, fmt.Sprintf("%s: %s", msg.Name, tz))
-		},
-	})
 	//Reconnect logic and Irc Pinger
-	wait.Add(1)
-	go func() {
-		var err error
-		defer wait.Done()
-		for {
-			timer := time.NewTimer(time.Minute * 1)
-			select {
-			case err = <-s.IrcObj.Errchan:
-				log.Println("Error:", err)
-				log.Println("Restarting the bot...")
-				time.AfterFunc(time.Second*30, func() {
-					select {
-					case <-s.Stopper:
-						return
-					default:
-						s.IrcObj.Start()
-					}
-				})
-			case <-s.Stopper:
-				timer.Stop()
-				log.Println("Stopping the bot...")
-				log.Println("Disconnecting...")
-				s.IrcObj.Disconnect()
-				return
-			//ping timer
-			case <-timer.C:
-				timer.Stop()
-				//pingpong stuff
-				select {
-				case <-pp:
-					log.Println("Sending PING...")
-					s.IrcObj.Ping()
-				default:
-					log.Println("Got no Response...")
-				}
-			}
-
-		}
-	}()
+	s.extra.wait.Add(1)
+	go s.ircControl()
+	//Start irc
 	s.IrcObj.Start()
+
 	//Starts when joined, see once.Do
 	select {
-	case <-start:
+	case <-s.extra.start:
 		log.Println("Got start...")
 	case <-s.Stopper:
 		return
 	}
-	var zones c.TZS
-	if err := json.Unmarshal([]byte(TZ), &zones); err != nil {
+	//Load timezones
+	if err := json.Unmarshal([]byte(TZ), &s.extra.zones); err != nil {
 		log.Fatal(err)
 	}
-	sort.Sort(sort.Reverse(zones))
-wrap:
-	for i := 0; i < len(zones); i++ {
-		dur, err := time.ParseDuration(zones[i].Offset + "h")
+	//Sort them
+	sort.Sort(sort.Reverse(s.extra.zones))
+
+	//Zone Looper
+	for {
+		s.loopTimeZones()
+		select {
+		case <-s.Stopper:
+			return
+		default:
+		}
+		s.IrcObj.PrivMsgBulk(s.IrcChans, fmt.Sprintf("That's it, Year %d is here AoE", target.Year()))
+		log.Println("All zones finished...")
+		target = target.AddDate(1, 0, 0)
+		log.Printf("Wrapping target date around to %d\n", target.Year())
+	}
+}
+
+//Stop stops the bot
+func (s *Settings) Stop() {
+	select {
+	case <-s.Stopper:
+		return
+	default:
+		close(s.Stopper)
+	}
+}
+
+func (s *Settings) ircControl() {
+	var err error
+	defer s.extra.wait.Done()
+	for {
+		timer := time.NewTimer(time.Minute * 1)
+		select {
+		case err = <-s.IrcObj.Errchan:
+			log.Println("Error:", err)
+			log.Println("Restarting the bot...")
+			time.AfterFunc(time.Second*30, func() {
+				select {
+				case <-s.Stopper:
+					return
+				default:
+					s.IrcObj.Start()
+				}
+			})
+		case <-s.Stopper:
+			timer.Stop()
+			log.Println("Stopping the bot...")
+			log.Println("Disconnecting...")
+			s.IrcObj.Disconnect()
+			return
+		//ping timer
+		case <-timer.C:
+			timer.Stop()
+			//pingpong stuff
+			select {
+			case <-s.extra.pp:
+				log.Println("Sending PING...")
+				s.IrcObj.Ping()
+			default:
+				log.Println("Got no Response...")
+			}
+		}
+
+	}
+}
+
+func (s *Settings) loopTimeZones() {
+	for i := 0; i < len(s.extra.zones); i++ {
+		dur, err := time.ParseDuration(s.extra.zones[i].Offset + "h")
 		if err != nil {
 			log.Fatal(err)
 		}
 		//Check if zone is past target
-		next = zones[i]
+		s.extra.next = s.extra.zones[i]
 		if i == 0 {
-			last = zones[len(zones)-1]
+			s.extra.last = s.extra.zones[len(s.extra.zones)-1]
 		} else {
-			last = zones[i-1]
+			s.extra.last = s.extra.zones[i-1]
 		}
 		if time.Now().UTC().Add(dur).Before(target) {
 			time.Sleep(time.Second * 2)
-			log.Println("Zone pending:", zones[i].Offset)
+			log.Println("Zone pending:", s.extra.zones[i].Offset)
 			humandur, err := durafmt.ParseString(target.Sub(time.Now().UTC().Add(dur)).String())
 			if err != nil {
 				log.Fatal(err)
 			}
-			msg := fmt.Sprintf("Next New Year in %s in %s", removeMilliseconds(humandur.String()), zones[i])
+			msg := fmt.Sprintf("Next New Year in %s in %s", removeMilliseconds(humandur.String()), s.extra.zones[i])
 			s.IrcObj.PrivMsgBulk(s.IrcChans, msg)
 			//Wait till Target in Timezone
 			timer := c.NewTimer(target.Sub(time.Now().UTC().Add(dur)))
@@ -308,104 +194,13 @@ wrap:
 			select {
 			case <-timer.C:
 				timer.Stop()
-				msg = fmt.Sprintf("Happy New Year in %s", zones[i])
+				msg = fmt.Sprintf("Happy New Year in %s", s.extra.zones[i])
 				s.IrcObj.PrivMsgBulk(s.IrcChans, msg)
-				log.Println("Announcing zone:", zones[i].Offset)
+				log.Println("Announcing zone:", s.extra.zones[i].Offset)
 			case <-s.Stopper:
 				timer.Stop()
 				return
 			}
 		}
 	}
-	s.IrcObj.PrivMsgBulk(s.IrcChans, fmt.Sprintf("That's it, Year %d is here AoE", target.Year()))
-	log.Println("All zones finished...")
-	target = target.AddDate(1, 0, 0)
-	log.Printf("Wrapping target date around to %d\n", target.Year())
-	goto wrap
-}
-
-func pingpong(c chan bool) {
-	select {
-	case c <- true:
-	default:
-		return
-	}
-}
-
-//Func for querying newyears in specified location
-func getNewYear(loc string, email string, server string) (string, error) {
-	var adress string
-	log.Println("Querying location:", loc)
-	maps := url.Values{}
-	maps.Add("q", loc)
-	maps.Add("format", "json")
-	maps.Add("accept-language", "en")
-	maps.Add("limit", "1")
-	maps.Add("email", email)
-	data, err := c.NominatimGetter(server + c.NominatimGeoCode + maps.Encode())
-	if err != nil {
-		log.Println(err)
-		return "", err
-	}
-	var mapj c.NominatimResults
-	if err = json.Unmarshal(data, &mapj); err != nil {
-		log.Println(err)
-		return "", err
-	}
-	if len(mapj) == 0 {
-		return "Couldn't find that place.", nil
-	}
-	adress = mapj[0].DisplayName
-	lat, err := strconv.ParseFloat(mapj[0].Lat, 64)
-	if err != nil {
-		return "", err
-	}
-	lon, err := strconv.ParseFloat(mapj[0].Lon, 64)
-	if err != nil {
-		return "", err
-	}
-	p := gotz.Point{
-		Lat: lat,
-		Lng: lon,
-	}
-	zone, err := gotz.GetZone(p)
-	if err != nil {
-		return "Couldn't get the timezone for that location.", nil
-	}
-	//RawOffset
-	offset, err := time.ParseDuration(fmt.Sprintf("%ds", getOffset(target, zone)))
-	if err != nil {
-		log.Println(err)
-		return "", err
-	}
-	//Check if past target
-	if time.Now().UTC().Add(offset).Before(target) {
-		humandur, err := durafmt.ParseString(target.Sub(time.Now().UTC().Add(offset)).String())
-		if err != nil {
-			log.Println(err)
-			return "", err
-		}
-		return fmt.Sprintf("New Year in %s will happen in %s", adress, removeMilliseconds(humandur.String())), nil
-	}
-	humandur, err := durafmt.ParseString(time.Now().UTC().Add(offset).Sub(target).String())
-	if err != nil {
-		log.Println(err)
-		return "", err
-	}
-	return fmt.Sprintf("New Year in %s happened %s ago", adress, removeMilliseconds(humandur.String())), nil
-}
-
-func removeMilliseconds(dur string) string {
-	arr := strings.Split(dur, " ")
-	if len(arr) < 3 {
-		return dur
-	}
-	return strings.Join(arr[:len(arr)-2], " ")
-}
-
-func getOffset(target time.Time, zone *time.Location) int {
-	_, offset := time.Date(target.Year(), target.Month(), target.Day(),
-		target.Hour(), target.Minute(), target.Second(),
-		target.Nanosecond(), zone).Zone()
-	return offset
 }
