@@ -239,36 +239,36 @@ func (w *Window) startClicked() {
 }
 
 func (w *Window) validateInputs() error {
-	nickreg := regexp.MustCompile("^\\S+$")
 	nick, err := w.nick.GetText()
 	fatal(err)
 	if nick == "" {
 		return fmt.Errorf("Empty nick")
 	}
+	nickreg := regexp.MustCompile("^\\A[a-z_\\-\\[\\]\\^{}|`][a-z0-9_\\-\\[\\]\\^{}|`]{2,15}\\z$")
 	if !nickreg.MatchString(nick) {
-		return fmt.Errorf("Nick contains whitespace characters")
+		return fmt.Errorf("Invalid nickname")
 	}
-	chanreg := regexp.MustCompile("^#+\\S+$")
 	chans, err := w.chans.GetText()
 	fatal(err)
+	chanreg := regexp.MustCompile("^([#&][^\\x07\\x2C\\s]{0,200})$")
 	for _, ch := range strings.Split(chans, ",") {
 		chClean := strings.TrimSpace(ch)
 		if !chanreg.MatchString(chClean) || len(chClean) <= 1 {
 			return fmt.Errorf("Invalid channel name: %s", chClean)
 		}
 	}
-	serverreg := regexp.MustCompile("^\\S+:\\d+$")
 	server, err := w.server.GetText()
 	fatal(err)
+	serverreg := regexp.MustCompile("^\\S+:\\d+$")
 	if !serverreg.MatchString(server) {
-		return fmt.Errorf("Invalid irc server name")
+		return fmt.Errorf("Invalid irc server url")
 	}
-	triggerreg := regexp.MustCompile("^\\S+$")
 	trigger, err := w.trigger.GetText()
 	fatal(err)
 	if len(trigger) <= 0 {
 		return fmt.Errorf("Empty trigger")
 	}
+	triggerreg := regexp.MustCompile("^\\S+$")
 	if !triggerreg.MatchString(trigger) {
 		return (fmt.Errorf("Trigger contains whitespace characters"))
 	}
@@ -286,7 +286,7 @@ func (w *Window) validateInputs() error {
 		return fmt.Errorf("You must enter valid email")
 	}
 	if err := checkmail.ValidateFormat(email); err != nil {
-		return fmt.Errorf("Invalid email adress")
+		return fmt.Errorf("Invalid email address")
 	}
 	return nil
 }

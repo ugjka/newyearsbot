@@ -68,7 +68,7 @@ func main() {
 		return
 	}
 	if err := checkmail.ValidateFormat(*ircEmail); err != nil {
-		fmt.Fprint(os.Stderr, "Error: Invalid email format\n")
+		fmt.Fprint(os.Stderr, "Error: Invalid email address\n")
 		flag.Usage()
 		return
 	}
@@ -77,9 +77,9 @@ func main() {
 		flag.Usage()
 		return
 	}
-	nickreg := regexp.MustCompile("^\\S+$")
+	nickreg := regexp.MustCompile("^\\A[a-z_\\-\\[\\]\\^{}|`][a-z0-9_\\-\\[\\]\\^{}|`]{2,15}\\z$")
 	if !nickreg.MatchString(*ircNick) {
-		fmt.Fprintf(os.Stderr, "Error: Nick contains whitespace\n")
+		fmt.Fprintf(os.Stderr, "Error: Invalid nickname\n")
 		flag.Usage()
 		return
 	}
@@ -88,7 +88,7 @@ func main() {
 		flag.Usage()
 		return
 	}
-	chanreg := regexp.MustCompile("^#+\\S+$")
+	chanreg := regexp.MustCompile("^([#&][^\\x07\\x2C\\s]{0,200})$")
 	for _, ch := range ircChansFlag {
 		if !chanreg.MatchString(ch) || len(ch) <= 1 {
 			fmt.Fprintf(os.Stderr, "Error: Invalid channel name: %s\n", ch)
@@ -103,7 +103,7 @@ func main() {
 	}
 	serverreg := regexp.MustCompile("^\\S+:\\d+$")
 	if !serverreg.MatchString(*ircServer) {
-		fmt.Fprintf(os.Stderr, "Error: Invalid irc server name\n")
+		fmt.Fprintf(os.Stderr, "Error: Invalid irc server url\n")
 		flag.Usage()
 		return
 	}
