@@ -13,6 +13,6 @@ func (l LogChan) Write(p []byte) (n int, err error) {
 }
 
 //NewLogChan make new log channel
-func NewLogChan() LogChan {
+func newLogChan() LogChan {
 	return make(chan string, logChanLen)
 }

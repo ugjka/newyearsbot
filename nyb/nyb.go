@@ -49,7 +49,7 @@ func New(nick string, chans []string, trigger string, server string, tls bool, e
 		server,
 		trigger,
 		tls,
-		NewLogChan(),
+		newLogChan(),
 		make(chan bool),
 		&irc.Connection{},
 		email,
