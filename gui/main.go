@@ -253,7 +253,7 @@ func (w *Window) validateInputs() error {
 	chanreg := regexp.MustCompile("^([#&][^\\x07\\x2C\\s]{0,200})$")
 	for _, ch := range strings.Split(chans, ",") {
 		chClean := strings.TrimSpace(ch)
-		if !chanreg.MatchString(chClean) || len(chClean) <= 1 {
+		if !chanreg.MatchString(chClean) {
 			return fmt.Errorf("Invalid channel name: %s", chClean)
 		}
 	}
@@ -265,7 +265,7 @@ func (w *Window) validateInputs() error {
 	}
 	trigger, err := w.trigger.GetText()
 	fatal(err)
-	if len(trigger) <= 0 {
+	if trigger == "" {
 		return fmt.Errorf("Empty trigger")
 	}
 	triggerreg := regexp.MustCompile("^\\S+$")

@@ -83,14 +83,14 @@ func main() {
 		flag.Usage()
 		return
 	}
-	if len(ircChansFlag) <= 0 {
+	if len(ircChansFlag) == 0 {
 		fmt.Fprintf(os.Stderr, "Error: No channels defined\n")
 		flag.Usage()
 		return
 	}
 	chanreg := regexp.MustCompile("^([#&][^\\x07\\x2C\\s]{0,200})$")
 	for _, ch := range ircChansFlag {
-		if !chanreg.MatchString(ch) || len(ch) <= 1 {
+		if !chanreg.MatchString(ch) {
 			fmt.Fprintf(os.Stderr, "Error: Invalid channel name: %s\n", ch)
 			flag.Usage()
 			return
@@ -107,7 +107,7 @@ func main() {
 		flag.Usage()
 		return
 	}
-	if len(*ircTrigger) <= 0 {
+	if *ircTrigger == "" {
 		fmt.Fprintf(os.Stderr, "Error: No trigger defined\n")
 		flag.Usage()
 		return
