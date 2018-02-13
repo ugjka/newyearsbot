@@ -22,20 +22,20 @@ type TZ struct {
 }
 
 func (t TZ) String() (x string) {
-	for i, k := range t.Countries {
-		x += fmt.Sprintf("%s", k.Name)
-		for i, k1 := range k.Cities {
-			if k1 == "" {
+	for i, country := range t.Countries {
+		x += fmt.Sprintf("%s", country.Name)
+		for i, city := range country.Cities {
+			if city == "" {
 				continue
 			}
 			if i == 0 {
 				x += " ("
 			}
-			x += fmt.Sprintf("%s", k1)
-			if i >= 0 && i < len(k.Cities)-1 {
+			x += fmt.Sprintf("%s", city)
+			if i >= 0 && i < len(country.Cities)-1 {
 				x += ", "
 			}
-			if i == len(k.Cities)-1 {
+			if i == len(country.Cities)-1 {
 				x += ")"
 			}
 		}
@@ -84,8 +84,8 @@ func (i *IrcChans) Set(value string) error {
 	if len(*i) > 0 {
 		return errors.New("interval flag already set")
 	}
-	for _, dt := range strings.Split(value, ", ") {
-		*i = append(*i, dt)
+	for _, dt := range strings.Split(value, ",") {
+		*i = append(*i, strings.TrimSpace(dt))
 	}
 	return nil
 }
