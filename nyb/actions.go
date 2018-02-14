@@ -71,11 +71,11 @@ func (s *Settings) addTriggers() {
 			if err != nil {
 				return
 			}
-			if time.Now().UTC().Add(dur).After(target) {
+			if timeNow().UTC().Add(dur).After(target) {
 				bot.Reply(msg, fmt.Sprintf("No more next, %d is here AoE", target.Year()))
 				return
 			}
-			humandur, err := durafmt.ParseString(target.Sub(time.Now().UTC().Add(dur)).String())
+			humandur, err := durafmt.ParseString(target.Sub(timeNow().UTC().Add(dur)).String())
 			if err != nil {
 				return
 			}
@@ -95,12 +95,12 @@ func (s *Settings) addTriggers() {
 			if err != nil {
 				return
 			}
-			humandur, err := durafmt.ParseString(time.Now().UTC().Add(dur).Sub(target).String())
+			humandur, err := durafmt.ParseString(timeNow().UTC().Add(dur).Sub(target).String())
 			if err != nil {
 				return
 			}
 			if s.extra.last.Offset == "-12" {
-				humandur, err = durafmt.ParseString(time.Now().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)).String())
+				humandur, err = durafmt.ParseString(timeNow().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)).String())
 				if err != nil {
 					return
 				}

@@ -179,17 +179,17 @@ func (s *Settings) loopTimeZones() {
 		} else {
 			s.extra.last = zones[i-1]
 		}
-		if time.Now().UTC().Add(dur).Before(target) {
+		if timeNow().UTC().Add(dur).Before(target) {
 			time.Sleep(time.Second * 2)
 			log.Println("Zone pending:", zones[i].Offset)
-			humandur, err := durafmt.ParseString(target.Sub(time.Now().UTC().Add(dur)).String())
+			humandur, err := durafmt.ParseString(target.Sub(timeNow().UTC().Add(dur)).String())
 			if err != nil {
 				log.Fatal(err)
 			}
 			msg := fmt.Sprintf("Next New Year in %s in %s", removeMilliseconds(humandur.String()), zones[i])
 			bot.PrivMsgBulk(s.IrcChans, msg)
 			//Wait till Target in Timezone
-			timer := c.NewTimer(target.Sub(time.Now().UTC().Add(dur)))
+			timer := c.NewTimer(target.Sub(timeNow().UTC().Add(dur)))
 
 			select {
 			case <-timer.C:

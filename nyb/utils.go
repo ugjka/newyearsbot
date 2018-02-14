@@ -61,9 +61,9 @@ func getNewYear(loc string, email string, server string) (string, error) {
 		return "", err
 	}
 	//Check if past target
-	if time.Now().UTC().Add(offset).Before(target) {
+	if timeNow().UTC().Add(offset).Before(target) {
 		humandur, err := durafmt.ParseString(target.
-			Sub(time.Now().UTC().Add(offset)).String())
+			Sub(timeNow().UTC().Add(offset)).String())
 		if err != nil {
 			log.Println(err)
 			return "", err
@@ -71,7 +71,7 @@ func getNewYear(loc string, email string, server string) (string, error) {
 		return fmt.Sprintf("New Year in %s will happen in %s", adress,
 			removeMilliseconds(humandur.String())), nil
 	}
-	humandur, err := durafmt.ParseString(time.Now().UTC().Add(offset).Sub(target).String())
+	humandur, err := durafmt.ParseString(timeNow().UTC().Add(offset).Sub(target).String())
 	if err != nil {
 		log.Println(err)
 		return "", err
