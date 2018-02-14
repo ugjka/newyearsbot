@@ -52,7 +52,7 @@ func New(nick string, chans []string, trigger string, server string,
 		tls,
 		newLogChan(),
 		make(chan bool),
-		&irc.Connection{},
+		irc.New(nick, "nyebot", server, tls),
 		email,
 		nominatim,
 		extra{
@@ -72,7 +72,6 @@ func (s *Settings) Start() {
 	//
 	//Set up irc
 	//
-	s.IrcObj = irc.New(s.IrcNick, "nyebot", s.IrcServer, s.UseTLS)
 	bot := s.IrcObj
 	//Add Callbacs
 	s.addCallbacks()
