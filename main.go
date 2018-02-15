@@ -30,6 +30,7 @@ CMD Options:
 -chans			comma seperated list of irc channels to join eg. "#test, #test2"
 -botnick		nick for the bot
 -email			Refferer Email for Nominatim
+
 [optional]
 -ircserver		irc server to use (Default: irc.freenode.net:7000)
 -trigger		trigger used for queries. (Default: hny)
