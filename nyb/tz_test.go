@@ -12,7 +12,10 @@ func TestZones(t *testing.T) {
 	if err != nil {
 		t.Errorf("Corrupted zone data: %s", err)
 	}
-	for _, zone := range zones {
+	for i, zone := range zones {
+		if zone.Offset == "" {
+			t.Errorf("Empty zone offset at: %d", i)
+		}
 		_, err := time.ParseDuration(zone.Offset + "h")
 		if err != nil {
 			t.Errorf("Could not parse offset %s: Err: %s", zone.Offset, err)
