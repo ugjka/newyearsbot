@@ -16,18 +16,18 @@ import (
 )
 
 func (s *Settings) addCallbacks() {
-	bot := s.IrcConn
+	bot := s.Bot
 	//On any message send a signal to ping timer to be ready
 	bot.AddCallback(dumbirc.ANYMESSAGE, func(msg dumbirc.Message) {
-		pingpong(s.extra.pp)
+		pingpong(s.pp)
 	})
 
 	//Join channels on WELCOME
 	bot.AddCallback(dumbirc.WELCOME, func(msg dumbirc.Message) {
 		bot.Join(s.IrcChans)
 		//Prevent early start
-		s.extra.once.Do(func() {
-			close(s.extra.start)
+		s.Do(func() {
+			close(s.start)
 		})
 	})
 	//Reply ping messages with pong
@@ -56,7 +56,7 @@ func (s *Settings) addCallbacks() {
 }
 
 func (s *Settings) addTriggers() {
-	bot := s.IrcConn
+	bot := s.Bot
 	//Trigger for !help
 	stHelp := "%s: Query location: '%s <location>', Next zone: '%s !next', Last zone: '%s !last', Source code: https://github.com/ugjka/newyearsbot"
 	bot.AddTrigger(dumbirc.Trigger{
@@ -76,7 +76,7 @@ func (s *Settings) addTriggers() {
 		},
 		Response: func(msg dumbirc.Message) {
 			log.Println("Querying !next...")
-			dur, err := time.ParseDuration(s.extra.next.Offset + "h")
+			dur, err := time.ParseDuration(s.next.Offset + "h")
 			if err != nil {
 				return
 			}
@@ -86,7 +86,7 @@ func (s *Settings) addTriggers() {
 			}
 			humandur := durafmt.Parse(target.Sub(time.Now().UTC().Add(dur)))
 			bot.Reply(msg, fmt.Sprintf("Next New Year in %s in %s",
-				removeMilliseconds(humandur), s.extra.next.String()))
+				removeMilliseconds(humandur), s.next.String()))
 		},
 	})
 	//Trigger for !last
@@ -97,16 +97,16 @@ func (s *Settings) addTriggers() {
 		},
 		Response: func(msg dumbirc.Message) {
 			log.Println("Querying !last...")
-			dur, err := time.ParseDuration(s.extra.last.Offset + "h")
+			dur, err := time.ParseDuration(s.last.Offset + "h")
 			if err != nil {
 				return
 			}
 			humandur := durafmt.Parse(time.Now().UTC().Add(dur).Sub(target))
-			if s.extra.last.Offset == "-12" {
+			if s.last.Offset == "-12" {
 				humandur = durafmt.Parse(time.Now().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
 			}
 			bot.Reply(msg, fmt.Sprintf("Last NewYear %s ago in %s",
-				removeMilliseconds(humandur), s.extra.last.String()))
+				removeMilliseconds(humandur), s.last.String()))
 		},
 	})
 	//Trigger for location queries
@@ -162,19 +162,18 @@ func (s *Settings) getNewYear(location string) (string, error) {
 		log.Println(err)
 		return "", err
 	}
-	nominatimResp := s.extra.nominatimResult
-	if err = json.Unmarshal(data, &nominatimResp); err != nil {
+	if err = json.Unmarshal(data, &s.nominatimResult); err != nil {
 		log.Println(err)
 		return "", err
 	}
-	if len(nominatimResp) == 0 {
+	if len(s.nominatimResult) == 0 {
 		return "", errNoPlace
 	}
-	lat, err := strconv.ParseFloat(nominatimResp[0].Lat, 64)
+	lat, err := strconv.ParseFloat(s.nominatimResult[0].Lat, 64)
 	if err != nil {
 		return "", err
 	}
-	lng, err := strconv.ParseFloat(nominatimResp[0].Lon, 64)
+	lng, err := strconv.ParseFloat(s.nominatimResult[0].Lon, 64)
 	if err != nil {
 		return "", err
 	}
@@ -192,7 +191,7 @@ func (s *Settings) getNewYear(location string) (string, error) {
 		log.Println(err)
 		return "", err
 	}
-	adress := nominatimResp[0].DisplayName
+	adress := s.nominatimResult[0].DisplayName
 	//Check if past target
 	if time.Now().UTC().Add(offset).Before(target) {
 		humandur := durafmt.Parse(target.Sub(time.Now().UTC().Add(offset)))

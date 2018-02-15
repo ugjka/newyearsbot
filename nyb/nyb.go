@@ -19,27 +19,27 @@ type Settings struct {
 	IrcServer  string
 	IrcTrigger string
 	IrcUseTLS  bool
-	IrcConn    *dumbirc.Connection
+	Bot        *dumbirc.Connection
 	LogChan    LogChan
 	Stopper    chan bool
 	Email      string
 	Nominatim  string
-	extra      extra
+	extra
 }
 
 type extra struct {
-	zones TZS
-	last  TZ
-	next  TZ
+	zones           TZS
+	last            TZ
+	next            TZ
+	nominatimResult NominatimResults
 	//We close this when we get WELCOME msg on join in irc
 	start chan bool
-	once  sync.Once
 	//This is used to prevent sending ping before we
 	//have response from previous ping (any activity on irc)
 	//pingpong(pp) sends a signal to ping timer
-	pp              chan bool
-	wait            sync.WaitGroup
-	nominatimResult NominatimResults
+	pp chan bool
+	sync.Once
+	sync.WaitGroup
 }
 
 //New creates new bot
@@ -71,35 +71,35 @@ func (s *Settings) Start() {
 	log.Println("Starting the bot...")
 
 	//To exit gracefully we need to wait
-	defer s.extra.wait.Wait()
+	defer s.Wait()
 	//
 	//Set up irc
 	//
-	bot := s.IrcConn
+	bot := s.Bot
 	//Add Callbacs
 	s.addCallbacks()
 	//Add Triggers
 	s.addTriggers()
 
 	//Reconnect logic and Irc Pinger
-	s.extra.wait.Add(1)
+	s.Add(1)
 	go s.ircControl()
 	//Start irc
 	bot.Start()
 
 	//Starts when joined, see once.Do
 	select {
-	case <-s.extra.start:
+	case <-s.start:
 		log.Println("Got start...")
 	case <-s.Stopper:
 		return
 	}
 	//Load timezones
-	if err := json.Unmarshal([]byte(Zones), &s.extra.zones); err != nil {
+	if err := json.Unmarshal([]byte(Zones), &s.zones); err != nil {
 		log.Fatal(err)
 	}
 	//Sort them
-	sort.Sort(sort.Reverse(s.extra.zones))
+	sort.Sort(sort.Reverse(s.zones))
 
 	//Zone Looper
 	for {
@@ -130,8 +130,8 @@ var reconnectInterval = time.Second * 30
 var pingInterval = time.Minute * 1
 
 func (s *Settings) ircControl() {
-	bot := s.IrcConn
-	defer s.extra.wait.Done()
+	bot := s.Bot
+	defer s.Done()
 	for {
 		timer := time.NewTimer(pingInterval)
 		select {
@@ -157,7 +157,7 @@ func (s *Settings) ircControl() {
 			timer.Stop()
 			//pingpong stuff
 			select {
-			case <-s.extra.pp:
+			case <-s.pp:
 				log.Println("Sending PING...")
 				bot.Ping()
 			default:
@@ -172,19 +172,19 @@ var stNextNewYear = "Next New Year in %s in %s"
 var stHappyNewYear = "Happy New Year in %s"
 
 func (s *Settings) loopTimeZones() {
-	zones := s.extra.zones
-	bot := s.IrcConn
+	zones := s.zones
+	bot := s.Bot
 	for i := 0; i < len(zones); i++ {
 		dur, err := time.ParseDuration(zones[i].Offset + "h")
 		if err != nil {
 			log.Fatal(err)
 		}
 		//Check if zone is past target
-		s.extra.next = zones[i]
+		s.next = zones[i]
 		if i == 0 {
-			s.extra.last = zones[len(zones)-1]
+			s.last = zones[len(zones)-1]
 		} else {
-			s.extra.last = zones[i-1]
+			s.last = zones[i-1]
 		}
 		if time.Now().UTC().Add(dur).Before(target) {
 			time.Sleep(time.Second * 2)
