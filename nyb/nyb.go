@@ -133,7 +133,7 @@ func (s *Settings) ircControl() {
 	bot := s.IrcConn
 	defer s.extra.wait.Done()
 	for {
-		timer := time.NewTimer(pingInterval * 1)
+		timer := time.NewTimer(pingInterval)
 		select {
 		case err := <-bot.Errchan:
 			log.Println("Error:", err)
