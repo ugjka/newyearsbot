@@ -54,14 +54,14 @@ func (s *Settings) addCallbacks() {
 func (s *Settings) addTriggers() {
 	bot := s.IrcConn
 	//Trigger for !help
+	stHelp := "%s: Query location: '%s <location>', Next zone: '%s !next', Last zone: '%s !last', Source code: https://github.com/ugjka/newyearsbot"
 	bot.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg dumbirc.Message) bool {
 			return msg.Command == "PRIVMSG" &&
 				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !help", s.IrcTrigger))
 		},
 		Response: func(msg dumbirc.Message) {
-			bot.Reply(msg, fmt.Sprintf("%s: Query location: '%s <location>', Next zone: '%s !next', Last zone: '%s !last', Source code: https://github.com/ugjka/newyearsbot",
-				msg.Name, s.IrcTrigger, s.IrcTrigger, s.IrcTrigger))
+			bot.Reply(msg, fmt.Sprintf(stHelp, msg.Name, s.IrcTrigger, s.IrcTrigger, s.IrcTrigger))
 		},
 	})
 	//Trigger for !next
