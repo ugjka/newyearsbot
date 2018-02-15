@@ -37,8 +37,9 @@ type extra struct {
 	//This is used to prevent sending ping before we
 	//have response from previous ping (any activity on irc)
 	//pingpong(pp) sends a signal to ping timer
-	pp   chan bool
-	wait sync.WaitGroup
+	pp              chan bool
+	wait            sync.WaitGroup
+	nominatimResult NominatimResults
 }
 
 //New creates new bot

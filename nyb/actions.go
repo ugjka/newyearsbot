@@ -40,13 +40,17 @@ func (s *Settings) addCallbacks() {
 		log.Println("Got PONG...")
 	})
 	//Change nick if taken
+	//This could loop forever in some cases
+	//Could be improved
 	bot.AddCallback(dumbirc.NICKTAKEN, func(msg dumbirc.Message) {
 		log.Println("Nick taken, changing...")
-		if strings.HasSuffix(bot.Nick, "_") {
+		time.Sleep(time.Second * 5)
+		if strings.HasSuffix(bot.Nick, "__") {
 			bot.Nick = bot.Nick[:len(bot.Nick)-1]
 		} else {
 			bot.Nick += "_"
 		}
+		log.Printf("New nick: %s", bot.Nick)
 		bot.NewNick(bot.Nick)
 	})
 }
@@ -136,21 +140,29 @@ var (
 	errNoPlace = errors.New("Couldn't find that place")
 )
 
-//Func for querying newyears in specified location
-func (s *Settings) getNewYear(location string) (string, error) {
-	log.Println("Querying location:", location)
+//Build nominatim api request url
+func (s *Settings) getNominatimReqURL(location *string) string {
 	maps := url.Values{}
-	maps.Add("q", location)
+	maps.Add("q", *location)
 	maps.Add("format", "json")
 	maps.Add("accept-language", "en")
 	maps.Add("limit", "1")
 	maps.Add("email", s.Email)
-	data, err := NominatimGetter(s.Nominatim + NominatimGeoCode + maps.Encode())
+	return s.Nominatim + NominatimGeoCode + maps.Encode()
+}
+
+var stNewYearWillHappen = "New Year in %s will happen in %s"
+var stNewYearHappenned = "New Year in %s happened %s ago"
+
+//Func for querying newyears in specified location
+func (s *Settings) getNewYear(location string) (string, error) {
+	log.Println("Querying location:", location)
+	data, err := NominatimGetter(s.getNominatimReqURL(&location))
 	if err != nil {
 		log.Println(err)
 		return "", err
 	}
-	var nominatimResp NominatimResults
+	nominatimResp := s.extra.nominatimResult
 	if err = json.Unmarshal(data, &nominatimResp); err != nil {
 		log.Println(err)
 		return "", err
@@ -184,10 +196,8 @@ func (s *Settings) getNewYear(location string) (string, error) {
 	//Check if past target
 	if time.Now().UTC().Add(offset).Before(target) {
 		humandur := durafmt.Parse(target.Sub(time.Now().UTC().Add(offset)))
-		return fmt.Sprintf("New Year in %s will happen in %s", adress,
-			removeMilliseconds(humandur)), nil
+		return fmt.Sprintf(stNewYearWillHappen, adress, removeMilliseconds(humandur)), nil
 	}
 	humandur := durafmt.Parse(time.Now().UTC().Add(offset).Sub(target))
-	return fmt.Sprintf("New Year in %s happened %s ago", adress,
-		removeMilliseconds(humandur)), nil
+	return fmt.Sprintf(stNewYearHappenned, adress, removeMilliseconds(humandur)), nil
 }
