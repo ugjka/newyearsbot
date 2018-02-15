@@ -29,3 +29,15 @@ func pingpong(c chan bool) {
 		return
 	}
 }
+
+func changeNick(n string) string {
+	if len(n) < 16 {
+		n += "_"
+		return n
+	}
+	n = strings.TrimRight(n, "_")
+	if len(n) > 12 {
+		n = n[:12] + "_"
+	}
+	return n
+}

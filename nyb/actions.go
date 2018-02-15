@@ -44,11 +44,7 @@ func (s *Settings) addCallbacks() {
 	bot.AddCallback(dumbirc.NICKTAKEN, func(msg dumbirc.Message) {
 		log.Println("Nick taken, changing...")
 		time.Sleep(time.Second * 5)
-		if strings.HasSuffix(bot.Nick, "__") {
-			bot.Nick = bot.Nick[:len(bot.Nick)-1]
-		} else {
-			bot.Nick += "_"
-		}
+		bot.Nick = changeNick(bot.Nick)
 		log.Printf("New nick: %s", bot.Nick)
 		bot.NewNick(bot.Nick)
 	})
