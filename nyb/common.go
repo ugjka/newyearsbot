@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"sync"
@@ -147,29 +148,36 @@ type NominatimResults []NominatimResult
 //NominatimGeoCode const
 const NominatimGeoCode = "/search?"
 
+//Avoid allocations, reuse stuff
 var nominatim = struct {
 	cache map[string][]byte
+	req   *http.Request
 	sync.RWMutex
 	http.Client
 }{
 	cache: make(map[string][]byte),
 }
 
+func init() {
+	nominatim.req, _ = http.NewRequest("GET", "", nil)
+	nominatim.req.Header.Set("User-Agent", "newyearsbot (irc bot) https://github.com/ugjka/newyearsbot")
+}
+
 //NominatimGetter make an api request
-func NominatimGetter(url string) (data []byte, err error) {
+func NominatimGetter(urlString string) (data []byte, err error) {
 	nominatim.RLock()
-	if v, ok := nominatim.cache[url]; ok {
+	if v, ok := nominatim.cache[urlString]; ok {
 		nominatim.RUnlock()
 		log.Println("Nominatim: using cached result")
 		return v, nil
 	}
 	nominatim.RUnlock()
-	req, err := http.NewRequest("GET", url, nil)
+	url, err := url.Parse(urlString)
 	if err != nil {
-		return
+		return nil, err
 	}
-	req.Header.Set("User-Agent", "newyearsbot (irc bot) https://github.com/ugjka/newyearsbot")
-	get, err := nominatim.Do(req)
+	nominatim.req.URL = url
+	get, err := nominatim.Do(nominatim.req)
 	if err != nil {
 		return
 	}
@@ -182,7 +190,7 @@ func NominatimGetter(url string) (data []byte, err error) {
 		return
 	}
 	nominatim.Lock()
-	nominatim.cache[url] = data
+	nominatim.cache[urlString] = data
 	nominatim.Unlock()
 	return
 }
