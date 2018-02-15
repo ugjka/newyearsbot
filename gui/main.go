@@ -182,7 +182,7 @@ func (w *Window) initWidgets() {
 	fatal(err)
 	w.nominatim.SetText(w.ircNominatim)
 	grid2.Attach(w.nominatim, 0, 11, 1, 1)
-	grid2.Attach(labelNew("Nominatim refferer Email:"), 0, 12, 1, 1)
+	grid2.Attach(labelNew("Nominatim referrer email:"), 0, 12, 1, 1)
 	w.email, err = gtk.EntryNew()
 	fatal(err)
 	w.email.SetText(w.ircEmail)
@@ -261,7 +261,7 @@ func (w *Window) validateInputs() error {
 	fatal(err)
 	serverreg := regexp.MustCompile("^\\S+:\\d+$")
 	if !serverreg.MatchString(server) {
-		return fmt.Errorf("Invalid irc server url")
+		return fmt.Errorf("Invalid irc server address")
 	}
 	trigger, err := w.trigger.GetText()
 	fatal(err)
