@@ -78,7 +78,6 @@ func (s *Settings) Start() {
 	s.addCallbacks()
 	s.addTriggers()
 
-	s.Add(1)
 	go s.ircControl()
 
 	bot.Start()
@@ -122,8 +121,9 @@ var reconnectInterval = time.Second * 30
 var pingInterval = time.Minute * 1
 
 func (s *Settings) ircControl() {
-	bot := s.Bot
+	s.Add(1)
 	defer s.Done()
+	bot := s.Bot
 	for {
 		timer := time.NewTimer(pingInterval)
 		select {
