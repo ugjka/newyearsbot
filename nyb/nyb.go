@@ -61,6 +61,8 @@ func New(nick string, chans []string, trigger string, server string,
 	}
 }
 
+var stFinished = "That's it, Year %d is here AoE"
+
 //Start starts the bot
 func (s *Settings) Start() {
 	log.SetOutput(s.LogChan)
@@ -105,7 +107,7 @@ func (s *Settings) Start() {
 			return
 		default:
 		}
-		bot.PrivMsgBulk(s.IrcChans, fmt.Sprintf("That's it, Year %d is here AoE", target.Year()))
+		bot.PrivMsgBulk(s.IrcChans, fmt.Sprintf(stFinished, target.Year()))
 		log.Println("All zones finished...")
 		target = target.AddDate(1, 0, 0)
 		log.Printf("Wrapping target date around to %d\n", target.Year())
@@ -122,17 +124,20 @@ func (s *Settings) Stop() {
 	}
 }
 
+var reconnectInterval = time.Second * 30
+var pingInterval = time.Minute * 1
+
 func (s *Settings) ircControl() {
 	bot := s.IrcConn
 	var err error
 	defer s.extra.wait.Done()
 	for {
-		timer := time.NewTimer(time.Minute * 1)
+		timer := time.NewTimer(pingInterval * 1)
 		select {
 		case err = <-bot.Errchan:
 			log.Println("Error:", err)
 			log.Println("Recconecting to irc in 30secs...")
-			time.AfterFunc(time.Second*30, func() {
+			time.AfterFunc(reconnectInterval, func() {
 				select {
 				case <-s.Stopper:
 					return
@@ -162,6 +167,9 @@ func (s *Settings) ircControl() {
 	}
 }
 
+var stNextNewYear = "Next New Year in %s in %s"
+var stHappyNewYear = "Happy New Year in %s"
+
 func (s *Settings) loopTimeZones() {
 	zones := s.extra.zones
 	bot := s.IrcConn
@@ -181,7 +189,7 @@ func (s *Settings) loopTimeZones() {
 			time.Sleep(time.Second * 2)
 			log.Println("Zone pending:", zones[i].Offset)
 			humandur := durafmt.Parse(target.Sub(time.Now().UTC().Add(dur)))
-			msg := fmt.Sprintf("Next New Year in %s in %s", removeMilliseconds(humandur), zones[i])
+			msg := fmt.Sprintf(stNextNewYear, removeMilliseconds(humandur), zones[i])
 			bot.PrivMsgBulk(s.IrcChans, msg)
 			//Wait till Target in Timezone
 			timer := NewTimer(target.Sub(time.Now().UTC().Add(dur)))
@@ -189,7 +197,7 @@ func (s *Settings) loopTimeZones() {
 			select {
 			case <-timer.C:
 				timer.Stop()
-				msg = fmt.Sprintf("Happy New Year in %s", zones[i])
+				msg = fmt.Sprintf(stHappyNewYear, zones[i])
 				bot.PrivMsgBulk(s.IrcChans, msg)
 				log.Println("Announcing zone:", zones[i].Offset)
 			case <-s.Stopper:
