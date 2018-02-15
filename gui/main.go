@@ -55,7 +55,7 @@ func main() {
 				select {
 				case <-s.logStopper:
 					return
-				case logmsg = <-bot.LogCh:
+				case logmsg = <-bot.LogChan:
 					_, err := glib.IdleAdd(s.addMessage, logmsg)
 					fatal(err)
 				}

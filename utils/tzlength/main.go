@@ -9,13 +9,12 @@ import (
 	"sort"
 	"text/tabwriter"
 
-	c "github.com/ugjka/newyearsbot/common"
-	nyb "github.com/ugjka/newyearsbot/nyb"
+	"github.com/ugjka/newyearsbot/nyb"
 )
 
 func main() {
-	var zones c.TZS
-	err := json.Unmarshal([]byte(nyb.TZ), &zones)
+	var zones nyb.TZS
+	err := json.Unmarshal([]byte(nyb.Zones), &zones)
 	if err != nil {
 		log.Fatal(err)
 	}

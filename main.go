@@ -10,13 +10,12 @@ import (
 	"sync"
 
 	"github.com/badoux/checkmail"
-	c "github.com/ugjka/newyearsbot/common"
 	nyb "github.com/ugjka/newyearsbot/nyb"
 	"mvdan.cc/xurls"
 )
 
 //Custom flag to get irc channelsn to join
-var ircChansFlag c.IrcChans
+var ircChansFlag nyb.IrcChans
 
 func init() {
 	flag.Var(&ircChansFlag, "chans", "comma seperated list of irc channels to join")
@@ -27,12 +26,14 @@ This bot announces new years as they happen in each timezone
 You can query location using "hny" trigger for example "hny New York"
 
 CMD Options:
+[mandatory]
 -chans			comma seperated list of irc channels to join eg. "#test, #test2"
--ircserver		irc server to use irc.example.com:7000 (must be TLS enabled)
 -botnick		nick for the bot
--trigger		trigger used for queries
--usetls			use tls encryption for irc
 -email			Refferer Email for Nominatim
+[optional]
+-ircserver		irc server to use (Default: irc.freenode.net:7000)
+-trigger		trigger used for queries. (Default: hny)
+-usetls			use tls encryption for irc. (Default: true)
 -nominatim		Nominatim server to use (Default: http://nominatim.openstreetmap.org)
 `
 
@@ -128,7 +129,7 @@ func main() {
 		defer wait.Done()
 		for {
 			select {
-			case msg, ok := <-bot.LogCh:
+			case msg, ok := <-bot.LogChan:
 				if !ok {
 					return
 				}
@@ -143,6 +144,6 @@ func main() {
 	}()
 	bot.Start()
 	//close and wait
-	close(bot.LogCh)
+	close(bot.LogChan)
 	wait.Wait()
 }

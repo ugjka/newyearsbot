@@ -1,24 +1,29 @@
 package nyb
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
+	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/hako/durafmt"
-	irc "github.com/ugjka/dumbirc"
+	"github.com/ugjka/dumbirc"
+	"github.com/ugjka/go-tz"
 )
 
 func (s *Settings) addCallbacks() {
-	bot := s.IrcObj
+	bot := s.IrcConn
 	//On any message send a signal to ping timer to be ready
-	bot.AddCallback(irc.ANYMESSAGE, func(msg irc.Message) {
+	bot.AddCallback(dumbirc.ANYMESSAGE, func(msg dumbirc.Message) {
 		pingpong(s.extra.pp)
 	})
 
 	//Join channels on WELCOME
-	bot.AddCallback(irc.WELCOME, func(msg irc.Message) {
+	bot.AddCallback(dumbirc.WELCOME, func(msg dumbirc.Message) {
 		bot.Join(s.IrcChans)
 		//Prevent early start
 		s.extra.once.Do(func() {
@@ -26,16 +31,16 @@ func (s *Settings) addCallbacks() {
 		})
 	})
 	//Reply ping messages with pong
-	bot.AddCallback(irc.PING, func(msg irc.Message) {
+	bot.AddCallback(dumbirc.PING, func(msg dumbirc.Message) {
 		log.Println("PING recieved, sending PONG")
 		bot.Pong()
 	})
 	//Log pongs
-	bot.AddCallback(irc.PONG, func(msg irc.Message) {
+	bot.AddCallback(dumbirc.PONG, func(msg dumbirc.Message) {
 		log.Println("Got PONG...")
 	})
 	//Change nick if taken
-	bot.AddCallback(irc.NICKTAKEN, func(msg irc.Message) {
+	bot.AddCallback(dumbirc.NICKTAKEN, func(msg dumbirc.Message) {
 		log.Println("Nick taken, changing...")
 		if strings.HasSuffix(bot.Nick, "_") {
 			bot.Nick = bot.Nick[:len(bot.Nick)-1]
@@ -47,25 +52,25 @@ func (s *Settings) addCallbacks() {
 }
 
 func (s *Settings) addTriggers() {
-	bot := s.IrcObj
+	bot := s.IrcConn
 	//Trigger for !help
-	bot.AddTrigger(irc.Trigger{
-		Condition: func(msg irc.Message) bool {
+	bot.AddTrigger(dumbirc.Trigger{
+		Condition: func(msg dumbirc.Message) bool {
 			return msg.Command == "PRIVMSG" &&
 				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !help", s.IrcTrigger))
 		},
-		Response: func(msg irc.Message) {
+		Response: func(msg dumbirc.Message) {
 			bot.Reply(msg, fmt.Sprintf("%s: Query location: '%s <location>', Next zone: '%s !next', Last zone: '%s !last', Source code: https://github.com/ugjka/newyearsbot",
 				msg.Name, s.IrcTrigger, s.IrcTrigger, s.IrcTrigger))
 		},
 	})
 	//Trigger for !next
-	bot.AddTrigger(irc.Trigger{
-		Condition: func(msg irc.Message) bool {
+	bot.AddTrigger(dumbirc.Trigger{
+		Condition: func(msg dumbirc.Message) bool {
 			return msg.Command == "PRIVMSG" &&
 				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !next", s.IrcTrigger))
 		},
-		Response: func(msg irc.Message) {
+		Response: func(msg dumbirc.Message) {
 			log.Println("Querying !next...")
 			dur, err := time.ParseDuration(s.extra.next.Offset + "h")
 			if err != nil {
@@ -75,51 +80,47 @@ func (s *Settings) addTriggers() {
 				bot.Reply(msg, fmt.Sprintf("No more next, %d is here AoE", target.Year()))
 				return
 			}
-			humandur, err := durafmt.ParseString(target.Sub(time.Now().UTC().Add(dur)).String())
-			if err != nil {
-				return
-			}
+			humandur := durafmt.Parse(target.Sub(time.Now().UTC().Add(dur)))
 			bot.Reply(msg, fmt.Sprintf("Next New Year in %s in %s",
-				removeMilliseconds(humandur.String()), s.extra.next.String()))
+				removeMilliseconds(humandur), s.extra.next.String()))
 		},
 	})
 	//Trigger for !last
-	bot.AddTrigger(irc.Trigger{
-		Condition: func(msg irc.Message) bool {
+	bot.AddTrigger(dumbirc.Trigger{
+		Condition: func(msg dumbirc.Message) bool {
 			return msg.Command == "PRIVMSG" &&
 				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !last", s.IrcTrigger))
 		},
-		Response: func(msg irc.Message) {
+		Response: func(msg dumbirc.Message) {
 			log.Println("Querying !last...")
 			dur, err := time.ParseDuration(s.extra.last.Offset + "h")
 			if err != nil {
 				return
 			}
-			humandur, err := durafmt.ParseString(time.Now().UTC().Add(dur).Sub(target).String())
-			if err != nil {
-				return
-			}
+			humandur := durafmt.Parse(time.Now().UTC().Add(dur).Sub(target))
 			if s.extra.last.Offset == "-12" {
-				humandur, err = durafmt.ParseString(time.Now().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)).String())
-				if err != nil {
-					return
-				}
+				humandur = durafmt.Parse(time.Now().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
 			}
 			bot.Reply(msg, fmt.Sprintf("Last NewYear %s ago in %s",
-				removeMilliseconds(humandur.String()), s.extra.last.String()))
+				removeMilliseconds(humandur), s.extra.last.String()))
 		},
 	})
 	//Trigger for location queries
-	bot.AddTrigger(irc.Trigger{
-		Condition: func(msg irc.Message) bool {
+	bot.AddTrigger(dumbirc.Trigger{
+		Condition: func(msg dumbirc.Message) bool {
 			return msg.Command == "PRIVMSG" &&
 				!strings.Contains(msg.Trailing, "!next") &&
 				!strings.Contains(msg.Trailing, "!last") &&
 				!strings.Contains(msg.Trailing, "!help") &&
 				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s ", s.IrcTrigger))
 		},
-		Response: func(msg irc.Message) {
-			tz, err := getNewYear(msg.Trailing[len(s.IrcTrigger)+1:], s.Email, s.Nominatim)
+		Response: func(msg dumbirc.Message) {
+			tz, err := s.getNewYear(msg.Trailing[len(s.IrcTrigger)+1:])
+			if err == errNoZone || err == errNoPlace {
+				log.Println("Query error:", err)
+				bot.Reply(msg, fmt.Sprintf("%s: %s", msg.Name, err))
+				return
+			}
 			if err != nil {
 				log.Println("Query error:", err)
 				bot.Reply(msg, "Some error occurred!")
@@ -128,4 +129,65 @@ func (s *Settings) addTriggers() {
 			bot.Reply(msg, fmt.Sprintf("%s: %s", msg.Name, tz))
 		},
 	})
+}
+
+var (
+	errNoZone  = errors.New("couldn't get the timezone for that location")
+	errNoPlace = errors.New("Couldn't find that place")
+)
+
+//Func for querying newyears in specified location
+func (s *Settings) getNewYear(location string) (string, error) {
+	log.Println("Querying location:", location)
+	maps := url.Values{}
+	maps.Add("q", location)
+	maps.Add("format", "json")
+	maps.Add("accept-language", "en")
+	maps.Add("limit", "1")
+	maps.Add("email", s.Email)
+	data, err := NominatimGetter(s.Nominatim + NominatimGeoCode + maps.Encode())
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+	var nominatimResp NominatimResults
+	if err = json.Unmarshal(data, &nominatimResp); err != nil {
+		log.Println(err)
+		return "", err
+	}
+	if len(nominatimResp) == 0 {
+		return "", errNoPlace
+	}
+	lat, err := strconv.ParseFloat(nominatimResp[0].Lat, 64)
+	if err != nil {
+		return "", err
+	}
+	lng, err := strconv.ParseFloat(nominatimResp[0].Lon, 64)
+	if err != nil {
+		return "", err
+	}
+	p := gotz.Point{
+		Lat: lat,
+		Lng: lng,
+	}
+	zone, err := gotz.GetZone(p)
+	if err != nil {
+		return "", errNoZone
+	}
+	//Get zone offset
+	offset, err := time.ParseDuration(fmt.Sprintf("%ds", getOffset(target, zone)))
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+	adress := nominatimResp[0].DisplayName
+	//Check if past target
+	if time.Now().UTC().Add(offset).Before(target) {
+		humandur := durafmt.Parse(target.Sub(time.Now().UTC().Add(offset)))
+		return fmt.Sprintf("New Year in %s will happen in %s", adress,
+			removeMilliseconds(humandur)), nil
+	}
+	humandur := durafmt.Parse(time.Now().UTC().Add(offset).Sub(target))
+	return fmt.Sprintf("New Year in %s happened %s ago", adress,
+		removeMilliseconds(humandur)), nil
 }

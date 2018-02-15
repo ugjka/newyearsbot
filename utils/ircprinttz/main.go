@@ -11,8 +11,7 @@ import (
 	"sync"
 	"time"
 
-	irc "github.com/ugjka/dumbirc"
-	c "github.com/ugjka/newyearsbot/common"
+	"github.com/ugjka/dumbirc"
 	"github.com/ugjka/newyearsbot/nyb"
 )
 
@@ -20,12 +19,11 @@ var usage = `Test utility for debugging that post all newyears on a specified ch
 
 CMD Options:
 -chans			comma seperated list of irc channels to join
--tzpath			path to tz database (../tz.json)
 -ircserver		irc server to use irc.example.com:7000 (must be TLS enabled)
 -botnick		nick for the bot `
 
 //Custom flag to get irc channelsn to join
-var ircChansFlag c.IrcChans
+var ircChansFlag nyb.IrcChans
 
 func init() {
 	flag.Var(&ircChansFlag, "chans", "comma seperated list of irc channels to join")
@@ -40,7 +38,7 @@ var start = make(chan bool)
 func main() {
 	//flags
 	ircServer := flag.String("ircserver", "irc.freenode.net:7000", "Irc server to use, must be TLS")
-	ircNick := flag.String("botnick", "HNYbot18", "Irc Nick for the bot")
+	ircNick := flag.String("botnick", "HNYtestbot", "Irc Nick for the bot")
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, fmt.Sprintf(usage))
 	}
@@ -48,12 +46,12 @@ func main() {
 	if len(ircChansFlag) > 0 {
 		ircChannel = ircChansFlag
 	}
-	var zones c.TZS
-	json.Unmarshal([]byte(nyb.TZ), &zones)
+	var zones nyb.TZS
+	json.Unmarshal([]byte(nyb.Zones), &zones)
 	sort.Sort(sort.Reverse(zones))
 
-	ircobj := irc.New(*ircNick, ircName, *ircServer, true)
-	ircobj.AddCallback(irc.WELCOME, func(msg irc.Message) {
+	ircobj := dumbirc.New(*ircNick, ircName, *ircServer, true)
+	ircobj.AddCallback(dumbirc.WELCOME, func(msg dumbirc.Message) {
 		ircobj.Join(ircChannel)
 		//Prevent early start
 		once.Do(func() {
@@ -61,11 +59,11 @@ func main() {
 		})
 	})
 
-	ircobj.AddCallback(irc.PING, func(msg irc.Message) {
+	ircobj.AddCallback(dumbirc.PING, func(msg dumbirc.Message) {
 		ircobj.Pong()
 	})
 
-	ircobj.AddCallback(irc.NICKTAKEN, func(msg irc.Message) {
+	ircobj.AddCallback(dumbirc.NICKTAKEN, func(msg dumbirc.Message) {
 		ircobj.Nick += "_"
 		ircobj.NewNick(ircobj.Nick)
 	})

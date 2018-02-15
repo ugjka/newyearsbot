@@ -15,9 +15,7 @@ import (
 	"time"
 
 	"github.com/ugjka/go-tz"
-
-	c "github.com/ugjka/newyearsbot/common"
-	nyb "github.com/ugjka/newyearsbot/nyb"
+	"github.com/ugjka/newyearsbot/nyb"
 )
 
 //Set target year
@@ -40,8 +38,8 @@ func main() {
 		fmt.Fprintf(os.Stderr, "%s", "provide email with -email flag")
 		return
 	}
-	var zones c.TZS
-	if err := json.Unmarshal([]byte(nyb.TZ), &zones); err != nil {
+	var zones nyb.TZS
+	if err := json.Unmarshal([]byte(nyb.Zones), &zones); err != nil {
 		log.Fatal(err)
 	}
 	//print target to be sure
@@ -89,11 +87,11 @@ func getTimeZone(loc string) (float64, error) {
 	var data []byte
 	var err error
 	time.Sleep(time.Second * 5)
-	data, err = c.NominatimGetter(*ircNominatim + c.NominatimGeoCode + maps.Encode())
+	data, err = nyb.NominatimGetter(*ircNominatim + nyb.NominatimGeoCode + maps.Encode())
 	if err != nil {
 		return 0, err
 	}
-	var mapj c.NominatimResults
+	var mapj nyb.NominatimResults
 	if err = json.Unmarshal(data, &mapj); err != nil {
 		return 0, err
 	}

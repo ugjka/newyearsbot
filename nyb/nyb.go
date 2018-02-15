@@ -9,8 +9,7 @@ import (
 	"time"
 
 	"github.com/hako/durafmt"
-	irc "github.com/ugjka/dumbirc"
-	c "github.com/ugjka/newyearsbot/common"
+	"github.com/ugjka/dumbirc"
 )
 
 //Settings for bot
@@ -19,19 +18,19 @@ type Settings struct {
 	IrcChans   []string
 	IrcServer  string
 	IrcTrigger string
-	UseTLS     bool
-	LogCh      LogChan
+	IrcUseTLS  bool
+	IrcConn    *dumbirc.Connection
+	LogChan    LogChan
 	Stopper    chan bool
-	IrcObj     *irc.Connection
 	Email      string
 	Nominatim  string
 	extra      extra
 }
 
 type extra struct {
-	zones c.TZS
-	last  c.TZ
-	next  c.TZ
+	zones TZS
+	last  TZ
+	next  TZ
 	start chan bool
 	once  sync.Once
 	//This is used to prevent sending ping before we
@@ -50,9 +49,9 @@ func New(nick string, chans []string, trigger string, server string,
 		server,
 		trigger,
 		tls,
+		dumbirc.New(nick, "nyebot", server, tls),
 		newLogChan(),
 		make(chan bool),
-		irc.New(nick, "nyebot", server, tls),
 		email,
 		nominatim,
 		extra{
@@ -64,7 +63,7 @@ func New(nick string, chans []string, trigger string, server string,
 
 //Start starts the bot
 func (s *Settings) Start() {
-	log.SetOutput(s.LogCh)
+	log.SetOutput(s.LogChan)
 	log.Println("Starting the bot...")
 
 	//To exit gracefully we need to wait
@@ -72,7 +71,7 @@ func (s *Settings) Start() {
 	//
 	//Set up irc
 	//
-	bot := s.IrcObj
+	bot := s.IrcConn
 	//Add Callbacs
 	s.addCallbacks()
 	//Add Triggers
@@ -92,7 +91,7 @@ func (s *Settings) Start() {
 		return
 	}
 	//Load timezones
-	if err := json.Unmarshal([]byte(TZ), &s.extra.zones); err != nil {
+	if err := json.Unmarshal([]byte(Zones), &s.extra.zones); err != nil {
 		log.Fatal(err)
 	}
 	//Sort them
@@ -124,7 +123,7 @@ func (s *Settings) Stop() {
 }
 
 func (s *Settings) ircControl() {
-	bot := s.IrcObj
+	bot := s.IrcConn
 	var err error
 	defer s.extra.wait.Done()
 	for {
@@ -165,7 +164,7 @@ func (s *Settings) ircControl() {
 
 func (s *Settings) loopTimeZones() {
 	zones := s.extra.zones
-	bot := s.IrcObj
+	bot := s.IrcConn
 	for i := 0; i < len(zones); i++ {
 		dur, err := time.ParseDuration(zones[i].Offset + "h")
 		if err != nil {
@@ -181,14 +180,11 @@ func (s *Settings) loopTimeZones() {
 		if time.Now().UTC().Add(dur).Before(target) {
 			time.Sleep(time.Second * 2)
 			log.Println("Zone pending:", zones[i].Offset)
-			humandur, err := durafmt.ParseString(target.Sub(time.Now().UTC().Add(dur)).String())
-			if err != nil {
-				log.Fatal(err)
-			}
-			msg := fmt.Sprintf("Next New Year in %s in %s", removeMilliseconds(humandur.String()), zones[i])
+			humandur := durafmt.Parse(target.Sub(time.Now().UTC().Add(dur)))
+			msg := fmt.Sprintf("Next New Year in %s in %s", removeMilliseconds(humandur), zones[i])
 			bot.PrivMsgBulk(s.IrcChans, msg)
 			//Wait till Target in Timezone
-			timer := c.NewTimer(target.Sub(time.Now().UTC().Add(dur)))
+			timer := NewTimer(target.Sub(time.Now().UTC().Add(dur)))
 
 			select {
 			case <-timer.C:

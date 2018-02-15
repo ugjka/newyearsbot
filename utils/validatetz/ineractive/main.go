@@ -14,7 +14,7 @@ import (
 	"time"
 
 	gotz "github.com/ugjka/go-tz"
-	c "github.com/ugjka/newyearsbot/common"
+	"github.com/ugjka/newyearsbot/nyb"
 )
 
 var email *string
@@ -57,12 +57,12 @@ func getLocationInfo(loc string) (string, error) {
 	maps.Add("email", *email)
 	var data []byte
 	var err error
-	data, err = c.NominatimGetter(*ircNominatim + c.NominatimGeoCode + maps.Encode())
+	data, err = nyb.NominatimGetter(*ircNominatim + nyb.NominatimGeoCode + maps.Encode())
 	if err != nil {
 		return "", err
 	}
 
-	var mapj c.NominatimResults
+	var mapj nyb.NominatimResults
 	if err = json.Unmarshal(data, &mapj); err != nil {
 		return "", err
 	}
