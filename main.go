@@ -12,7 +12,7 @@ import (
 	"github.com/fatih/color"
 
 	"github.com/badoux/checkmail"
-	nyb "github.com/ugjka/newyearsbot/nyb"
+	"github.com/ugjka/newyearsbot/nyb"
 	"mvdan.cc/xurls"
 )
 
@@ -43,9 +43,9 @@ CMD Options:
 `
 
 func main() {
-	green := color.New(color.FgGreen)
 	//Syncing for graceful exit
 	var wait sync.WaitGroup
+
 	//Flags
 	botnick := flag.String("botnick", "", "irc nick for the bot")
 	email := flag.String("email", "", "referrer email for Nominatim")
@@ -53,6 +53,8 @@ func main() {
 	trigger := flag.String("trigger", "hny", "trigger for queries")
 	useTLS := flag.Bool("usetls", true, "use tls for irc")
 	nominatim := flag.String("nominatim", "http://nominatim.openstreetmap.org", "nominatim server to use")
+
+	green := color.New(color.FgGreen)
 	flag.Usage = func() {
 		green.Fprint(os.Stderr, fmt.Sprintf(usage))
 	}
@@ -137,7 +139,7 @@ func main() {
 	//Catch interrupt ^C
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
-	//New bot instance
+
 	bot := nyb.New(*botnick, chans, *trigger, *ircServer, *useTLS, *email, *nominatim)
 	//Log printer
 	go func() {
@@ -149,7 +151,7 @@ func main() {
 				if !ok {
 					return
 				}
-				fmt.Fprintf(os.Stdout, "%s", msg)
+				green.Fprintf(os.Stdout, "%s", msg)
 			}
 		}
 	}()
@@ -159,7 +161,7 @@ func main() {
 		bot.Stop()
 	}()
 	bot.Start()
-	//close and wait
+
 	close(bot.LogChan)
 	wait.Wait()
 }
