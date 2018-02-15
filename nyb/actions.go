@@ -22,7 +22,6 @@ func (s *Settings) addCallbacks() {
 		pingpong(s.pp)
 	})
 
-	//Join channels on WELCOME
 	bot.AddCallback(dumbirc.WELCOME, func(msg dumbirc.Message) {
 		bot.Join(s.IrcChans)
 		//Prevent early start
@@ -30,12 +29,12 @@ func (s *Settings) addCallbacks() {
 			close(s.start)
 		})
 	})
-	//Reply ping messages with pong
+
 	bot.AddCallback(dumbirc.PING, func(msg dumbirc.Message) {
 		log.Println("PING recieved, sending PONG")
 		bot.Pong()
 	})
-	//Log pongs
+
 	bot.AddCallback(dumbirc.PONG, func(msg dumbirc.Message) {
 		log.Println("Got PONG...")
 	})
@@ -140,7 +139,6 @@ var (
 	errNoPlace = errors.New("Couldn't find that place")
 )
 
-//Build nominatim api request url
 func (s *Settings) getNominatimReqURL(location *string) string {
 	maps := url.Values{}
 	maps.Add("q", *location)
@@ -154,7 +152,6 @@ func (s *Settings) getNominatimReqURL(location *string) string {
 var stNewYearWillHappen = "New Year in %s will happen in %s"
 var stNewYearHappenned = "New Year in %s happened %s ago"
 
-//Func for querying newyears in specified location
 func (s *Settings) getNewYear(location string) (string, error) {
 	log.Println("Querying location:", location)
 	data, err := NominatimGetter(s.getNominatimReqURL(&location))
@@ -185,14 +182,14 @@ func (s *Settings) getNewYear(location string) (string, error) {
 	if err != nil {
 		return "", errNoZone
 	}
-	//Get zone offset
+
 	offset, err := time.ParseDuration(fmt.Sprintf("%ds", getOffset(target, zone)))
 	if err != nil {
 		log.Println(err)
 		return "", err
 	}
 	adress := s.nominatimResult[0].DisplayName
-	//Check if past target
+
 	if time.Now().UTC().Add(offset).Before(target) {
 		humandur := durafmt.Parse(target.Sub(time.Now().UTC().Add(offset)))
 		return fmt.Sprintf(stNewYearWillHappen, adress, removeMilliseconds(humandur)), nil

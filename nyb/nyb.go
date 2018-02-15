@@ -70,38 +70,30 @@ func (s *Settings) Start() {
 	log.SetOutput(s.LogChan)
 	log.Println("Starting the bot...")
 
-	//To exit gracefully we need to wait
 	defer s.Wait()
 	//
 	//Set up irc
 	//
 	bot := s.Bot
-	//Add Callbacs
 	s.addCallbacks()
-	//Add Triggers
 	s.addTriggers()
 
-	//Reconnect logic and Irc Pinger
 	s.Add(1)
 	go s.ircControl()
-	//Start irc
+
 	bot.Start()
 
-	//Starts when joined, see once.Do
 	select {
 	case <-s.start:
 		log.Println("Got start...")
 	case <-s.Stopper:
 		return
 	}
-	//Load timezones
 	if err := json.Unmarshal([]byte(Zones), &s.zones); err != nil {
 		log.Fatal(err)
 	}
-	//Sort them
 	sort.Sort(sort.Reverse(s.zones))
 
-	//Zone Looper
 	for {
 		s.loopTimeZones()
 		select {
@@ -152,7 +144,6 @@ func (s *Settings) ircControl() {
 			log.Println("Disconnecting...")
 			bot.Disconnect()
 			return
-		//ping timer
 		case <-timer.C:
 			timer.Stop()
 			//pingpong stuff
@@ -179,7 +170,6 @@ func (s *Settings) loopTimeZones() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		//Check if zone is past target
 		s.next = zones[i]
 		if i == 0 {
 			s.last = zones[len(zones)-1]

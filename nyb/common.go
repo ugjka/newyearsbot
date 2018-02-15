@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-//TZ holds infor for Time Zone
+//TZ holds info for Time Zone
 type TZ struct {
 	Countries []struct {
 		Name   string   `json:"name"`
