@@ -9,16 +9,18 @@ import (
 	"regexp"
 	"sync"
 
+	"github.com/fatih/color"
+
 	"github.com/badoux/checkmail"
 	nyb "github.com/ugjka/newyearsbot/nyb"
 	"mvdan.cc/xurls"
 )
 
 //Custom flag to get irc channelsn to join
-var ircChansFlag nyb.IrcChans
+var chans nyb.IrcChans
 
 func init() {
-	flag.Var(&ircChansFlag, "chans", "comma seperated list of irc channels to join")
+	flag.Var(&chans, "chans", "comma seperated list of irc channels to join")
 }
 
 var usage = `
@@ -41,91 +43,102 @@ CMD Options:
 `
 
 func main() {
+	green := color.New(color.FgGreen)
 	//Syncing for graceful exit
 	var wait sync.WaitGroup
 	//Flags
+	botnick := flag.String("botnick", "", "irc nick for the bot")
+	email := flag.String("email", "", "referrer email for Nominatim")
 	ircServer := flag.String("ircserver", "irc.freenode.net:7000", "irc server to use")
-	ircNick := flag.String("botnick", "", "irc nick for the bot")
-	ircTrigger := flag.String("trigger", "hny", "trigger for queries")
-	ircTLS := flag.Bool("usetls", true, "use tls for irc")
-	ircEmail := flag.String("email", "", "referrer email for Nominatim")
-	ircNominatim := flag.String("nominatim", "http://nominatim.openstreetmap.org", "nominatim server to use")
+	trigger := flag.String("trigger", "hny", "trigger for queries")
+	useTLS := flag.Bool("usetls", true, "use tls for irc")
+	nominatim := flag.String("nominatim", "http://nominatim.openstreetmap.org", "nominatim server to use")
 	flag.Usage = func() {
-		fmt.Fprint(os.Stderr, fmt.Sprintf(usage))
+		green.Fprint(os.Stderr, fmt.Sprintf(usage))
 	}
 	flag.Parse()
 
-	//Check inputs
-	if *ircNominatim == "" {
-		fmt.Fprint(os.Stderr, "error: need to provide a Nominatim Server url\n")
+	//Colorize errors
+	red := color.New(color.FgHiRed)
+
+	//Check mandatory inputs
+	if len(chans) == 0 {
+		red.Fprintln(os.Stderr, "error: no channels defined")
 		flag.Usage()
 		return
 	}
-	if !xurls.Strict().MatchString(*ircNominatim) {
-		fmt.Fprint(os.Stderr, "error: invalid Nominatim server url\n")
-		flag.Usage()
-		return
-	}
-	if *ircEmail == "" {
-		fmt.Fprint(os.Stderr, "error: need to provide referrer email for Nominatim\n")
-		flag.Usage()
-		return
-	}
-	if err := checkmail.ValidateFormat(*ircEmail); err != nil {
-		fmt.Fprint(os.Stderr, "error: invalid email address\n")
-		flag.Usage()
-		return
-	}
-	if *ircNick == "" {
-		fmt.Fprintf(os.Stderr, "error: no bot nick defined\n")
-		flag.Usage()
-		return
-	}
-	nickreg := regexp.MustCompile("^\\A[a-z_\\-\\[\\]\\^{}|`][a-z0-9_\\-\\[\\]\\^{}|`]{2,15}\\z$")
-	if !nickreg.MatchString(*ircNick) {
-		fmt.Fprintf(os.Stderr, "error: invalid nickname\n")
-		flag.Usage()
-		return
-	}
-	if len(ircChansFlag) == 0 {
-		fmt.Fprintf(os.Stderr, "error: no channels defined\n")
-		flag.Usage()
-		return
-	}
-	chanreg := regexp.MustCompile("^([#&][^\\x07\\x2C\\s]{0,200})$")
-	for _, ch := range ircChansFlag {
-		if !chanreg.MatchString(ch) {
-			fmt.Fprintf(os.Stderr, "error: invalid channel name: %s\n", ch)
+	chanReg := regexp.MustCompile("^([#&][^\\x07\\x2C\\s]{0,200})$")
+	for _, ch := range chans {
+		if !chanReg.MatchString(ch) {
+			red.Fprintf(os.Stderr, "error: invalid channel name: %s\n", ch)
 			flag.Usage()
 			return
 		}
 	}
+	if *botnick == "" {
+		red.Fprintln(os.Stderr, "error: no nick defined")
+		flag.Usage()
+		return
+	}
+	if len(*botnick) > 16 {
+		red.Fprintln(os.Stderr, "error: nick can't be longer than 16 characters")
+		flag.Usage()
+		return
+	}
+	botnickReg := regexp.MustCompile("^\\A[a-z_\\-\\[\\]\\^{}|`][a-z0-9_\\-\\[\\]\\^{}|`]{1,15}\\z$")
+	if !botnickReg.MatchString(*botnick) {
+		red.Fprintln(os.Stderr, "error: invalid nickname")
+		flag.Usage()
+		return
+	}
+	if *email == "" {
+		red.Fprintln(os.Stderr, "error: need to provide referrer email for Nominatim")
+		flag.Usage()
+		return
+	}
+	if err := checkmail.ValidateFormat(*email); err != nil {
+		red.Fprintln(os.Stderr, "error: invalid email address")
+		flag.Usage()
+		return
+	}
+	//Check optional inputs
 	if *ircServer == "" {
-		fmt.Fprintf(os.Stderr, "error: no irc server defined\n")
+		red.Fprintln(os.Stderr, "error: no irc server defined")
 		flag.Usage()
 		return
 	}
-	serverreg := regexp.MustCompile("^\\S+:\\d+$")
-	if !serverreg.MatchString(*ircServer) {
-		fmt.Fprintf(os.Stderr, "error: invalid irc server address\n")
+	serverReg := regexp.MustCompile("^\\S+:\\d+$")
+	if !serverReg.MatchString(*ircServer) {
+		red.Fprintln(os.Stderr, "error: invalid irc server address")
 		flag.Usage()
 		return
 	}
-	if *ircTrigger == "" {
-		fmt.Fprintf(os.Stderr, "error: no trigger defined\n")
+	if *trigger == "" {
+		red.Fprintln(os.Stderr, "error: no trigger defined")
 		flag.Usage()
 		return
 	}
-	triggerreg := regexp.MustCompile("^\\S+$")
-	if !triggerreg.MatchString(*ircTrigger) {
-		fmt.Fprintf(os.Stderr, "error: trigger contains white space\n")
+	triggerReg := regexp.MustCompile("^\\S+$")
+	if !triggerReg.MatchString(*trigger) {
+		red.Fprintln(os.Stderr, "error: trigger contains white space")
+		flag.Usage()
+		return
+	}
+	if *nominatim == "" {
+		red.Fprintln(os.Stderr, "error: need to provide a Nominatim Server url")
+		flag.Usage()
+		return
+	}
+	if !xurls.Strict().MatchString(*nominatim) {
+		red.Fprintln(os.Stderr, "error: invalid Nominatim server url")
+		flag.Usage()
 		return
 	}
 	//Catch interrupt ^C
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 	//New bot instance
-	bot := nyb.New(*ircNick, ircChansFlag, *ircTrigger, *ircServer, *ircTLS, *ircEmail, *ircNominatim)
+	bot := nyb.New(*botnick, chans, *trigger, *ircServer, *useTLS, *email, *nominatim)
 	//Log printer
 	go func() {
 		wait.Add(1)

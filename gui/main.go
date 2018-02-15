@@ -244,7 +244,10 @@ func (w *Window) validateInputs() error {
 	if nick == "" {
 		return fmt.Errorf("Empty nick")
 	}
-	nickreg := regexp.MustCompile("^\\A[a-z_\\-\\[\\]\\^{}|`][a-z0-9_\\-\\[\\]\\^{}|`]{2,15}\\z$")
+	if len(nick) > 16 {
+		return fmt.Errorf("Nick exceeds 16 characters")
+	}
+	nickreg := regexp.MustCompile("^\\A[a-z_\\-\\[\\]\\^{}|`][a-z0-9_\\-\\[\\]\\^{}|`]{1,15}\\z$")
 	if !nickreg.MatchString(nick) {
 		return fmt.Errorf("Invalid nickname")
 	}
