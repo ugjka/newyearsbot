@@ -20,7 +20,8 @@ var usage = `Test utility for debugging that post all newyears on a specified ch
 CMD Options:
 -chans			comma seperated list of irc channels to join
 -ircserver		irc server to use irc.example.com:7000 (must be TLS enabled)
--botnick		nick for the bot `
+-botnick		nick for the bot 
+`
 
 //Custom flag to get irc channelsn to join
 var ircChansFlag nyb.IrcChans
@@ -31,20 +32,26 @@ func init() {
 
 const ircName = "nyebottest"
 
-var ircChannel = []string{"#ugjkatest"}
 var once sync.Once
 var start = make(chan bool)
 
 func main() {
 	//flags
 	ircServer := flag.String("ircserver", "irc.freenode.net:7000", "Irc server to use, must be TLS")
-	ircNick := flag.String("botnick", "HNYtestbot", "Irc Nick for the bot")
+	ircNick := flag.String("botnick", "", "Irc Nick for the bot")
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, fmt.Sprintf(usage))
 	}
 	flag.Parse()
-	if len(ircChansFlag) > 0 {
-		ircChannel = ircChansFlag
+	if *ircNick == "" {
+		fmt.Fprintln(os.Stderr, "Error: empty nick")
+		flag.Usage()
+		return
+	}
+	if len(ircChansFlag) == 0 {
+		fmt.Fprintln(os.Stderr, "Error: no channel defined")
+		flag.Usage()
+		return
 	}
 	var zones nyb.TZS
 	json.Unmarshal([]byte(nyb.Zones), &zones)
@@ -52,7 +59,7 @@ func main() {
 
 	ircobj := dumbirc.New(*ircNick, ircName, *ircServer, true)
 	ircobj.AddCallback(dumbirc.WELCOME, func(msg dumbirc.Message) {
-		ircobj.Join(ircChannel)
+		ircobj.Join(ircChansFlag)
 		//Prevent early start
 		once.Do(func() {
 			start <- true
@@ -82,9 +89,9 @@ func main() {
 
 	for _, k := range zones {
 		time.Sleep(time.Second * 2)
-		ircobj.PrivMsg(ircChannel[0], "Next New Year in 29 minutes 57 seconds in "+k.String())
+		ircobj.PrivMsg(ircChansFlag[0], "Next New Year in 29 minutes 57 seconds in "+k.String())
 		time.Sleep(time.Second * 1)
-		ircobj.PrivMsg(ircChannel[0], "Happy New Year in "+k.String())
+		ircobj.PrivMsg(ircChansFlag[0], "Happy New Year in "+k.String())
 	}
 
 }
