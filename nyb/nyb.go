@@ -31,6 +31,7 @@ type extra struct {
 	zones TZS
 	last  TZ
 	next  TZ
+	//We close this when we get WELCOME msg on join in irc
 	start chan bool
 	once  sync.Once
 	//This is used to prevent sending ping before we
@@ -110,7 +111,7 @@ func (s *Settings) Start() {
 		bot.PrivMsgBulk(s.IrcChans, fmt.Sprintf(stFinished, target.Year()))
 		log.Println("All zones finished...")
 		target = target.AddDate(1, 0, 0)
-		log.Printf("Wrapping target date around to %d\n", target.Year())
+		log.Printf("Wrapping the target date around to %d\n", target.Year())
 	}
 }
 
@@ -129,14 +130,13 @@ var pingInterval = time.Minute * 1
 
 func (s *Settings) ircControl() {
 	bot := s.IrcConn
-	var err error
 	defer s.extra.wait.Done()
 	for {
 		timer := time.NewTimer(pingInterval * 1)
 		select {
-		case err = <-bot.Errchan:
+		case err := <-bot.Errchan:
 			log.Println("Error:", err)
-			log.Println("Recconecting to irc in 30secs...")
+			log.Printf("Reconnecting to irc in %s...\n", reconnectInterval)
 			time.AfterFunc(reconnectInterval, func() {
 				select {
 				case <-s.Stopper:
