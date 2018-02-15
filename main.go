@@ -142,8 +142,8 @@ func main() {
 
 	bot := nyb.New(*botnick, chans, *trigger, *ircServer, *useTLS, *email, *nominatim)
 	//Log printer
+	wait.Add(1)
 	go func() {
-		wait.Add(1)
 		defer wait.Done()
 		for {
 			select {
