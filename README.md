@@ -20,7 +20,7 @@ Posts New Years for each timezone when they happen
 
 ## Has GTK3 gui (standalone cli tool also)
 
-![alt text](https://i.imgur.com/f2Xlfpc.png "Main window")
+![alt text](https://i.imgur.com/hMjsn34.png "Main window")
 
 ![alt text](https://i.imgur.com/ze0V82J.png "Bot status")
 
