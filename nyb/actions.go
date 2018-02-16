@@ -18,11 +18,11 @@ import (
 func (s *Settings) addCallbacks() {
 	bot := s.Bot
 	//On any message send a signal to ping timer to be ready
-	bot.AddCallback(dumbirc.ANYMESSAGE, func(msg dumbirc.Message) {
+	bot.AddCallback(dumbirc.ANYMESSAGE, func(msg *dumbirc.Message) {
 		pingpong(s.pp)
 	})
 
-	bot.AddCallback(dumbirc.WELCOME, func(msg dumbirc.Message) {
+	bot.AddCallback(dumbirc.WELCOME, func(msg *dumbirc.Message) {
 		bot.Join(s.IrcChans)
 		//Prevent early start
 		s.Do(func() {
@@ -30,18 +30,18 @@ func (s *Settings) addCallbacks() {
 		})
 	})
 
-	bot.AddCallback(dumbirc.PING, func(msg dumbirc.Message) {
+	bot.AddCallback(dumbirc.PING, func(msg *dumbirc.Message) {
 		log.Println("PING recieved, sending PONG")
 		bot.Pong()
 	})
 
-	bot.AddCallback(dumbirc.PONG, func(msg dumbirc.Message) {
+	bot.AddCallback(dumbirc.PONG, func(msg *dumbirc.Message) {
 		log.Println("Got PONG...")
 	})
 	//Change nick if taken
 	//This could loop forever in some cases
 	//Could be improved
-	bot.AddCallback(dumbirc.NICKTAKEN, func(msg dumbirc.Message) {
+	bot.AddCallback(dumbirc.NICKTAKEN, func(msg *dumbirc.Message) {
 		log.Println("Nick taken, changing...")
 		time.Sleep(time.Second * 5)
 		bot.Nick = changeNick(bot.Nick)
@@ -55,50 +55,50 @@ func (s *Settings) addTriggers() {
 	//Trigger for !help
 	stHelp := "%s: Query location: '%s <location>', Next zone: '%s !next', Last zone: '%s !last', Source code: https://github.com/ugjka/newyearsbot"
 	bot.AddTrigger(dumbirc.Trigger{
-		Condition: func(msg dumbirc.Message) bool {
+		Condition: func(msg *dumbirc.Message) bool {
 			return msg.Command == "PRIVMSG" &&
 				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !help", s.IrcTrigger))
 		},
-		Response: func(msg dumbirc.Message) {
+		Response: func(msg *dumbirc.Message) {
 			bot.Reply(msg, fmt.Sprintf(stHelp, msg.Name, s.IrcTrigger, s.IrcTrigger, s.IrcTrigger))
 		},
 	})
 	//Trigger for !next
 	bot.AddTrigger(dumbirc.Trigger{
-		Condition: func(msg dumbirc.Message) bool {
+		Condition: func(msg *dumbirc.Message) bool {
 			return msg.Command == "PRIVMSG" &&
 				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !next", s.IrcTrigger))
 		},
-		Response: func(msg dumbirc.Message) {
+		Response: func(msg *dumbirc.Message) {
 			log.Println("Querying !next...")
 			dur, err := time.ParseDuration(s.next.Offset + "h")
 			if err != nil {
 				return
 			}
-			if time.Now().UTC().Add(dur).After(target) {
+			if timeNow().UTC().Add(dur).After(target) {
 				bot.Reply(msg, fmt.Sprintf("No more next, %d is here AoE", target.Year()))
 				return
 			}
-			humandur := durafmt.Parse(target.Sub(time.Now().UTC().Add(dur)))
+			humandur := durafmt.Parse(target.Sub(timeNow().UTC().Add(dur)))
 			bot.Reply(msg, fmt.Sprintf("Next New Year in %s in %s",
 				removeMilliseconds(humandur), s.next.String()))
 		},
 	})
 	//Trigger for !last
 	bot.AddTrigger(dumbirc.Trigger{
-		Condition: func(msg dumbirc.Message) bool {
+		Condition: func(msg *dumbirc.Message) bool {
 			return msg.Command == "PRIVMSG" &&
 				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !last", s.IrcTrigger))
 		},
-		Response: func(msg dumbirc.Message) {
+		Response: func(msg *dumbirc.Message) {
 			log.Println("Querying !last...")
 			dur, err := time.ParseDuration(s.last.Offset + "h")
 			if err != nil {
 				return
 			}
-			humandur := durafmt.Parse(time.Now().UTC().Add(dur).Sub(target))
+			humandur := durafmt.Parse(timeNow().UTC().Add(dur).Sub(target))
 			if s.last.Offset == "-12" {
-				humandur = durafmt.Parse(time.Now().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
+				humandur = durafmt.Parse(timeNow().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
 			}
 			bot.Reply(msg, fmt.Sprintf("Last NewYear %s ago in %s",
 				removeMilliseconds(humandur), s.last.String()))
@@ -106,14 +106,14 @@ func (s *Settings) addTriggers() {
 	})
 	//Trigger for location queries
 	bot.AddTrigger(dumbirc.Trigger{
-		Condition: func(msg dumbirc.Message) bool {
+		Condition: func(msg *dumbirc.Message) bool {
 			return msg.Command == "PRIVMSG" &&
 				!strings.Contains(msg.Trailing, "!next") &&
 				!strings.Contains(msg.Trailing, "!last") &&
 				!strings.Contains(msg.Trailing, "!help") &&
 				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s ", s.IrcTrigger))
 		},
-		Response: func(msg dumbirc.Message) {
+		Response: func(msg *dumbirc.Message) {
 			tz, err := s.getNewYear(msg.Trailing[len(s.IrcTrigger)+1:])
 			if err == errNoZone || err == errNoPlace {
 				log.Println("Query error:", err)
@@ -186,10 +186,10 @@ func (s *Settings) getNewYear(location string) (string, error) {
 	}
 	adress := s.nominatimResult[0].DisplayName
 
-	if time.Now().UTC().Add(offset).Before(target) {
-		humandur := durafmt.Parse(target.Sub(time.Now().UTC().Add(offset)))
+	if timeNow().UTC().Add(offset).Before(target) {
+		humandur := durafmt.Parse(target.Sub(timeNow().UTC().Add(offset)))
 		return fmt.Sprintf(stNewYearWillHappen, adress, removeMilliseconds(humandur)), nil
 	}
-	humandur := durafmt.Parse(time.Now().UTC().Add(offset).Sub(target))
+	humandur := durafmt.Parse(timeNow().UTC().Add(offset).Sub(target))
 	return fmt.Sprintf(stNewYearHappenned, adress, removeMilliseconds(humandur)), nil
 }

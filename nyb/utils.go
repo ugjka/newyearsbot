@@ -41,3 +41,7 @@ func changeNick(n string) string {
 	}
 	return n
 }
+
+var timeNow = func() time.Time {
+	return time.Now()
+}

@@ -89,10 +89,7 @@ func (s *Settings) Start() {
 	case <-s.Stopper:
 		return
 	}
-	if err := json.Unmarshal([]byte(Zones), &s.zones); err != nil {
-		log.Fatal(err)
-	}
-	sort.Sort(sort.Reverse(s.zones))
+	s.decodeZones()
 
 	for {
 		s.loopTimeZones()
@@ -106,6 +103,13 @@ func (s *Settings) Start() {
 		target = target.AddDate(1, 0, 0)
 		log.Printf("Wrapping the target date around to %d\n", target.Year())
 	}
+}
+
+func (s *Settings) decodeZones() {
+	if err := json.Unmarshal([]byte(Zones), &s.zones); err != nil {
+		log.Fatal(err)
+	}
+	sort.Sort(sort.Reverse(s.zones))
 }
 
 //Stop stops the bot
@@ -176,14 +180,14 @@ func (s *Settings) loopTimeZones() {
 		} else {
 			s.last = zones[i-1]
 		}
-		if time.Now().UTC().Add(dur).Before(target) {
+		if timeNow().UTC().Add(dur).Before(target) {
 			time.Sleep(time.Second * 2)
 			log.Println("Zone pending:", zones[i].Offset)
-			humandur := durafmt.Parse(target.Sub(time.Now().UTC().Add(dur)))
+			humandur := durafmt.Parse(target.Sub(timeNow().UTC().Add(dur)))
 			msg := fmt.Sprintf(stNextNewYear, removeMilliseconds(humandur), zones[i])
 			bot.PrivMsgBulk(s.IrcChans, msg)
 			//Wait till Target in Timezone
-			timer := NewTimer(target.Sub(time.Now().UTC().Add(dur)))
+			timer := NewTimer(target.Sub(timeNow().UTC().Add(dur)))
 
 			select {
 			case <-timer.C:
