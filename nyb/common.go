@@ -60,11 +60,11 @@ func (t TZS) Swap(i, j int) {
 func (t TZS) Less(i, j int) bool {
 	x, err := strconv.ParseFloat(t[i].Offset, 64)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	y, err := strconv.ParseFloat(t[j].Offset, 64)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	if x < y {
 		return true
