@@ -49,3 +49,18 @@ func TestTriggers(t *testing.T) {
 	m.Name = "test"
 	nye.Bot.RunTriggers(m)
 }
+
+func TestCallbacks(t *testing.T) {
+	nickChangeInterval = time.Second * 0
+	nye := New("", []string{""}, "hny", "", false, "", "")
+	nye.addCallbacks()
+	cases := []string{
+		dumbirc.ANYMESSAGE, dumbirc.NICKTAKEN, dumbirc.PING,
+		dumbirc.PONG, dumbirc.PRIVMSG, dumbirc.WELCOME,
+	}
+	for _, v := range cases {
+		m := dumbirc.NewMessage()
+		m.Command = v
+		nye.Bot.RunCallbacks(m)
+	}
+}

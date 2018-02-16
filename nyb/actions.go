@@ -15,6 +15,8 @@ import (
 	"github.com/ugjka/go-tz"
 )
 
+var nickChangeInterval = time.Second * 5
+
 func (s *Settings) addCallbacks() {
 	bot := s.Bot
 	//On any message send a signal to ping timer to be ready
@@ -43,7 +45,7 @@ func (s *Settings) addCallbacks() {
 	//Could be improved
 	bot.AddCallback(dumbirc.NICKTAKEN, func(msg *dumbirc.Message) {
 		log.Println("Nick taken, changing...")
-		time.Sleep(time.Second * 5)
+		time.Sleep(nickChangeInterval)
 		bot.Nick = changeNick(bot.Nick)
 		log.Printf("New nick: %s", bot.Nick)
 		bot.NewNick(bot.Nick)
