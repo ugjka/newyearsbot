@@ -8,11 +8,7 @@ import (
 )
 
 func TestTriggers(t *testing.T) {
-	//hny !last, hny !next
-	target = func() time.Time {
-		tmp := time.Now()
-		return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
-	}()
+	//hny !next, hny !last
 	nye := New("", []string{""}, "hny", "", false, "", "")
 	nye.addTriggers()
 	nye.decodeZones(Zones)

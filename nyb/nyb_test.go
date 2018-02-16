@@ -7,10 +7,6 @@ import (
 )
 
 func TestLoopTimeZones(t *testing.T) {
-	target = func() time.Time {
-		tmp := time.Now()
-		return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
-	}()
 	nye := New("", []string{""}, "hny", "", false, "", "")
 	nye.decodeZones(Zones)
 	timeNow = func() time.Time {
@@ -61,12 +57,8 @@ func TestDecodeZones(t *testing.T) {
 }
 
 func TestStart(t *testing.T) {
-	target = func() time.Time {
-		tmp := time.Now()
-		return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
-	}()
 	timeNow = func() time.Time {
-		return target.Add(11*time.Hour + time.Minute*59 + time.Second*59 + time.Second/2)
+		return target.Add(11*time.Hour + time.Minute*59 + time.Second*59 + time.Millisecond*500)
 	}
 	nye := New("", []string{""}, "hny", "", false, "", "")
 	nye.Bot.DebugFakeConn = true
