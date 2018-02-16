@@ -49,7 +49,7 @@ The `hny` part can be changed by defining a different trigger
 
 ## Installation
 
-### (WARNING: deb and rpm packages are not updated yet for 2019 version)
+### 2019 versions are ready
 
 Arch linux PKGBUILD in archlinux folder
 
