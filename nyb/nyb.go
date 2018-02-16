@@ -89,8 +89,8 @@ func (s *Settings) Start() {
 	case <-s.Stopper:
 		return
 	}
-	s.decodeZones()
 
+	s.decodeZones()
 	for {
 		s.loopTimeZones()
 		select {
@@ -107,7 +107,9 @@ func (s *Settings) Start() {
 
 func (s *Settings) decodeZones() {
 	if err := json.Unmarshal([]byte(Zones), &s.zones); err != nil {
-		log.Fatal(err)
+		log.Println("Fatal error:", err)
+		close(s.Stopper)
+		return
 	}
 	sort.Sort(sort.Reverse(s.zones))
 }
@@ -172,7 +174,9 @@ func (s *Settings) loopTimeZones() {
 	for i := 0; i < len(zones); i++ {
 		dur, err := time.ParseDuration(zones[i].Offset + "h")
 		if err != nil {
-			log.Fatal(err)
+			log.Println("Fatal error:", err)
+			close(s.Stopper)
+			return
 		}
 		s.next = zones[i]
 		if i == 0 {
