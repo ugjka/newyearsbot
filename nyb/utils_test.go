@@ -6,32 +6,18 @@ import (
 )
 
 func TestChangeNick(t *testing.T) {
-	ln := "h123456789123456"
-	sn := changeNick(ln)
-	if len(sn) != 13 {
-		t.Errorf("Expecting 13 chars got %d chars", len(sn))
+	ln := "aaaaaaaaaaaaaaaa"
+	for i := 1; i <= 4; i++ {
+		ln = changeNick(ln)
+		if got := strings.Count(ln, "_"); got != i {
+			t.Errorf("expecting %d _'s got %d ", i, got)
+		}
+		if len(ln) != 12+i {
+			t.Errorf("expecting lenght %d got %d", 12+i, len(ln))
+		}
 	}
-	if !strings.HasSuffix(sn, "_") {
-		t.Errorf("%s dosen't have _ suffix", sn)
-	}
-	sn = changeNick(sn)
-	if !strings.HasSuffix(sn, "__") {
-		t.Errorf("didn't get __ suffix")
-	}
-	sn = changeNick(sn)
-	if !strings.HasSuffix(sn, "___") {
-		t.Errorf("didn't get ___ suffix")
-	}
-	sn = changeNick(sn)
-	if !strings.HasSuffix(sn, "____") {
-		t.Errorf("didn't get ____ suffix")
-	}
-	if len(sn) != 16 {
-		t.Error("sn not 16 chars")
-	}
-	sn = changeNick(sn)
-	if sn != ln[:12] {
-		t.Errorf("didn't get %s, got %s", ln[:12], sn)
+	if ln := changeNick(ln); len(ln) != 12 {
+		t.Errorf("expecting lenght 12 got %d", len(ln))
 	}
 	n := "a"
 	for i := 1; i <= 15; i++ {
@@ -41,5 +27,7 @@ func TestChangeNick(t *testing.T) {
 			t.Errorf("expecting %d _'s got %d: string: %s", i, c, n)
 		}
 	}
-
+	if n := changeNick(n); n != "a" {
+		t.Error("n wasn't 'a'")
+	}
 }
