@@ -102,7 +102,7 @@ func (s *Settings) addTriggers() {
 			if s.last.Offset == "-12" {
 				humandur = durafmt.Parse(timeNow().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
 			}
-			bot.Reply(msg, fmt.Sprintf("Last NewYear %s ago in %s",
+			bot.Reply(msg, fmt.Sprintf("Last New Year %s ago in %s",
 				removeMilliseconds(humandur), s.last.String()))
 		},
 	})
