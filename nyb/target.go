@@ -9,6 +9,6 @@ var target = func() time.Time {
 		return time.Date(tmp.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
 	}
 	//Debug target
-	return time.Date(tmp.Year(), time.February, 18, 0, 0, 0, 0, time.UTC)
-	//return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
+	//return time.Date(tmp.Year(), time.February, 18, 0, 0, 0, 0, time.UTC)
+	return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 }()
