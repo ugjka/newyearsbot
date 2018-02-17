@@ -69,7 +69,6 @@ var stFinished = "That's it, Year %d is here AoE"
 func (s *Settings) Start() {
 	log.SetOutput(s.LogChan)
 	log.Println("Starting the bot...")
-
 	defer s.Wait()
 	//
 	//Set up irc
@@ -187,7 +186,6 @@ func (s *Settings) loopTimeZones() {
 			bot.PrivMsgBulk(s.IrcChans, msg)
 			//Wait till Target in Timezone
 			timer := NewTimer(target.Sub(timeNow().UTC().Add(dur)))
-
 			select {
 			case <-timer.C:
 				timer.Stop()

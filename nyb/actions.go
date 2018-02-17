@@ -40,8 +40,6 @@ func (s *Settings) addCallbacks() {
 		log.Println("Got PONG...")
 	})
 	//Change nick if taken
-	//This could loop forever in some cases
-	//Could be improved
 	bot.AddCallback(dumbirc.NICKTAKEN, func(msg *dumbirc.Message) {
 		log.Println("Nick taken, changing...")
 		time.Sleep(nickChangeInterval)

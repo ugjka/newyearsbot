@@ -60,33 +60,39 @@ func TestQuery(t *testing.T) {
 	time.Sleep(time.Second)
 	nye := New("", []string{""}, "hny", "", false, "", "http://127.0.0.1:1234")
 	nye.addTriggers()
+	//Ok location
 	m := dumbirc.NewMessage()
 	m.Command = dumbirc.PRIVMSG
 	m.Trailing = "hny ok"
 	m.Name = "test"
 	nye.Bot.RunTriggers(m)
+	//Test cached
 	nye.Bot.RunTriggers(m)
+	//Not ok server status
 	m = dumbirc.NewMessage()
 	m.Command = dumbirc.PRIVMSG
 	m.Trailing = "hny notok"
 	m.Name = "test"
 	nye.Bot.RunTriggers(m)
-	nye.Bot.RunTriggers(m)
+	//Test No time zone for location
 	m = dumbirc.NewMessage()
 	m.Command = dumbirc.PRIVMSG
 	m.Trailing = "hny nozone"
 	m.Name = "test"
 	nye.Bot.RunTriggers(m)
+	//Test no place found
 	m = dumbirc.NewMessage()
 	m.Command = dumbirc.PRIVMSG
 	m.Trailing = "hny noplace"
 	m.Name = "test"
 	nye.Bot.RunTriggers(m)
+	//Test malformed json
 	m = dumbirc.NewMessage()
 	m.Command = dumbirc.PRIVMSG
 	m.Trailing = "hny borked"
 	m.Name = "test"
 	nye.Bot.RunTriggers(m)
+	//Test past
 	timeNow = func() time.Time {
 		return time.Date(time.Now().Year()+1000, 0, 0, 0, 0, 0, 0, time.UTC)
 	}
