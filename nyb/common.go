@@ -1,6 +1,7 @@
 package nyb
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -136,9 +137,32 @@ func (t *Timer) Stop() {
 
 //NominatimResult ...
 type NominatimResult struct {
-	Lat         string
-	Lon         string
+	Lat         float64
+	Lon         float64
 	DisplayName string `json:"Display_name"`
+}
+
+//UnmarshalJSON ...
+func (n *NominatimResult) UnmarshalJSON(data []byte) (err error) {
+	v := struct {
+		Lat         string
+		Lon         string
+		DisplayName string `json:"Display_name"`
+	}{}
+	err = json.Unmarshal(data, &v)
+	if err != nil {
+		return
+	}
+	n.Lat, err = strconv.ParseFloat(v.Lat, 64)
+	if err != nil {
+		return
+	}
+	n.Lon, err = strconv.ParseFloat(v.Lon, 64)
+	if err != nil {
+		return
+	}
+	n.DisplayName = v.DisplayName
+	return
 }
 
 //NominatimResults ...

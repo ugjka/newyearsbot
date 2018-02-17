@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/url"
-	"strconv"
 	"strings"
 	"time"
 
@@ -164,28 +163,15 @@ func (s *Settings) getNewYear(location string) (string, error) {
 	if len(s.nominatimResult) == 0 {
 		return "", errNoPlace
 	}
-	lat, err := strconv.ParseFloat(s.nominatimResult[0].Lat, 64)
-	if err != nil {
-		return "", err
-	}
-	lng, err := strconv.ParseFloat(s.nominatimResult[0].Lon, 64)
-	if err != nil {
-		return "", err
-	}
 	p := gotz.Point{
-		Lat: lat,
-		Lng: lng,
+		Lat: s.nominatimResult[0].Lat,
+		Lng: s.nominatimResult[0].Lon,
 	}
 	zone, err := gotz.GetZone(p)
 	if err != nil {
 		return "", errNoZone
 	}
-
-	offset, err := time.ParseDuration(fmt.Sprintf("%ds", getOffset(target, zone)))
-	if err != nil {
-		log.Println(err)
-		return "", err
-	}
+	offset := time.Second * time.Duration(getOffset(target, zone))
 	adress := s.nominatimResult[0].DisplayName
 
 	if timeNow().UTC().Add(offset).Before(target) {
