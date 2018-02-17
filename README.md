@@ -57,9 +57,9 @@ The `hny` part can be changed by defining a different trigger
 
 Arch linux PKGBUILD in archlinux folder
 
-RPM on [releases page](https://github.com/ugjka/newyearsbot/releases) (not tested),
+RPM on [releases page](https://github.com/ugjka/newyearsbot/releases)
 
-DEB on [releases page](https://github.com/ugjka/newyearsbot/releases) (Works on ubuntu 16.04 LTS, may work elsewhere too)
+DEB on [releases page](https://github.com/ugjka/newyearsbot/releases)
 
 ### Using make
 
