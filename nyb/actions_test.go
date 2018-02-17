@@ -1,9 +1,13 @@
 package nyb
 
 import (
+	"encoding/json"
+	"log"
+	"net/http"
 	"testing"
 	"time"
 
+	"github.com/julienschmidt/httprouter"
 	"github.com/ugjka/dumbirc"
 )
 
@@ -48,5 +52,120 @@ func TestCallbacks(t *testing.T) {
 		m := dumbirc.NewMessage()
 		m.Command = v
 		nye.Bot.RunCallbacks(m)
+	}
+}
+
+func TestQuery(t *testing.T) {
+	go createServer()
+	time.Sleep(time.Second)
+	nye := New("", []string{""}, "hny", "", false, "", "http://127.0.0.1:1234")
+	nye.addTriggers()
+	m := dumbirc.NewMessage()
+	m.Command = dumbirc.PRIVMSG
+	m.Trailing = "hny ok"
+	m.Name = "test"
+	nye.Bot.RunTriggers(m)
+	nye.Bot.RunTriggers(m)
+	m = dumbirc.NewMessage()
+	m.Command = dumbirc.PRIVMSG
+	m.Trailing = "hny notok"
+	m.Name = "test"
+	nye.Bot.RunTriggers(m)
+	nye.Bot.RunTriggers(m)
+	m = dumbirc.NewMessage()
+	m.Command = dumbirc.PRIVMSG
+	m.Trailing = "hny nozone"
+	m.Name = "test"
+	nye.Bot.RunTriggers(m)
+	m = dumbirc.NewMessage()
+	m.Command = dumbirc.PRIVMSG
+	m.Trailing = "hny noplace"
+	m.Name = "test"
+	nye.Bot.RunTriggers(m)
+	m = dumbirc.NewMessage()
+	m.Command = dumbirc.PRIVMSG
+	m.Trailing = "hny borked"
+	m.Name = "test"
+	nye.Bot.RunTriggers(m)
+	timeNow = func() time.Time {
+		return time.Date(time.Now().Year()+1000, 0, 0, 0, 0, 0, 0, time.UTC)
+	}
+	m = dumbirc.NewMessage()
+	m.Command = dumbirc.PRIVMSG
+	m.Trailing = "hny ok"
+	m.Name = "test"
+	nye.Bot.RunTriggers(m)
+
+}
+
+func createServer() {
+	mux := httprouter.New()
+	mux.HandlerFunc("GET", "/search", fakeNominatim)
+	http.ListenAndServe(":1234", mux)
+	return
+}
+
+func fakeNominatim(w http.ResponseWriter, r *http.Request) {
+	values := r.URL.Query()
+	//test ok
+	if values.Get("q") == "ok" {
+		type nom struct {
+			Lat         string
+			Lon         string
+			DisplayName string `json:"Display_name"`
+		}
+		type noms []nom
+		n := make(noms, 0)
+		n = append(n, nom{
+			DisplayName: "ok",
+			Lat:         "56.946285",
+			Lon:         "24.105078",
+		})
+		err := json.NewEncoder(w).Encode(n)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	//test not ok
+	if values.Get("q") == "notok" {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+	//test no zone
+	if values.Get("q") == "nozone" {
+		type nom struct {
+			Lat         string
+			Lon         string
+			DisplayName string `json:"Display_name"`
+		}
+		type noms []nom
+		n := make(noms, 0)
+		n = append(n, nom{
+			DisplayName: "ok",
+			Lat:         "0.190165906",
+			Lon:         "-176.474331436",
+		})
+		err := json.NewEncoder(w).Encode(n)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	//test no place
+	if values.Get("q") == "noplace" {
+		type nom struct {
+			Lat         string
+			Lon         string
+			DisplayName string `json:"Display_name"`
+		}
+		type noms []nom
+		n := make(noms, 0)
+		err := json.NewEncoder(w).Encode(n)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	//borked json
+	if values.Get("q") == "borked" {
+		w.Write([]byte("*eaeia"))
 	}
 }
