@@ -45,6 +45,7 @@ The `hny` part can be changed by defining a different trigger
 * you can specify different Nominatim server if you want
 * timezone lookup is done from tz shapefile (no more google api)
 * code much more readable
+* tests
 
 ## What's not so great
 
