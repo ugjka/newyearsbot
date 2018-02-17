@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"net/url"
 	"os"
-	"strconv"
 	"time"
 
 	gotz "github.com/ugjka/go-tz"
@@ -34,7 +33,7 @@ func main() {
 	ircNominatim = flag.String("nominatim", "http://nominatim.openstreetmap.org", "Nominatim server to use")
 	flag.Parse()
 	if *email == "" {
-		fmt.Fprintf(os.Stderr, "%s", "provide email with -email flag")
+		fmt.Fprintf(os.Stderr, "%s", "provide email with -email flag\n")
 		return
 	}
 	scanner := bufio.NewScanner(os.Stdin)
@@ -69,17 +68,9 @@ func getLocationInfo(loc string) (string, error) {
 	if len(mapj) == 0 {
 		return "", errors.New("status not OK")
 	}
-	lat, err := strconv.ParseFloat(mapj[0].Lat, 64)
-	if err != nil {
-		return "", err
-	}
-	lon, err := strconv.ParseFloat(mapj[0].Lon, 64)
-	if err != nil {
-		return "", err
-	}
 	location := gotz.Point{
-		Lat: lat,
-		Lng: lon,
+		Lat: mapj[0].Lat,
+		Lng: mapj[0].Lon,
 	}
 	zone, err := gotz.GetZone(location)
 	if err != nil {

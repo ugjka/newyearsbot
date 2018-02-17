@@ -58,7 +58,7 @@ func main() {
 	sort.Sort(sort.Reverse(zones))
 
 	ircobj := dumbirc.New(*ircNick, ircName, *ircServer, true)
-	ircobj.AddCallback(dumbirc.WELCOME, func(msg dumbirc.Message) {
+	ircobj.AddCallback(dumbirc.WELCOME, func(msg *dumbirc.Message) {
 		ircobj.Join(ircChansFlag)
 		//Prevent early start
 		once.Do(func() {
@@ -66,11 +66,11 @@ func main() {
 		})
 	})
 
-	ircobj.AddCallback(dumbirc.PING, func(msg dumbirc.Message) {
+	ircobj.AddCallback(dumbirc.PING, func(msg *dumbirc.Message) {
 		ircobj.Pong()
 	})
 
-	ircobj.AddCallback(dumbirc.NICKTAKEN, func(msg dumbirc.Message) {
+	ircobj.AddCallback(dumbirc.NICKTAKEN, func(msg *dumbirc.Message) {
 		ircobj.Nick += "_"
 		ircobj.NewNick(ircobj.Nick)
 	})

@@ -19,7 +19,7 @@ type TZ struct {
 		Name   string   `json:"name"`
 		Cities []string `json:"cities"`
 	} `json:"countries"`
-	Offset string `json:"offset"`
+	Offset float64 `json:"offset"`
 }
 
 func (t TZ) String() (x string) {
@@ -59,18 +59,7 @@ func (t TZS) Swap(i, j int) {
 }
 
 func (t TZS) Less(i, j int) bool {
-	x, err := strconv.ParseFloat(t[i].Offset, 64)
-	if err != nil {
-		panic(err)
-	}
-	y, err := strconv.ParseFloat(t[j].Offset, 64)
-	if err != nil {
-		panic(err)
-	}
-	if x < y {
-		return true
-	}
-	return false
+	return t[i].Offset < t[j].Offset
 }
 
 //IrcChans is a custom flag

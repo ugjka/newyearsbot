@@ -16,10 +16,6 @@ func TestLoopTimeZones(t *testing.T) {
 	//Test stopper
 	close(nye.Stopper)
 	nye.loopTimeZones()
-	//Test fatal error
-	nye.Stopper = make(chan bool)
-	nye.zones[0].Offset = "aeiiaoeii"
-	nye.loopTimeZones()
 }
 
 func TestIrcControl(t *testing.T) {

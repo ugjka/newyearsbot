@@ -11,7 +11,6 @@ import (
 	"net/url"
 	"os"
 	"sort"
-	"strconv"
 	"time"
 
 	"github.com/ugjka/go-tz"
@@ -35,7 +34,7 @@ func main() {
 	ircNominatim = flag.String("nominatim", "http://nominatim.openstreetmap.org", "Nominatim server to use")
 	flag.Parse()
 	if *ircEmail == "" {
-		fmt.Fprintf(os.Stderr, "%s", "provide email with -email flag")
+		fmt.Fprintf(os.Stderr, "%s", "provide email with -email flag\n")
 		return
 	}
 	var zones nyb.TZS
@@ -53,10 +52,9 @@ func main() {
 				if err != nil {
 					log.Println(country.Name, err)
 				} else {
-					localOffset, _ := strconv.ParseFloat(zone.Offset, 64)
-					if remoteOffset != localOffset {
+					if remoteOffset != zone.Offset {
 						fmt.Printf("%s: Offset mismatch Loc: %v, Rem: %v\n",
-							country.Name, localOffset, remoteOffset)
+							country.Name, zone.Offset, remoteOffset)
 					}
 				}
 			}
@@ -65,10 +63,9 @@ func main() {
 				if err != nil {
 					log.Println(city+" "+country.Name, err)
 				} else {
-					localOffset, _ := strconv.ParseFloat(zone.Offset, 64)
-					if remoteOffset != localOffset {
+					if remoteOffset != zone.Offset {
 						fmt.Printf("%s, %s: Offset mismatch Loc: %v, Rem: %v\n",
-							city, country.Name, localOffset, remoteOffset)
+							city, country.Name, zone.Offset, remoteOffset)
 					}
 				}
 			}
@@ -98,17 +95,9 @@ func getTimeZone(loc string) (float64, error) {
 	if len(mapj) == 0 {
 		return 0, errors.New("could not find location")
 	}
-	lat, err := strconv.ParseFloat(mapj[0].Lat, 64)
-	if err != nil {
-		return 0, err
-	}
-	lon, err := strconv.ParseFloat(mapj[0].Lon, 64)
-	if err != nil {
-		return 0, err
-	}
 	location := gotz.Point{
-		Lat: lat,
-		Lng: lon,
+		Lat: mapj[0].Lat,
+		Lng: mapj[0].Lon,
 	}
 	zone, err := gotz.GetZone(location)
 	if err != nil {

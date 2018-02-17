@@ -172,12 +172,7 @@ func (s *Settings) loopTimeZones() {
 	zones := s.zones
 	bot := s.Bot
 	for i := 0; i < len(zones); i++ {
-		dur, err := time.ParseDuration(zones[i].Offset + "h")
-		if err != nil {
-			log.Println("Fatal error:", err)
-			close(s.Stopper)
-			return
-		}
+		dur := time.Minute * time.Duration(zones[i].Offset*60)
 		s.next = zones[i]
 		if i == 0 {
 			s.last = zones[len(zones)-1]

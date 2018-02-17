@@ -28,16 +28,6 @@ func TestTriggers(t *testing.T) {
 			nye.Bot.RunTriggers(m)
 		}
 	}
-	//test borked offsets
-	nye.last.Offset = "aoeiaoi"
-	nye.next.Offset = "aoeoaei"
-	for _, v := range cases {
-		m := dumbirc.NewMessage()
-		m.Command = dumbirc.PRIVMSG
-		m.Trailing = v
-		m.Name = "test"
-		nye.Bot.RunTriggers(m)
-	}
 	//hny !help
 	m := dumbirc.NewMessage()
 	m.Command = dumbirc.PRIVMSG

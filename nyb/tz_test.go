@@ -3,7 +3,6 @@ package nyb
 import (
 	"encoding/json"
 	"testing"
-	"time"
 )
 
 func TestZones(t *testing.T) {
@@ -12,21 +11,14 @@ func TestZones(t *testing.T) {
 	if err != nil {
 		t.Errorf("Corrupted zone data: %s", err)
 	}
-	for i, zone := range zones {
-		if zone.Offset == "" {
-			t.Errorf("Empty zone offset at: %d", i)
-		}
-		_, err := time.ParseDuration(zone.Offset + "h")
-		if err != nil {
-			t.Errorf("Could not parse offset %s: Err: %s", zone.Offset, err)
-		}
+	for _, zone := range zones {
 		for _, country := range zone.Countries {
 			if country.Name == "" {
-				t.Errorf("Empty country name in zone %s", zone.Offset)
+				t.Errorf("Empty country name in zone %v", zone.Offset)
 			}
 			for _, city := range country.Cities {
 				if city == "" {
-					t.Errorf("Empty city name in %s in zone %s", country.Name, zone.Offset)
+					t.Errorf("Empty city name in %s in zone %v", country.Name, zone.Offset)
 				}
 			}
 		}

@@ -72,10 +72,7 @@ func (s *Settings) addTriggers() {
 		},
 		Response: func(msg *dumbirc.Message) {
 			log.Println("Querying !next...")
-			dur, err := time.ParseDuration(s.next.Offset + "h")
-			if err != nil {
-				return
-			}
+			dur := time.Minute * time.Duration(s.next.Offset*60)
 			if timeNow().UTC().Add(dur).After(target) {
 				bot.Reply(msg, fmt.Sprintf("No more next, %d is here AoE", target.Year()))
 				return
@@ -93,12 +90,9 @@ func (s *Settings) addTriggers() {
 		},
 		Response: func(msg *dumbirc.Message) {
 			log.Println("Querying !last...")
-			dur, err := time.ParseDuration(s.last.Offset + "h")
-			if err != nil {
-				return
-			}
+			dur := time.Minute * time.Duration(s.last.Offset*60)
 			humandur := durafmt.Parse(timeNow().UTC().Add(dur).Sub(target))
-			if s.last.Offset == "-12" {
+			if s.last.Offset == -12 {
 				humandur = durafmt.Parse(timeNow().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
 			}
 			bot.Reply(msg, fmt.Sprintf("Last New Year %s ago in %s",

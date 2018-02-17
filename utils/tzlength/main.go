@@ -24,7 +24,7 @@ func main() {
 		tmp := len([]byte(k.String()))
 		//if tmp > 396 {
 		if tmp > 0 {
-			fmt.Fprintf(w, "%s\t%d\t%d\t\n", k.Offset, tmp, tmp-396)
+			fmt.Fprintf(w, "%v\t%d\t%d\t\n", k.Offset, tmp, tmp-396)
 		}
 	}
 	w.Flush()

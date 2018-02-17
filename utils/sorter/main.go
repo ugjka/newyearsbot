@@ -4,10 +4,8 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"os"
 	"sort"
-	"strconv"
 
 	nyb "github.com/ugjka/newyearsbot/nyb"
 )
@@ -34,12 +32,13 @@ func main() {
 type Cities []string
 
 //TZ holds infor for Time Zone
+//TZ holds info for Time Zone
 type TZ struct {
 	Countries []struct {
 		Name   string `json:"name"`
 		Cities Cities `json:"cities"`
 	} `json:"countries"`
-	Offset string `json:"offset"`
+	Offset float64 `json:"offset"`
 }
 
 //TZS is a slice of TZ
@@ -78,16 +77,5 @@ func (t TZS) Swap(i, j int) {
 }
 
 func (t TZS) Less(i, j int) bool {
-	x, err := strconv.ParseFloat(t[i].Offset, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
-	y, err := strconv.ParseFloat(t[j].Offset, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if x < y {
-		return true
-	}
-	return false
+	return t[i].Offset < t[j].Offset
 }

@@ -12,7 +12,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "-12"
+    "offset": -12
   },
   {
     "countries": [
@@ -35,7 +35,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "-11"
+    "offset": -11
   },
   {
     "countries": [
@@ -69,7 +69,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "-10"
+    "offset": -10
   },
   {
     "countries": [
@@ -83,7 +83,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "-9.5"
+    "offset": -9.5
   },
   {
     "countries": [
@@ -102,7 +102,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "-9"
+    "offset": -9
   },
   {
     "countries": [
@@ -142,7 +142,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "-8"
+    "offset": -8
   },
   {
     "countries": [
@@ -179,7 +179,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "-7"
+    "offset": -7
   },
   {
     "countries": [
@@ -256,7 +256,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "-6"
+    "offset": -6
   },
   {
     "countries": [
@@ -343,7 +343,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "-5"
+    "offset": -5
   },
   {
     "countries": [
@@ -445,7 +445,7 @@ var Zones = `[
         "cities": []
       }
     ],
-    "offset": "-4"
+    "offset": -4
   },
   {
     "countries": [
@@ -459,7 +459,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "-3.5"
+    "offset": -3.5
   },
   {
     "countries": [
@@ -533,7 +533,7 @@ var Zones = `[
         "cities": []
       }
     ],
-    "offset": "-3"
+    "offset": -3
   },
   {
     "countries": [
@@ -560,7 +560,7 @@ var Zones = `[
         "cities": []
       }
     ],
-    "offset": "-2"
+    "offset": -2
   },
   {
     "countries": [
@@ -583,7 +583,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "-1"
+    "offset": -1
   },
   {
     "countries": [
@@ -679,7 +679,7 @@ var Zones = `[
         "cities": []
       }
     ],
-    "offset": "0"
+    "offset": 0
   },
   {
     "countries": [
@@ -840,7 +840,7 @@ var Zones = `[
         "cities": []
       }
     ],
-    "offset": "1"
+    "offset": 1
   },
   {
     "countries": [
@@ -985,7 +985,7 @@ var Zones = `[
         "cities": []
       }
     ],
-    "offset": "2"
+    "offset": 2
   },
   {
     "countries": [
@@ -1097,7 +1097,7 @@ var Zones = `[
         "cities": []
       }
     ],
-    "offset": "3"
+    "offset": 3
   },
   {
     "countries": [
@@ -1114,7 +1114,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "3.5"
+    "offset": 3.5
   },
   {
     "countries": [
@@ -1178,7 +1178,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "4"
+    "offset": 4
   },
   {
     "countries": [
@@ -1191,7 +1191,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "4.5"
+    "offset": 4.5
   },
   {
     "countries": [
@@ -1257,7 +1257,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "5"
+    "offset": 5
   },
   {
     "countries": [
@@ -1283,7 +1283,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "5.5"
+    "offset": 5.5
   },
   {
     "countries": [
@@ -1296,7 +1296,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "5.75"
+    "offset": 5.75
   },
   {
     "countries": [
@@ -1346,7 +1346,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "6"
+    "offset": 6
   },
   {
     "countries": [
@@ -1362,7 +1362,7 @@ var Zones = `[
         "cities": []
       }
     ],
-    "offset": "6.5"
+    "offset": 6.5
   },
   {
     "countries": [
@@ -1427,7 +1427,7 @@ var Zones = `[
         "cities": []
       }
     ],
-    "offset": "7"
+    "offset": 7
   },
   {
     "countries": [
@@ -1512,7 +1512,7 @@ var Zones = `[
         "cities": []
       }
     ],
-    "offset": "8"
+    "offset": 8
   },
   {
     "countries": [
@@ -1524,7 +1524,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "8.5"
+    "offset": 8.5
   },
   {
     "countries": [
@@ -1537,7 +1537,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "8.75"
+    "offset": 8.75
   },
   {
     "countries": [
@@ -1582,7 +1582,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "9"
+    "offset": 9
   },
   {
     "countries": [
@@ -1594,7 +1594,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "9.5"
+    "offset": 9.5
   },
   {
     "countries": [
@@ -1637,7 +1637,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "10"
+    "offset": 10
   },
   {
     "countries": [
@@ -1649,7 +1649,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "10.5"
+    "offset": 10.5
   },
   {
     "countries": [
@@ -1695,7 +1695,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "11"
+    "offset": 11
   },
   {
     "countries": [
@@ -1738,7 +1738,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "12"
+    "offset": 12
   },
   {
     "countries": [
@@ -1772,7 +1772,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "13"
+    "offset": 13
   },
   {
     "countries": [
@@ -1783,7 +1783,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "13.75"
+    "offset": 13.75
   },
   {
     "countries": [
@@ -1800,7 +1800,7 @@ var Zones = `[
         ]
       }
     ],
-    "offset": "14"
+    "offset": 14
   }
 ]
 `
