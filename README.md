@@ -3,7 +3,7 @@
 ## Preparing for 2019
 
 [![Build Status](https://travis-ci.org/ugjka/newyearsbot.svg?branch=master)](https://travis-ci.org/ugjka/newyearsbot)
-[![Coverage Status](https://coveralls.io/repos/github/ugjka/newyearsbot/badge.svg)](https://coveralls.io/github/ugjka/newyearsbot)
+[![codecov](https://codecov.io/gh/ugjka/newyearsbot/branch/master/graph/badge.svg)](https://codecov.io/gh/ugjka/newyearsbot)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ugjka/newyearsbot/nyb)](https://goreportcard.com/report/github.com/ugjka/newyearsbot/nyb)
 
 Irc Bot for celebrating New Year Eve
