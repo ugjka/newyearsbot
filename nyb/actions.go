@@ -39,7 +39,7 @@ func (s *Settings) addCallbacks() {
 	bot.AddCallback(dumbirc.PONG, func(msg *dumbirc.Message) {
 		log.Println("Got PONG...")
 	})
-	//Change nick if taken
+
 	bot.AddCallback(dumbirc.NICKTAKEN, func(msg *dumbirc.Message) {
 		log.Println("Nick taken, changing...")
 		time.Sleep(nickChangeInterval)
