@@ -1,0 +1,16 @@
+language: go
+go:
+  - 1.x
+os:
+  - linux
+  - osx
+  - windows
+sudo: required
+before_install:
+  - go get github.com/golang/lint/golint
+  - go get -d ./nyb/...
+script:
+  - go build ./nyb/...
+  - go vet ./nyb/...
+  - golint -set_exit_status ./nyb/...
+
