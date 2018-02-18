@@ -26,9 +26,6 @@ func (t TZ) String() (x string) {
 	for i, country := range t.Countries {
 		x += fmt.Sprintf("%s", country.Name)
 		for i, city := range country.Cities {
-			if city == "" {
-				continue
-			}
 			if i == 0 {
 				x += " ("
 			}
