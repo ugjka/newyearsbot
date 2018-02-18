@@ -8,7 +8,7 @@ import (
 
 func TestLoopTimeZones(t *testing.T) {
 	nye := New("", []string{""}, "hny", "", false, "", "")
-	nye.decodeZones(&Zones)
+	nye.decodeZones(Zones)
 	timeNow = func() time.Time {
 		return target.Add(11*time.Hour + time.Minute*59 + time.Second*59)
 	}
@@ -47,9 +47,9 @@ func TestStop(t *testing.T) {
 
 func TestDecodeZones(t *testing.T) {
 	nye := New("", []string{""}, "hny", "", false, "", "")
-	nye.decodeZones(&Zones)
-	zones := "*" + Zones
-	nye.decodeZones(&zones)
+	nye.decodeZones(Zones)
+	zones := append([]byte{'*'}, Zones...)
+	nye.decodeZones(zones)
 }
 
 func TestStart(t *testing.T) {

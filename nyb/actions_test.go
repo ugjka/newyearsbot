@@ -15,7 +15,7 @@ func TestTriggers(t *testing.T) {
 	//hny !next, hny !last
 	nye := New("", []string{""}, "hny", "", false, "", "")
 	nye.addTriggers()
-	nye.decodeZones(&Zones)
+	nye.decodeZones(Zones)
 	nye.last = nye.zones[len(nye.zones)-1]
 	nye.next = nye.zones[len(nye.zones)-2]
 	cases := []string{"hny !next", "hny !last"}

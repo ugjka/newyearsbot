@@ -89,7 +89,7 @@ func (s *Settings) Start() {
 		return
 	}
 
-	s.decodeZones(&Zones)
+	s.decodeZones(Zones)
 	for {
 		s.loopTimeZones()
 		select {
@@ -104,8 +104,8 @@ func (s *Settings) Start() {
 	}
 }
 
-func (s *Settings) decodeZones(z *string) {
-	if err := json.Unmarshal([]byte(*z), &s.zones); err != nil {
+func (s *Settings) decodeZones(z []byte) {
+	if err := json.Unmarshal(z, &s.zones); err != nil {
 		log.Println("Fatal error:", err)
 		close(s.Stopper)
 		return

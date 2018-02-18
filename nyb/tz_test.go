@@ -7,7 +7,7 @@ import (
 
 func TestZones(t *testing.T) {
 	var zones TZS
-	err := json.Unmarshal([]byte(Zones), &zones)
+	err := json.Unmarshal(Zones, &zones)
 	if err != nil {
 		t.Errorf("Corrupted zone data: %s", err)
 	}
