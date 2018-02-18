@@ -101,6 +101,11 @@ func TestQuery(t *testing.T) {
 	m.Trailing = "hny ok"
 	m.Name = "test"
 	nye.Bot.RunTriggers(m)
+	//BORKED SERVER
+	nye.Nominatim = "//////////////"
+	nye.Bot.RunTriggers(m)
+	nye.Nominatim = ":"
+	nye.Bot.RunTriggers(m)
 
 }
 
