@@ -157,7 +157,7 @@ func (s *Settings) getNewYear(location string) (string, error) {
 	}
 	p := gotz.Point{
 		Lat: s.nominatimResult[0].Lat,
-		Lng: s.nominatimResult[0].Lon,
+		Lon: s.nominatimResult[0].Lon,
 	}
 	zone, err := gotz.GetZone(p)
 	if err != nil {
