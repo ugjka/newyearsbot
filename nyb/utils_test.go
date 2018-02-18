@@ -5,6 +5,10 @@ import (
 	"testing"
 )
 
+func init() {
+	timeNow()
+}
+
 func TestChangeNick(t *testing.T) {
 	ln := "aaaaaaaaaaaaaaaa"
 	for i := 1; i <= 4; i++ {
