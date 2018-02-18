@@ -55,8 +55,8 @@ func (s *Settings) addTriggers() {
 	stHelp := "%s: Query location: '%s <location>', Next zone: '%s !next', Last zone: '%s !last', Source code: https://github.com/ugjka/newyearsbot"
 	bot.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
-			return msg.Command == "PRIVMSG" &&
-				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !help", s.IrcTrigger))
+			return msg.Command == dumbirc.PRIVMSG &&
+				msg.Trailing == fmt.Sprintf("%s !help", s.IrcTrigger)
 		},
 		Response: func(msg *dumbirc.Message) {
 			bot.Reply(msg, fmt.Sprintf(stHelp, msg.Name, s.IrcTrigger, s.IrcTrigger, s.IrcTrigger))
@@ -65,8 +65,8 @@ func (s *Settings) addTriggers() {
 	//Trigger for !next
 	bot.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
-			return msg.Command == "PRIVMSG" &&
-				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !next", s.IrcTrigger))
+			return msg.Command == dumbirc.PRIVMSG &&
+				msg.Trailing == fmt.Sprintf("%s !next", s.IrcTrigger)
 		},
 		Response: func(msg *dumbirc.Message) {
 			log.Println("Querying !next...")
@@ -83,8 +83,8 @@ func (s *Settings) addTriggers() {
 	//Trigger for !last
 	bot.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
-			return msg.Command == "PRIVMSG" &&
-				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s !last", s.IrcTrigger))
+			return msg.Command == dumbirc.PRIVMSG &&
+				msg.Trailing == fmt.Sprintf("%s !last", s.IrcTrigger)
 		},
 		Response: func(msg *dumbirc.Message) {
 			log.Println("Querying !last...")
@@ -100,16 +100,21 @@ func (s *Settings) addTriggers() {
 	//Trigger for !remaining
 	bot.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
-			return msg.Command == dumbirc.PRIVMSG && msg.Trailing == fmt.Sprintf("%s !remaining", s.IrcTrigger)
+			return msg.Command == dumbirc.PRIVMSG &&
+				msg.Trailing == fmt.Sprintf("%s !remaining", s.IrcTrigger)
 		},
 		Response: func(msg *dumbirc.Message) {
-			bot.Reply(msg, fmt.Sprintf("%s: %d timezones remaining", msg.Name, s.remaining))
+			ss := "s"
+			if s.remaining == 1 {
+				ss = ""
+			}
+			bot.Reply(msg, fmt.Sprintf("%s: %d timezone%s remaining", msg.Name, s.remaining, ss))
 		},
 	})
 	//Trigger for location queries
 	bot.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
-			return msg.Command == "PRIVMSG" &&
+			return msg.Command == dumbirc.PRIVMSG &&
 				!strings.Contains(msg.Trailing, "!next") &&
 				!strings.Contains(msg.Trailing, "!last") &&
 				!strings.Contains(msg.Trailing, "!help") &&
