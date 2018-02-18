@@ -54,6 +54,10 @@ The `hny` part can be changed by defining a different trigger
 * timezone shapefile is loaded in memory which increases ram usage by 60 to 80MB
 * timezone lookup on slow hardware might be slow
 
+## Pro-tip
+
+* make sure your system's time is synchronized with NTP
+
 ## Installation
 
 ### 2019 versions are ready
