@@ -67,4 +67,8 @@ func TestStart(t *testing.T) {
 		close(nye.Stopper)
 	}()
 	nye.Start()
+	Zones = append([]byte{'*'}, Zones...)
+	nye.Stopper = make(chan bool)
+	nye.Start()
+	Zones = Zones[1:]
 }

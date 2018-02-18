@@ -81,7 +81,6 @@ func (s *Settings) Start() {
 	go s.ircControl()
 
 	bot.Start()
-
 	select {
 	case <-s.start:
 		log.Println("Got start...")
@@ -89,7 +88,11 @@ func (s *Settings) Start() {
 		return
 	}
 
-	s.decodeZones(Zones)
+	if err := s.decodeZones(Zones); err != nil {
+		log.Println("Fatal error:", err)
+		close(s.Stopper)
+		return
+	}
 	for {
 		s.loopTimeZones()
 		select {
@@ -104,13 +107,12 @@ func (s *Settings) Start() {
 	}
 }
 
-func (s *Settings) decodeZones(z []byte) {
+func (s *Settings) decodeZones(z []byte) error {
 	if err := json.Unmarshal(z, &s.zones); err != nil {
-		log.Println("Fatal error:", err)
-		close(s.Stopper)
-		return
+		return err
 	}
 	sort.Sort(sort.Reverse(s.zones))
+	return nil
 }
 
 //Stop stops the bot
