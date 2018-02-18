@@ -12,7 +12,7 @@ import (
 
 func main() {
 	var v TZS
-	err := json.Unmarshal([]byte(nyb.Zones), &v)
+	err := json.Unmarshal(nyb.Zones, &v)
 	if err != nil {
 		panic(err)
 	}

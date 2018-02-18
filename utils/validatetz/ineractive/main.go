@@ -70,7 +70,7 @@ func getLocationInfo(loc string) (string, error) {
 	}
 	location := gotz.Point{
 		Lat: mapj[0].Lat,
-		Lng: mapj[0].Lon,
+		Lon: mapj[0].Lon,
 	}
 	zone, err := gotz.GetZone(location)
 	if err != nil {

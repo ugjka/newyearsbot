@@ -54,7 +54,7 @@ func main() {
 		return
 	}
 	var zones nyb.TZS
-	json.Unmarshal([]byte(nyb.Zones), &zones)
+	json.Unmarshal(nyb.Zones, &zones)
 	sort.Sort(sort.Reverse(zones))
 
 	ircobj := dumbirc.New(*ircNick, ircName, *ircServer, true)
@@ -89,9 +89,9 @@ func main() {
 
 	for _, k := range zones {
 		time.Sleep(time.Second * 2)
-		ircobj.PrivMsg(ircChansFlag[0], "Next New Year in 29 minutes 57 seconds in "+k.String())
+		ircobj.Msg(ircChansFlag[0], "Next New Year in 29 minutes 57 seconds in "+k.String())
 		time.Sleep(time.Second * 1)
-		ircobj.PrivMsg(ircChansFlag[0], "Happy New Year in "+k.String())
+		ircobj.Msg(ircChansFlag[0], "Happy New Year in "+k.String())
 	}
 
 }

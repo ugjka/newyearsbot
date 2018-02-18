@@ -14,7 +14,7 @@ import (
 
 func main() {
 	var zones nyb.TZS
-	err := json.Unmarshal([]byte(nyb.Zones), &zones)
+	err := json.Unmarshal(nyb.Zones, &zones)
 	if err != nil {
 		log.Fatal(err)
 	}
