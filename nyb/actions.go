@@ -97,6 +97,15 @@ func (s *Settings) addTriggers() {
 				removeMilliseconds(humandur), s.last.String()))
 		},
 	})
+	//Trigger for !remaining
+	bot.AddTrigger(dumbirc.Trigger{
+		Condition: func(msg *dumbirc.Message) bool {
+			return msg.Command == dumbirc.PRIVMSG && msg.Trailing == fmt.Sprintf("%s !remaining", s.IrcTrigger)
+		},
+		Response: func(msg *dumbirc.Message) {
+			bot.Reply(msg, fmt.Sprintf("%s: %d timezones remaining", msg.Name, s.remaining))
+		},
+	})
 	//Trigger for location queries
 	bot.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
@@ -104,6 +113,7 @@ func (s *Settings) addTriggers() {
 				!strings.Contains(msg.Trailing, "!next") &&
 				!strings.Contains(msg.Trailing, "!last") &&
 				!strings.Contains(msg.Trailing, "!help") &&
+				!strings.Contains(msg.Trailing, "!remaining") &&
 				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s ", s.IrcTrigger))
 		},
 		Response: func(msg *dumbirc.Message) {

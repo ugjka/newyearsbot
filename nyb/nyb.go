@@ -31,6 +31,7 @@ type extra struct {
 	zones           TZS
 	last            TZ
 	next            TZ
+	remaining       int
 	nominatimResult NominatimResults
 	//We close this when we get WELCOME msg on join in irc
 	start chan bool
@@ -180,6 +181,7 @@ func (s *Settings) loopTimeZones() {
 		} else {
 			s.last = zones[i-1]
 		}
+		s.remaining = len(zones) - i
 		if timeNow().UTC().Add(dur).Before(target) {
 			time.Sleep(time.Second * 2)
 			log.Println("Zone pending:", zones[i].Offset)

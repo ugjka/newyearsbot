@@ -18,7 +18,7 @@ func TestTriggers(t *testing.T) {
 	nye.decodeZones(Zones)
 	nye.last = nye.zones[len(nye.zones)-1]
 	nye.next = nye.zones[len(nye.zones)-2]
-	cases := []string{"hny !next", "hny !last"}
+	cases := []string{"hny !next", "hny !last", "hny !remaining"}
 	offsets := []time.Duration{time.Hour * -5, time.Hour * 5, time.Hour * 24, time.Hour * -24}
 	for _, v := range offsets {
 		timeNow = func() time.Time {
