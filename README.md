@@ -32,22 +32,24 @@ Posts New Years for each timezone when they happen
 
 * `hny !next` upcoming new year
 * `hny !last` previous new year
+* `hny !remaining` number of remaining timezones
 * `hny <location>` query location
 * `hny !help` show help
 
 The `hny` part can be changed by defining a different trigger
 
-## What's new and great in 2018/2019
+## What's new and great for year 2019
 
 * target date wraps around after last zone
 * added `hny !last` command to print where previous new year happened
+* added `hny !remaining` to show how many zones are still remaining
 * uses Nominatim for geocoding (no more google api)
 * you can specify different Nominatim server if you want
 * timezone lookup is done from tz shapefile (no more google api)
 * code much more readable
 * tests
 
-## What's not so great
+## What's not so great but not too bad
 
 * timezone shapefile is loaded in memory which increases ram usage by 60 to 80MB
 * timezone lookup on slow hardware might be slow
