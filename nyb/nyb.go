@@ -97,7 +97,7 @@ func (s *Settings) Start() {
 			return
 		default:
 		}
-		bot.PrivMsgBulk(s.IrcChans, fmt.Sprintf(stFinished, target.Year()))
+		bot.MsgBulk(s.IrcChans, fmt.Sprintf(stFinished, target.Year()))
 		log.Println("All zones finished...")
 		target = target.AddDate(1, 0, 0)
 		log.Printf("Wrapping the target date around to %d\n", target.Year())
@@ -183,14 +183,14 @@ func (s *Settings) loopTimeZones() {
 			log.Println("Zone pending:", zones[i].Offset)
 			humandur := durafmt.Parse(target.Sub(timeNow().UTC().Add(dur)))
 			msg := fmt.Sprintf(stNextNewYear, removeMilliseconds(humandur), zones[i])
-			bot.PrivMsgBulk(s.IrcChans, msg)
+			bot.MsgBulk(s.IrcChans, msg)
 			//Wait till Target in Timezone
 			timer := NewTimer(target.Sub(timeNow().UTC().Add(dur)))
 			select {
 			case <-timer.C:
 				timer.Stop()
 				msg = fmt.Sprintf(stHappyNewYear, zones[i])
-				bot.PrivMsgBulk(s.IrcChans, msg)
+				bot.MsgBulk(s.IrcChans, msg)
 				log.Println("Announcing zone:", zones[i].Offset)
 			case <-s.Stopper:
 				timer.Stop()
