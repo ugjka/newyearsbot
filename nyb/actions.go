@@ -130,7 +130,7 @@ func (bot *Settings) addTriggers() {
 			}
 			if err != nil {
 				log.Println("Query error:", err)
-				irc.Reply(msg, "Some error occurred!")
+				irc.Reply(msg, fmt.Sprintf("%s: Some error occurred!", msg.Name))
 				return
 			}
 			irc.Reply(msg, fmt.Sprintf("%s: %s", msg.Name, tz))
