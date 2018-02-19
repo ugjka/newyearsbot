@@ -154,8 +154,8 @@ func (n *NominatimResult) UnmarshalJSON(data []byte) (err error) {
 //NominatimResults ...
 type NominatimResults []NominatimResult
 
-//NominatimGeoCode const
-const NominatimGeoCode = "/search?"
+//NominatimEndpoint api url
+const NominatimEndpoint = "/search?"
 
 //cache and client
 var nominatim = struct {

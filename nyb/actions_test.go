@@ -29,7 +29,7 @@ func TestTriggers(t *testing.T) {
 			m.Command = dumbirc.PRIVMSG
 			m.Trailing = v
 			m.Name = "test"
-			nye.Bot.RunTriggers(m)
+			nye.IrcConn.RunTriggers(m)
 		}
 	}
 	//hny !help
@@ -37,7 +37,7 @@ func TestTriggers(t *testing.T) {
 	m.Command = dumbirc.PRIVMSG
 	m.Trailing = "hny !help"
 	m.Name = "test"
-	nye.Bot.RunTriggers(m)
+	nye.IrcConn.RunTriggers(m)
 }
 
 func TestCallbacks(t *testing.T) {
@@ -51,7 +51,7 @@ func TestCallbacks(t *testing.T) {
 	for _, v := range cases {
 		m := dumbirc.NewMessage()
 		m.Command = v
-		nye.Bot.RunCallbacks(m)
+		nye.IrcConn.RunCallbacks(m)
 	}
 }
 
@@ -65,33 +65,33 @@ func TestQuery(t *testing.T) {
 	m.Command = dumbirc.PRIVMSG
 	m.Trailing = "hny ok"
 	m.Name = "test"
-	nye.Bot.RunTriggers(m)
+	nye.IrcConn.RunTriggers(m)
 	//Test cached
-	nye.Bot.RunTriggers(m)
+	nye.IrcConn.RunTriggers(m)
 	//Not ok server status
 	m = dumbirc.NewMessage()
 	m.Command = dumbirc.PRIVMSG
 	m.Trailing = "hny notok"
 	m.Name = "test"
-	nye.Bot.RunTriggers(m)
+	nye.IrcConn.RunTriggers(m)
 	//Test No time zone for location
 	m = dumbirc.NewMessage()
 	m.Command = dumbirc.PRIVMSG
 	m.Trailing = "hny nozone"
 	m.Name = "test"
-	nye.Bot.RunTriggers(m)
+	nye.IrcConn.RunTriggers(m)
 	//Test no place found
 	m = dumbirc.NewMessage()
 	m.Command = dumbirc.PRIVMSG
 	m.Trailing = "hny noplace"
 	m.Name = "test"
-	nye.Bot.RunTriggers(m)
+	nye.IrcConn.RunTriggers(m)
 	//Test malformed json
 	m = dumbirc.NewMessage()
 	m.Command = dumbirc.PRIVMSG
 	m.Trailing = "hny borked"
 	m.Name = "test"
-	nye.Bot.RunTriggers(m)
+	nye.IrcConn.RunTriggers(m)
 	//Test past
 	timeNow = func() time.Time {
 		return time.Date(time.Now().Year()+1000, 0, 0, 0, 0, 0, 0, time.UTC)
@@ -100,13 +100,12 @@ func TestQuery(t *testing.T) {
 	m.Command = dumbirc.PRIVMSG
 	m.Trailing = "hny ok"
 	m.Name = "test"
-	nye.Bot.RunTriggers(m)
+	nye.IrcConn.RunTriggers(m)
 	//BORKED SERVER
 	nye.Nominatim = "//////////////"
-	nye.Bot.RunTriggers(m)
+	nye.IrcConn.RunTriggers(m)
 	nye.Nominatim = ":"
-	nye.Bot.RunTriggers(m)
-
+	nye.IrcConn.RunTriggers(m)
 }
 
 func createServer() {

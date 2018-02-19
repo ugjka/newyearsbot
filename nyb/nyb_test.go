@@ -28,7 +28,7 @@ func TestIrcControl(t *testing.T) {
 	nye.Wait()
 	nye.Stopper = make(chan bool)
 	go func() {
-		nye.Bot.Errchan <- errors.New("test error")
+		nye.IrcConn.Errchan <- errors.New("test error")
 		time.Sleep(time.Second / 2)
 		nye.pp <- true
 		time.Sleep(time.Second / 2)
@@ -57,7 +57,7 @@ func TestStart(t *testing.T) {
 		return target.Add(11*time.Hour + time.Minute*59 + time.Second*59 + time.Millisecond*500)
 	}
 	nye := New("", []string{""}, "hny", "", false, "", "")
-	nye.Bot.DebugFakeConn = true
+	nye.IrcConn.DebugFakeConn = true
 	close(nye.Stopper)
 	nye.Start()
 	nye.Stopper = make(chan bool)
