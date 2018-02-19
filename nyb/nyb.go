@@ -91,7 +91,7 @@ func (s *Settings) Start() {
 
 	if err := s.decodeZones(Zones); err != nil {
 		log.Println("Fatal error:", err)
-		close(s.Stopper)
+		s.Stop()
 		return
 	}
 	for {
