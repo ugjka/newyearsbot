@@ -70,17 +70,16 @@ func (bot *Settings) Start() {
 	log.SetOutput(bot.LogChan)
 	log.Println("Starting the bot...")
 	defer bot.Wait()
+	bot.Add(1)
 	//
 	//Set up irc
 	//
-	irc := bot.IrcConn
 	bot.addCallbacks()
 	bot.addTriggers()
-
-	bot.Add(1)
 	go bot.ircControl()
-
+	irc := bot.IrcConn
 	irc.Start()
+
 	select {
 	case <-bot.start:
 		log.Println("Got start...")
