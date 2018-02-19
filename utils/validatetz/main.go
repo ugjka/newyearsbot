@@ -84,7 +84,7 @@ func getTimeZone(loc string) (float64, error) {
 	var data []byte
 	var err error
 	time.Sleep(time.Second * 5)
-	data, err = nyb.NominatimGetter(*ircNominatim + nyb.NominatimGeoCode + maps.Encode())
+	data, err = nyb.NominatimGetter(*ircNominatim + nyb.NominatimEndpoint + maps.Encode())
 	if err != nil {
 		return 0, err
 	}

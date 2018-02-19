@@ -56,7 +56,7 @@ func getLocationInfo(loc string) (string, error) {
 	maps.Add("email", *email)
 	var data []byte
 	var err error
-	data, err = nyb.NominatimGetter(*ircNominatim + nyb.NominatimGeoCode + maps.Encode())
+	data, err = nyb.NominatimGetter(*ircNominatim + nyb.NominatimEndpoint + maps.Encode())
 	if err != nil {
 		return "", err
 	}
