@@ -1517,18 +1517,6 @@ var Zones = []byte(`[
   {
     "countries": [
       {
-        "name": "North Korea",
-        "cities": [
-          "Hamhung",
-          "Pyongyang"
-        ]
-      }
-    ],
-    "offset": 8.5
-  },
-  {
-    "countries": [
-      {
         "name": "Australia",
         "cities": [
           "Eucla",
@@ -1576,9 +1564,13 @@ var Zones = []byte(`[
       {
         "name": "South Korea",
         "cities": [
-          "Busan",
-          "Incheon",
           "Seoul"
+        ]
+      },
+      {
+        "name": "North Korea",
+        "cities": [
+          "Pyongyang"
         ]
       }
     ],
