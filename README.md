@@ -24,7 +24,7 @@ Posts New Years for each timezone when they happen
 
 ## Has GTK3 gui (standalone cli tool also)
 
-![alt text](https://i.imgur.com/hMjsn34.png "Main window")
+![alt text](https://i.imgur.com/wcFYRO8.png "Main window")
 
 ![alt text](https://i.imgur.com/ze0V82J.png "Bot status")
 
@@ -40,6 +40,7 @@ The `hny` part can be changed by defining a different trigger
 
 ## What's new and great for year 2019
 
+* irc identification
 * target date wraps around after last zone
 * added `hny !last` command to print where previous new year happened
 * added `hny !remaining` to show how many zones are still remaining
