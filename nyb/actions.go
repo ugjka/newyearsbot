@@ -59,6 +59,7 @@ func (bot *Settings) addTriggers() {
 				msg.Trailing == fmt.Sprintf("%s !help", bot.IrcTrigger)
 		},
 		Response: func(msg *dumbirc.Message) {
+			log.Println("Querying !help...")
 			irc.Reply(msg, fmt.Sprintf(stHelp, msg.Name, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger))
 		},
 	})
@@ -104,6 +105,7 @@ func (bot *Settings) addTriggers() {
 				msg.Trailing == fmt.Sprintf("%s !remaining", bot.IrcTrigger)
 		},
 		Response: func(msg *dumbirc.Message) {
+			log.Println("Querying !remaining...")
 			ss := "s"
 			if bot.remaining == 1 {
 				ss = ""
