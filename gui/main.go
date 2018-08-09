@@ -25,6 +25,7 @@ func main() {
 	mv.ircUseTLS = true
 	mv.ircTrigger = "hny"
 	mv.ircNominatim = "http://nominatim.openstreetmap.org"
+	mv.ircNickPass = ""
 	bot := &nyb.Settings{}
 
 	st.onClose = func() {
@@ -35,7 +36,7 @@ func main() {
 	}
 
 	mv.startBot = func() {
-		bot = nyb.New(mv.ircNick, mv.ircChannels, mv.ircTrigger,
+		bot = nyb.New(mv.ircNick, mv.ircChannels, mv.ircNickPass, mv.ircTrigger,
 			mv.ircServer, mv.ircUseTLS, mv.ircEmail, mv.ircNominatim)
 		go bot.Start()
 	}
@@ -76,6 +77,7 @@ type Window struct {
 	ircTrigger   string
 	ircEmail     string
 	ircNominatim string
+	ircNickPass  string
 
 	onClose  func()
 	onHide   func()
@@ -93,6 +95,7 @@ type Window struct {
 	stop      *gtk.Button
 	email     *gtk.Entry
 	nominatim *gtk.Entry
+	nickpass  *gtk.Entry
 }
 
 func (w *Window) open() {
@@ -126,6 +129,7 @@ func (w *Window) fillInputs() {
 	w.server.SetText(w.ircServer)
 	w.tls.SetActive(w.ircUseTLS)
 	w.nominatim.SetText(w.ircNominatim)
+	w.nickpass.SetText(w.ircNickPass)
 }
 
 func (w *Window) initWidgets() {
@@ -157,36 +161,42 @@ func (w *Window) initWidgets() {
 	grid2.SetBorderWidth(6)
 	grid2.Attach(labelNew("Irc nick:"), 0, 0, 1, 1)
 	w.nick, err = gtk.EntryNew()
+	fatal(err)
 	grid2.Attach(w.nick, 0, 1, 1, 1)
-	grid2.Attach(labelNew("Bot trigger for queries:"), 0, 2, 1, 1)
+	grid2.Attach(labelNew("Nick password"), 0, 2, 1, 1)
+	w.nickpass, err = gtk.EntryNew()
+	fatal(err)
+	w.nickpass.SetVisibility(false)
+	grid2.Attach(w.nickpass, 0, 3, 1, 1)
+	grid2.Attach(labelNew("Bot trigger for queries:"), 0, 4, 1, 1)
 	w.trigger, err = gtk.EntryNew()
 	fatal(err)
-	grid2.Attach(w.trigger, 0, 3, 1, 1)
-	grid2.Attach(labelNew("Irc channels (comma seperated):"), 0, 4, 1, 1)
+	grid2.Attach(w.trigger, 0, 5, 1, 1)
+	grid2.Attach(labelNew("Irc channels (comma seperated):"), 0, 6, 1, 1)
 	w.chans, err = gtk.EntryNew()
 	fatal(err)
-	grid2.Attach(w.chans, 0, 5, 1, 1)
-	grid2.Attach(labelNew("Irc server (host:port):"), 0, 6, 1, 1)
+	grid2.Attach(w.chans, 0, 7, 1, 1)
+	grid2.Attach(labelNew("Irc server (host:port):"), 0, 8, 1, 1)
 	w.server, err = gtk.EntryNew()
 	fatal(err)
 	w.server.SetText(w.ircServer)
-	grid2.Attach(w.server, 0, 7, 1, 1)
-	grid2.Attach(labelNew("Use TLS:"), 0, 8, 1, 1)
+	grid2.Attach(w.server, 0, 9, 1, 1)
+	grid2.Attach(labelNew("Use TLS:"), 0, 10, 1, 1)
 	w.tls, err = gtk.CheckButtonNew()
 	fatal(err)
 	w.tls.SetActive(w.ircUseTLS)
 	w.tls.SetHAlign(gtk.ALIGN_END)
-	grid2.Attach(w.tls, 0, 9, 1, 1)
-	grid2.Attach(labelNew("Nominatim server:"), 0, 10, 1, 1)
+	grid2.Attach(w.tls, 0, 11, 1, 1)
+	grid2.Attach(labelNew("Nominatim server:"), 0, 12, 1, 1)
 	w.nominatim, err = gtk.EntryNew()
 	fatal(err)
 	w.nominatim.SetText(w.ircNominatim)
-	grid2.Attach(w.nominatim, 0, 11, 1, 1)
-	grid2.Attach(labelNew("Nominatim referrer email:"), 0, 12, 1, 1)
+	grid2.Attach(w.nominatim, 0, 13, 1, 1)
+	grid2.Attach(labelNew("Nominatim referrer email:"), 0, 14, 1, 1)
 	w.email, err = gtk.EntryNew()
 	fatal(err)
 	w.email.SetText(w.ircEmail)
-	grid2.Attach(w.email, 0, 13, 1, 1)
+	grid2.Attach(w.email, 0, 15, 1, 1)
 	config.Add(grid2)
 	w.start, err = gtk.ButtonNew()
 	fatal(err)
@@ -217,6 +227,8 @@ func (w *Window) startClicked() {
 	} else {
 		var err error
 		w.ircNick, err = w.nick.GetText()
+		fatal(err)
+		w.ircNickPass, err = w.nickpass.GetText()
 		fatal(err)
 		chans, err := w.chans.GetText()
 		fatal(err)

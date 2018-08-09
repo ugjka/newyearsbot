@@ -35,10 +35,12 @@ CMD Options:
 -email			referrer email for Nominatim
 
 [optional]
+-nickpass		nick password
 -ircserver		irc server to use (default: irc.freenode.net:7000)
 -trigger		trigger used for queries. (default: hny)
 -usetls			use tls encryption for irc. (default: true)
 -nominatim		Nominatim server to use (default: http://nominatim.openstreetmap.org)
+-ircdebug		log irc traffic
 
 `
 
@@ -50,9 +52,11 @@ func main() {
 	botnick := flag.String("botnick", "", "irc nick for the bot")
 	email := flag.String("email", "", "referrer email for Nominatim")
 	ircServer := flag.String("ircserver", "irc.freenode.net:7000", "irc server to use")
+	nickpass := flag.String("nickpass", "", "nick password")
 	trigger := flag.String("trigger", "hny", "trigger for queries")
 	useTLS := flag.Bool("usetls", true, "use tls for irc")
 	nominatim := flag.String("nominatim", "http://nominatim.openstreetmap.org", "nominatim server to use")
+	ircdebug := flag.Bool("ircdebug", false, "log irc traffic")
 
 	green := color.New(color.FgGreen)
 	flag.Usage = func() {
@@ -140,7 +144,10 @@ func main() {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 
-	bot := nyb.New(*botnick, chans, *trigger, *ircServer, *useTLS, *email, *nominatim)
+	bot := nyb.New(*botnick, chans, *nickpass, *trigger, *ircServer, *useTLS, *email, *nominatim)
+	if *ircdebug {
+		bot.IrcConn.EnableDebug(bot.LogChan)
+	}
 	//Log printer
 	wait.Add(1)
 	go func() {

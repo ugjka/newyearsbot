@@ -13,7 +13,7 @@ import (
 
 func TestTriggers(t *testing.T) {
 	//hny !next, hny !last
-	nye := New("", []string{""}, "hny", "", false, "", "")
+	nye := New("", []string{""}, "", "hny", "", false, "", "")
 	nye.addTriggers()
 	nye.decodeZones(Zones)
 	nye.last = nye.zones[len(nye.zones)-1]
@@ -42,7 +42,7 @@ func TestTriggers(t *testing.T) {
 
 func TestCallbacks(t *testing.T) {
 	nickChangeInterval = time.Second * 0
-	nye := New("", []string{""}, "hny", "", false, "", "")
+	nye := New("", []string{""}, "", "hny", "", false, "", "")
 	nye.addCallbacks()
 	cases := []string{
 		dumbirc.ANYMESSAGE, dumbirc.NICKTAKEN, dumbirc.PING,
@@ -58,7 +58,7 @@ func TestCallbacks(t *testing.T) {
 func TestQuery(t *testing.T) {
 	go createServer()
 	time.Sleep(time.Second)
-	nye := New("", []string{""}, "hny", "", false, "", "http://127.0.0.1:1234")
+	nye := New("", []string{""}, "", "hny", "", false, "", "http://127.0.0.1:1234")
 	nye.addTriggers()
 	//Ok location
 	m := dumbirc.NewMessage()

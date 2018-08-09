@@ -14,16 +14,17 @@ import (
 
 //Settings for bot
 type Settings struct {
-	IrcNick    string
-	IrcChans   []string
-	IrcServer  string
-	IrcTrigger string
-	IrcUseTLS  bool
-	IrcConn    *dumbirc.Connection
-	LogChan    LogChan
-	Stopper    chan bool
-	Email      string
-	Nominatim  string
+	IrcNick     string
+	IrcChans    []string
+	IrcServer   string
+	IrcTrigger  string
+	IrcUseTLS   bool
+	IrcPassword string
+	IrcConn     *dumbirc.Connection
+	LogChan     LogChan
+	Stopper     chan bool
+	Email       string
+	Nominatim   string
 	extra
 }
 
@@ -43,7 +44,7 @@ type extra struct {
 }
 
 //New creates new bot
-func New(nick string, chans []string, trigger string, server string,
+func New(nick string, chans []string, password string, trigger string, server string,
 	tls bool, email string, nominatim string) *Settings {
 	return &Settings{
 		nick,
@@ -51,6 +52,7 @@ func New(nick string, chans []string, trigger string, server string,
 		server,
 		trigger,
 		tls,
+		password,
 		dumbirc.New(nick, "nyebot", server, tls),
 		newLogChan(),
 		make(chan bool),
@@ -78,6 +80,9 @@ func (bot *Settings) Start() {
 	bot.addTriggers()
 	go bot.ircControl()
 	irc := bot.IrcConn
+	if bot.IrcPassword != "" {
+		irc.SetPassword(bot.IrcPassword)
+	}
 	irc.Start()
 
 	select {
