@@ -53,7 +53,7 @@ func New(nick string, chans []string, password string, trigger string, server st
 		trigger,
 		tls,
 		password,
-		dumbirc.New(nick, "nyebot", server, tls),
+		dumbirc.New(nick, nick, server, tls),
 		newLogChan(),
 		make(chan bool),
 		email,
