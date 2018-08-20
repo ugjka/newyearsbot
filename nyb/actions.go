@@ -21,6 +21,11 @@ func (bot *Settings) addCallbacks() {
 	//On any message send a signal to ping timer to be ready
 
 	irc.AddCallback(dumbirc.WELCOME, func(msg *dumbirc.Message) {
+		if irc.Password != "" {
+			irc.WaitFor(func(m *dumbirc.Message) bool {
+				return m.Command == dumbirc.NOTICE && strings.Contains(m.Trailing, "You are now identified for")
+			})
+		}
 		irc.Join(bot.IrcChans)
 		//Prevent early start
 		bot.Do(func() {

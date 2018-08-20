@@ -75,7 +75,6 @@ func (bot *Settings) Start() {
 	bot.addTriggers()
 	go bot.ircControl()
 	irc := bot.IrcConn
-	irc.Chans = bot.IrcChans
 	irc.RealN = "github.com/ugjka/newyearsbot"
 	irc.HandleNickTaken()
 	irc.HandlePingPong()
