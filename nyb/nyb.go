@@ -35,9 +35,6 @@ type extra struct {
 	remaining int
 	//We close this when we get WELCOME msg on join in irc
 	start chan bool
-	//This is used to prevent sending ping before we
-	//have response from previous ping (any activity on irc)
-	//pingpong(pp) sends a signal to ping timer
 	sync.Once
 	sync.WaitGroup
 }
@@ -78,6 +75,7 @@ func (bot *Settings) Start() {
 	bot.addTriggers()
 	go bot.ircControl()
 	irc := bot.IrcConn
+	irc.Chans = bot.IrcChans
 	irc.RealN = "github.com/ugjka/newyearsbot"
 	irc.HandleNickTaken()
 	irc.HandlePingPong()
