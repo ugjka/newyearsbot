@@ -38,7 +38,6 @@ type extra struct {
 	//This is used to prevent sending ping before we
 	//have response from previous ping (any activity on irc)
 	//pingpong(pp) sends a signal to ping timer
-	pp chan bool
 	sync.Once
 	sync.WaitGroup
 }
@@ -60,7 +59,6 @@ func New(nick string, chans []string, password string, trigger string, server st
 		nominatim,
 		extra{
 			start: make(chan bool),
-			pp:    make(chan bool, 1),
 		},
 	}
 }
@@ -80,6 +78,11 @@ func (bot *Settings) Start() {
 	bot.addTriggers()
 	go bot.ircControl()
 	irc := bot.IrcConn
+	irc.RealN = "github.com/ugjka/newyearsbot"
+	irc.HandleNickTaken()
+	irc.HandlePingPong()
+	irc.LogNotices()
+	irc.SetLogOutput(bot.LogChan)
 	if bot.IrcPassword != "" {
 		irc.SetPassword(bot.IrcPassword)
 	}
@@ -136,7 +139,6 @@ func (bot *Settings) ircControl() {
 	irc := bot.IrcConn
 	defer bot.Done()
 	for {
-		timer := time.NewTimer(pingInterval)
 		select {
 		case err := <-irc.Errchan:
 			log.Println("Error:", err)
@@ -150,21 +152,10 @@ func (bot *Settings) ircControl() {
 				}
 			})
 		case <-bot.Stopper:
-			timer.Stop()
 			log.Println("Stopping the bot...")
 			log.Println("Disconnecting...")
 			irc.Disconnect()
 			return
-		case <-timer.C:
-			timer.Stop()
-			//pingpong stuff
-			select {
-			case <-bot.pp:
-				log.Println("Sending PING...")
-				irc.Ping()
-			default:
-				log.Println("Got no PONG...")
-			}
 		}
 
 	}

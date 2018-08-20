@@ -19,9 +19,6 @@ var nickChangeInterval = time.Second * 5
 func (bot *Settings) addCallbacks() {
 	irc := bot.IrcConn
 	//On any message send a signal to ping timer to be ready
-	irc.AddCallback(dumbirc.ANYMESSAGE, func(msg *dumbirc.Message) {
-		pingpong(bot.pp)
-	})
 
 	irc.AddCallback(dumbirc.WELCOME, func(msg *dumbirc.Message) {
 		irc.Join(bot.IrcChans)
@@ -29,23 +26,6 @@ func (bot *Settings) addCallbacks() {
 		bot.Do(func() {
 			close(bot.start)
 		})
-	})
-
-	irc.AddCallback(dumbirc.PING, func(msg *dumbirc.Message) {
-		log.Println("PING recieved, sending PONG")
-		irc.Pong()
-	})
-
-	irc.AddCallback(dumbirc.PONG, func(msg *dumbirc.Message) {
-		log.Println("Got PONG...")
-	})
-
-	irc.AddCallback(dumbirc.NICKTAKEN, func(msg *dumbirc.Message) {
-		log.Println("Nick taken, changing...")
-		time.Sleep(nickChangeInterval)
-		irc.Nick = changeNick(irc.Nick)
-		log.Printf("New nick: %s", irc.Nick)
-		irc.NewNick(irc.Nick)
 	})
 }
 

@@ -1,12 +1,21 @@
 package nyb
 
 import (
+	"log"
 	"strings"
 	"testing"
 )
 
+type devNull struct {
+}
+
+func (d *devNull) Write(p []byte) (n int, err error) {
+	return len(p), nil
+}
+
 func init() {
 	timeNow()
+	log.SetOutput(&devNull{})
 }
 
 func TestChangeNick(t *testing.T) {

@@ -30,8 +30,6 @@ func TestIrcControl(t *testing.T) {
 	go func() {
 		nye.IrcConn.Errchan <- errors.New("test error")
 		time.Sleep(time.Second / 2)
-		nye.pp <- true
-		time.Sleep(time.Second / 2)
 		close(nye.Stopper)
 	}()
 	nye.Add(1)
