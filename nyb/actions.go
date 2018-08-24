@@ -23,6 +23,9 @@ func (bot *Settings) addCallbacks() {
 	irc.AddCallback(dumbirc.WELCOME, func(msg *dumbirc.Message) {
 		if irc.Password != "" {
 			irc.WaitFor(func(m *dumbirc.Message) bool {
+				if m.Command == dumbirc.NOTICE && strings.Contains(m.Trailing, "Invalid password for") {
+					return true
+				}
 				return m.Command == dumbirc.NOTICE && strings.Contains(m.Trailing, "You are now identified for")
 			})
 		}
