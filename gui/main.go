@@ -172,7 +172,7 @@ func (w *Window) initWidgets() {
 	w.trigger, err = gtk.EntryNew()
 	fatal(err)
 	grid2.Attach(w.trigger, 0, 5, 1, 1)
-	grid2.Attach(labelNew("Irc channels (comma seperated):"), 0, 6, 1, 1)
+	grid2.Attach(labelNew("Irc channels (comma separated):"), 0, 6, 1, 1)
 	w.chans, err = gtk.EntryNew()
 	fatal(err)
 	grid2.Attach(w.chans, 0, 7, 1, 1)

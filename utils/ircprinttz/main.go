@@ -18,7 +18,7 @@ import (
 var usage = `Test utility for debugging that post all newyears on a specified channel
 
 CMD Options:
--chans			comma seperated list of irc channels to join
+-chans			comma separated list of irc channels to join
 -ircserver		irc server to use irc.example.com:7000 (must be TLS enabled)
 -botnick		nick for the bot 
 `
@@ -27,7 +27,7 @@ CMD Options:
 var ircChansFlag nyb.IrcChans
 
 func init() {
-	flag.Var(&ircChansFlag, "chans", "comma seperated list of irc channels to join")
+	flag.Var(&ircChansFlag, "chans", "comma separated list of irc channels to join")
 }
 
 const ircName = "nyebottest"

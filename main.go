@@ -20,7 +20,7 @@ import (
 var chans nyb.IrcChans
 
 func init() {
-	flag.Var(&chans, "chans", "comma seperated list of irc channels to join")
+	flag.Var(&chans, "chans", "comma separated list of irc channels to join")
 }
 
 var usage = `
@@ -30,7 +30,7 @@ You can query location using "hny" trigger for example "hny New York"
 
 CMD Options:
 [mandatory]
--chans			comma seperated list of irc channels to join eg. "#test, #test2"
+-chans			comma separated list of irc channels to join eg. "#test, #test2"
 -botnick		nick for the bot
 -email			referrer email for Nominatim
 
