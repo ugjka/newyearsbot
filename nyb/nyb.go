@@ -40,8 +40,8 @@ type extra struct {
 }
 
 //New creates new bot
-func New(nick string, chans []string, password string, trigger string, server string,
-	tls bool, email string, nominatim string) *Settings {
+func New(nick string, chans []string, password, trigger, server string,
+	tls bool, email, nominatim string) *Settings {
 	return &Settings{
 		nick,
 		chans,
