@@ -26,11 +26,11 @@ func TestChangeNick(t *testing.T) {
 			t.Errorf("expecting %d _'s got %d, string: %s", i, got, ln)
 		}
 		if len(ln) != 12+i {
-			t.Errorf("expecting lenght %d got %d, string: %s", 12+i, len(ln), ln)
+			t.Errorf("expecting length %d got %d, string: %s", 12+i, len(ln), ln)
 		}
 	}
 	if ln := changeNick(ln); len(ln) != 12 {
-		t.Errorf("expecting lenght 12 got %d, string: %s", len(ln), ln)
+		t.Errorf("expecting length 12 got %d, string: %s", len(ln), ln)
 	}
 	n := "a"
 	for i := 1; i <= 15; i++ {

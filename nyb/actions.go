@@ -170,12 +170,12 @@ func (bot *Settings) getNewYear(location string) (string, error) {
 		return "", errNoZone
 	}
 	offset := time.Second * time.Duration(getOffset(target, zone))
-	adress := res[0].DisplayName
+	address := res[0].DisplayName
 
 	if timeNow().UTC().Add(offset).Before(target) {
 		humandur := durafmt.Parse(target.Sub(timeNow().UTC().Add(offset)))
-		return fmt.Sprintf(stNewYearWillHappen, adress, removeMilliseconds(humandur)), nil
+		return fmt.Sprintf(stNewYearWillHappen, address, removeMilliseconds(humandur)), nil
 	}
 	humandur := durafmt.Parse(timeNow().UTC().Add(offset).Sub(target))
-	return fmt.Sprintf(stNewYearHappenned, adress, removeMilliseconds(humandur)), nil
+	return fmt.Sprintf(stNewYearHappenned, address, removeMilliseconds(humandur)), nil
 }
