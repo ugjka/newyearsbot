@@ -21,7 +21,7 @@ func main() {
 	var st Status
 	st.logStopper = make(chan bool)
 	var mv Window
-	mv.ircServer = "irc.freenode.net:7000"
+	mv.ircServer = "chat.freenode.net:6697"
 	mv.ircUseTLS = true
 	mv.ircTrigger = "hny"
 	mv.ircNominatim = "http://nominatim.openstreetmap.org"

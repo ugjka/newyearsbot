@@ -51,7 +51,7 @@ func main() {
 	//Flags
 	botnick := flag.String("botnick", "", "irc nick for the bot")
 	email := flag.String("email", "", "referrer email for Nominatim")
-	ircServer := flag.String("ircserver", "irc.freenode.net:7000", "irc server to use")
+	ircServer := flag.String("ircserver", "chat.freenode.net:6697", "irc server to use")
 	nickpass := flag.String("nickpass", "", "nick password")
 	trigger := flag.String("trigger", "hny", "trigger for queries")
 	useTLS := flag.Bool("usetls", true, "use tls for irc")
