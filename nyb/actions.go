@@ -23,10 +23,10 @@ func (bot *Settings) addCallbacks() {
 	irc.AddCallback(dumbirc.WELCOME, func(msg *dumbirc.Message) {
 		if irc.Password != "" {
 			irc.WaitFor(func(m *dumbirc.Message) bool {
-				if m.Command == dumbirc.NOTICE && strings.Contains(m.Trailing, "Invalid password for") {
+				if m.Command == dumbirc.NOTICE && strings.Contains(m.Content, "Invalid password for") {
 					return true
 				}
-				return m.Command == dumbirc.NOTICE && strings.Contains(m.Trailing, "You are now identified for")
+				return m.Command == dumbirc.NOTICE && strings.Contains(m.Content, "You are now identified for")
 			})
 		}
 		irc.Join(bot.IrcChans)
@@ -44,7 +44,7 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
 			return msg.Command == dumbirc.PRIVMSG &&
-				msg.Trailing == fmt.Sprintf("%s !help", bot.IrcTrigger)
+				msg.Content == fmt.Sprintf("%s !help", bot.IrcTrigger)
 		},
 		Response: func(msg *dumbirc.Message) {
 			log.Println("Querying !help...")
@@ -55,7 +55,7 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
 			return msg.Command == dumbirc.PRIVMSG &&
-				msg.Trailing == fmt.Sprintf("%s !next", bot.IrcTrigger)
+				msg.Content == fmt.Sprintf("%s !next", bot.IrcTrigger)
 		},
 		Response: func(msg *dumbirc.Message) {
 			log.Println("Querying !next...")
@@ -73,7 +73,7 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
 			return msg.Command == dumbirc.PRIVMSG &&
-				msg.Trailing == fmt.Sprintf("%s !last", bot.IrcTrigger)
+				msg.Content == fmt.Sprintf("%s !last", bot.IrcTrigger)
 		},
 		Response: func(msg *dumbirc.Message) {
 			log.Println("Querying !last...")
@@ -90,7 +90,7 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
 			return msg.Command == dumbirc.PRIVMSG &&
-				msg.Trailing == fmt.Sprintf("%s !remaining", bot.IrcTrigger)
+				msg.Content == fmt.Sprintf("%s !remaining", bot.IrcTrigger)
 		},
 		Response: func(msg *dumbirc.Message) {
 			log.Println("Querying !remaining...")
@@ -105,14 +105,14 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
 			return msg.Command == dumbirc.PRIVMSG &&
-				!strings.Contains(msg.Trailing, "!next") &&
-				!strings.Contains(msg.Trailing, "!last") &&
-				!strings.Contains(msg.Trailing, "!help") &&
-				!strings.Contains(msg.Trailing, "!remaining") &&
-				strings.HasPrefix(msg.Trailing, fmt.Sprintf("%s ", bot.IrcTrigger))
+				!strings.Contains(msg.Content, "!next") &&
+				!strings.Contains(msg.Content, "!last") &&
+				!strings.Contains(msg.Content, "!help") &&
+				!strings.Contains(msg.Content, "!remaining") &&
+				strings.HasPrefix(msg.Content, fmt.Sprintf("%s ", bot.IrcTrigger))
 		},
 		Response: func(msg *dumbirc.Message) {
-			tz, err := bot.getNewYear(msg.Trailing[len(bot.IrcTrigger)+1:])
+			tz, err := bot.getNewYear(msg.Content[len(bot.IrcTrigger)+1:])
 			if err == errNoZone || err == errNoPlace {
 				log.Println("Query error:", err)
 				irc.Reply(msg, fmt.Sprintf("%s: %s", msg.Name, err))

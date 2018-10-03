@@ -27,7 +27,7 @@ func TestTriggers(t *testing.T) {
 		for _, v := range cases {
 			m := dumbirc.NewMessage()
 			m.Command = dumbirc.PRIVMSG
-			m.Trailing = v
+			m.Content = v
 			m.Name = "test"
 			nye.IrcConn.RunTriggers(m)
 		}
@@ -35,7 +35,7 @@ func TestTriggers(t *testing.T) {
 	//hny !help
 	m := dumbirc.NewMessage()
 	m.Command = dumbirc.PRIVMSG
-	m.Trailing = "hny !help"
+	m.Content = "hny !help"
 	m.Name = "test"
 	nye.IrcConn.RunTriggers(m)
 }
@@ -63,7 +63,7 @@ func TestQuery(t *testing.T) {
 	//Ok location
 	m := dumbirc.NewMessage()
 	m.Command = dumbirc.PRIVMSG
-	m.Trailing = "hny ok"
+	m.Content = "hny ok"
 	m.Name = "test"
 	nye.IrcConn.RunTriggers(m)
 	//Test cached
@@ -71,25 +71,25 @@ func TestQuery(t *testing.T) {
 	//Not ok server status
 	m = dumbirc.NewMessage()
 	m.Command = dumbirc.PRIVMSG
-	m.Trailing = "hny notok"
+	m.Content = "hny notok"
 	m.Name = "test"
 	nye.IrcConn.RunTriggers(m)
 	//Test No time zone for location
 	m = dumbirc.NewMessage()
 	m.Command = dumbirc.PRIVMSG
-	m.Trailing = "hny nozone"
+	m.Content = "hny nozone"
 	m.Name = "test"
 	nye.IrcConn.RunTriggers(m)
 	//Test no place found
 	m = dumbirc.NewMessage()
 	m.Command = dumbirc.PRIVMSG
-	m.Trailing = "hny noplace"
+	m.Content = "hny noplace"
 	m.Name = "test"
 	nye.IrcConn.RunTriggers(m)
 	//Test malformed json
 	m = dumbirc.NewMessage()
 	m.Command = dumbirc.PRIVMSG
-	m.Trailing = "hny borked"
+	m.Content = "hny borked"
 	m.Name = "test"
 	nye.IrcConn.RunTriggers(m)
 	//Test past
@@ -98,7 +98,7 @@ func TestQuery(t *testing.T) {
 	}
 	m = dumbirc.NewMessage()
 	m.Command = dumbirc.PRIVMSG
-	m.Trailing = "hny ok"
+	m.Content = "hny ok"
 	m.Name = "test"
 	nye.IrcConn.RunTriggers(m)
 	//BORKED SERVER
