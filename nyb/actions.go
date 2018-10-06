@@ -27,7 +27,9 @@ func (bot *Settings) addCallbacks() {
 					return true
 				}
 				return m.Command == dumbirc.NOTICE && strings.Contains(m.Content, "You are now identified for")
-			})
+			},
+				func() {},
+			)
 		}
 		irc.Join(bot.IrcChans)
 		//Prevent early start
