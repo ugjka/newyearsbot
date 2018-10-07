@@ -4,7 +4,6 @@ go:
 os:
   - linux
   - osx
-  - windows
 sudo: required
 before_install:
   - go get github.com/golang/lint/golint
