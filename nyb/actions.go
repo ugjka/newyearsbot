@@ -22,14 +22,18 @@ func (bot *Settings) addCallbacks() {
 
 	irc.AddCallback(dumbirc.WELCOME, func(msg *dumbirc.Message) {
 		if irc.Password != "" {
-			irc.WaitFor(func(m *dumbirc.Message) bool {
-				if m.Command == dumbirc.NOTICE && strings.Contains(m.Content, "Invalid password for") {
-					return true
-				}
+			confirmErr := fmt.Errorf("did not get identification confirmation")
+			err := irc.WaitFor(func(m *dumbirc.Message) bool {
 				return m.Command == dumbirc.NOTICE && strings.Contains(m.Content, "You are now identified for")
 			},
 				func() {},
+				time.Minute,
+				confirmErr,
 			)
+			if err == confirmErr {
+				log.Println(err)
+				log.Println("trying to start the bot anyway")
+			}
 		}
 		irc.Join(bot.IrcChans)
 		//Prevent early start
