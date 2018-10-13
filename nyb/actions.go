@@ -33,6 +33,8 @@ func (bot *Settings) addCallbacks() {
 			if err == confirmErr {
 				log.Println(err)
 				log.Println("trying to start the bot anyway")
+			} else if err != nil {
+				return
 			}
 		}
 		irc.Join(bot.IrcChans)
