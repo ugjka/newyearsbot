@@ -6,7 +6,7 @@ os:
   - osx
 sudo: required
 before_install:
-  - go get github.com/golang/lint/golint
+  - go get -u golang.org/x/lint/golint
   - go get -d -t ./nyb/...
 script:
   - go build ./nyb/...
