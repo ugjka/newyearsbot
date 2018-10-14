@@ -9,9 +9,8 @@ import (
 	"regexp"
 	"sync"
 
-	"github.com/fatih/color"
-
 	"github.com/badoux/checkmail"
+	"github.com/fatih/color"
 	"github.com/ugjka/newyearsbot/nyb"
 	"mvdan.cc/xurls"
 )
@@ -146,7 +145,7 @@ func main() {
 
 	bot := nyb.New(*botnick, chans, *nickpass, *trigger, *ircServer, *useTLS, *email, *nominatim)
 	if *ircdebug {
-		bot.IrcConn.EnableDebug(bot.LogChan)
+		bot.IrcConn.SetDebugOutput(bot.LogChan)
 	}
 	//Log printer
 	wait.Add(1)
