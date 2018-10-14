@@ -27,7 +27,7 @@ func (bot *Settings) addCallbacks() {
 				return m.Command == dumbirc.NOTICE && strings.Contains(m.Content, "You are now identified for")
 			},
 				func() {},
-				time.Minute,
+				time.Second*30,
 				confirmErr,
 			)
 			if err == confirmErr {
