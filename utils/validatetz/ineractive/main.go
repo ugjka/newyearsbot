@@ -77,7 +77,7 @@ func getLocationInfo(loc string) (string, error) {
 		return "", err
 	}
 	offset := getOffset(target, zone)
-	return fmt.Sprintf("%s, Offset %v", mapj[0].DisplayName, float64(offset)/60/60), nil
+	return fmt.Sprintf("%s, Offset %v, time now: %s", mapj[0].DisplayName, float64(offset)/60/60, time.Now().In(zone)), nil
 }
 
 func getOffset(target time.Time, zone *time.Location) int {
