@@ -83,7 +83,7 @@ func getTimeZone(loc string) (float64, error) {
 	maps.Add("email", *ircEmail)
 	var data []byte
 	var err error
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * 2)
 	data, err = nyb.NominatimGetter(*ircNominatim + nyb.NominatimEndpoint + maps.Encode())
 	if err != nil {
 		return 0, err
