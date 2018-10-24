@@ -50,7 +50,7 @@ var Zones = []byte(`[
         "name": "French Polynesia",
         "cities": [
           "Papeete",
-          "Vaitape (Bora Bora)"
+          "Vaitape"
         ]
       },
       {
@@ -453,7 +453,7 @@ var Zones = []byte(`[
         "name": "Canada",
         "cities": [
           "Grand Falls-Windsor",
-          "Paradise",
+          "Paradise (Newfoundland and Labrador)",
           "St Johns",
           "Stephenville"
         ]
@@ -541,7 +541,6 @@ var Zones = []byte(`[
         "name": "Brazil",
         "cities": [
           "Belo Horizonte",
-          "Brasília",
           "Curitiba",
           "Espírito Santo",
           "Federal District",

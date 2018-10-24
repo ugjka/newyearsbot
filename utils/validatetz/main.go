@@ -59,9 +59,9 @@ func main() {
 				}
 			}
 			for _, city := range country.Cities {
-				remoteOffset, err := getTimeZone(city + " " + country.Name)
+				remoteOffset, err := getTimeZone(city + ", " + country.Name)
 				if err != nil {
-					log.Println(city+" "+country.Name, err)
+					log.Println(city+", "+country.Name, err)
 				} else {
 					if remoteOffset != zone.Offset {
 						fmt.Printf("%s, %s: Offset mismatch Loc: %v, Rem: %v\n",
