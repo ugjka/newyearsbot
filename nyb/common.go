@@ -125,8 +125,7 @@ func (t *Timer) Stop() {
 type NominatimResult struct {
 	Lat         float64
 	Lon         float64
-	DisplayName string    `json:"Display_name"`
-	BoundingBox []float64 `json:"boundingbox"`
+	DisplayName string `json:"Display_name"`
 }
 
 //UnmarshalJSON ...
@@ -134,8 +133,7 @@ func (n *NominatimResult) UnmarshalJSON(data []byte) (err error) {
 	v := struct {
 		Lat         string
 		Lon         string
-		DisplayName string   `json:"Display_name"`
-		BoundingBox []string `json:"boundingbox"`
+		DisplayName string `json:"Display_name"`
 	}{}
 	err = json.Unmarshal(data, &v)
 	if err != nil {
@@ -150,10 +148,6 @@ func (n *NominatimResult) UnmarshalJSON(data []byte) (err error) {
 		return
 	}
 	n.DisplayName = v.DisplayName
-	for _, v := range v.BoundingBox {
-		tmp, _ := strconv.ParseFloat(v, 64)
-		n.BoundingBox = append(n.BoundingBox, tmp)
-	}
 	return
 }
 
