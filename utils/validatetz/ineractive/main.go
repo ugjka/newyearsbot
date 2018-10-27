@@ -18,6 +18,7 @@ import (
 
 var email *string
 var ircNominatim *string
+var ext *string
 
 //Set target year
 var target = func() time.Time {
@@ -29,12 +30,20 @@ var target = func() time.Time {
 }()
 
 func main() {
+	ext = flag.String("ext", "", "external geojson")
 	email = flag.String("email", "", "Email for Open Street Map")
 	ircNominatim = flag.String("nominatim", "http://nominatim.openstreetmap.org", "Nominatim server to use")
 	flag.Parse()
 	if *email == "" {
 		fmt.Fprintf(os.Stderr, "%s", "provide email with -email flag\n")
 		return
+	}
+	if *ext != "" {
+		f, err := os.OpenFile(*ext, os.O_RDONLY, 0655)
+		if err != nil {
+			panic(err)
+		}
+		gotz.LoadGeoJSON(f)
 	}
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
