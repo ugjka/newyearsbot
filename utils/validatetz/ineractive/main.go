@@ -82,8 +82,12 @@ func getLocationInfo(loc string) (string, error) {
 		Lon: mapj[0].Lon,
 	}
 	now := time.Now()
-	zone, err := gotz.GetZone(location)
+	tzid, err := gotz.GetZone(location)
 	lookup := time.Now().Sub(now)
+	if err != nil {
+		return "", err
+	}
+	zone, err := time.LoadLocation(tzid[0])
 	if err != nil {
 		return "", err
 	}

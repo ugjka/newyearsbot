@@ -99,7 +99,11 @@ func getTimeZone(loc string) (float64, error) {
 		Lat: mapj[0].Lat,
 		Lon: mapj[0].Lon,
 	}
-	zone, err := gotz.GetZone(location)
+	tzid, err := gotz.GetZone(location)
+	if err != nil {
+		return 0, err
+	}
+	zone, err := time.LoadLocation(tzid[0])
 	if err != nil {
 		return 0, err
 	}

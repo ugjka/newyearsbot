@@ -173,7 +173,11 @@ func (bot *Settings) getNewYear(location string) (string, error) {
 		Lat: res[0].Lat,
 		Lon: res[0].Lon,
 	}
-	zone, err := gotz.GetZone(p)
+	tzid, err := gotz.GetZone(p)
+	if err != nil {
+		return "", errNoZone
+	}
+	zone, err := time.LoadLocation(tzid[0])
 	if err != nil {
 		return "", errNoZone
 	}
