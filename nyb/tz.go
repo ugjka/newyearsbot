@@ -648,10 +648,6 @@ var Zones = []byte(`[
         "cities": []
       },
       {
-        "name": "Morocco",
-        "cities": []
-      },
-      {
         "name": "Portugal",
         "cities": []
       },
@@ -780,6 +776,10 @@ var Zones = []byte(`[
       },
       {
         "name": "Montenegro",
+        "cities": []
+      },
+      {
+        "name": "Morocco",
         "cities": []
       },
       {
