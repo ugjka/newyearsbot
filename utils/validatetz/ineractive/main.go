@@ -12,7 +12,7 @@ import (
 	"os"
 	"time"
 
-	gotz "github.com/ugjka/go-tz"
+	"github.com/ugjka/go-tz"
 	"github.com/ugjka/newyearsbot/nyb"
 )
 
