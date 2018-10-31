@@ -108,6 +108,59 @@ func TestQuery(t *testing.T) {
 	nye.IrcConn.RunTriggers(m)
 }
 
+func TestTimeQuery(t *testing.T) {
+	go createServer()
+	time.Sleep(time.Second)
+	nye := New("", []string{""}, "", "hny", "", false, "", "http://127.0.0.1:1234")
+	nye.addTriggers()
+	//Ok location
+	m := dumbirc.NewMessage()
+	m.Command = dumbirc.PRIVMSG
+	m.Content = "hny !time ok"
+	m.Name = "test"
+	nye.IrcConn.RunTriggers(m)
+	//Test cached
+	nye.IrcConn.RunTriggers(m)
+	//Not ok server status
+	m = dumbirc.NewMessage()
+	m.Command = dumbirc.PRIVMSG
+	m.Content = "hny !time notok"
+	m.Name = "test"
+	nye.IrcConn.RunTriggers(m)
+	//Test No time zone for location
+	m = dumbirc.NewMessage()
+	m.Command = dumbirc.PRIVMSG
+	m.Content = "hny !time nozone"
+	m.Name = "test"
+	nye.IrcConn.RunTriggers(m)
+	//Test no place found
+	m = dumbirc.NewMessage()
+	m.Command = dumbirc.PRIVMSG
+	m.Content = "hny !time noplace"
+	m.Name = "test"
+	nye.IrcConn.RunTriggers(m)
+	//Test malformed json
+	m = dumbirc.NewMessage()
+	m.Command = dumbirc.PRIVMSG
+	m.Content = "hny !time borked"
+	m.Name = "test"
+	nye.IrcConn.RunTriggers(m)
+	//Test past
+	timeNow = func() time.Time {
+		return time.Date(time.Now().Year()+1000, 0, 0, 0, 0, 0, 0, time.UTC)
+	}
+	m = dumbirc.NewMessage()
+	m.Command = dumbirc.PRIVMSG
+	m.Content = "hny !time ok"
+	m.Name = "test"
+	nye.IrcConn.RunTriggers(m)
+	//BORKED SERVER
+	nye.Nominatim = "//////////////"
+	nye.IrcConn.RunTriggers(m)
+	nye.Nominatim = ":"
+	nye.IrcConn.RunTriggers(m)
+}
+
 func createServer() {
 	mux := httprouter.New()
 	mux.HandlerFunc("GET", "/search", fakeNominatim)

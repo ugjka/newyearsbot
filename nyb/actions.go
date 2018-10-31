@@ -117,7 +117,7 @@ func (bot *Settings) addTriggers() {
 		},
 		Response: func(msg *dumbirc.Message) {
 			log.Println("Querying !time...")
-			res, err := bot.getTime(msg.Content[9:])
+			res, err := bot.getTime(msg.Content[10:])
 			if err == errNoZone || err == errNoPlace {
 				log.Println("Query error:", err)
 				irc.Reply(msg, fmt.Sprintf("%s: %s", msg.Name, err))
