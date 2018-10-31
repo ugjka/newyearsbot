@@ -48,7 +48,7 @@ func (bot *Settings) addCallbacks() {
 func (bot *Settings) addTriggers() {
 	irc := bot.IrcConn
 	//Trigger for !help
-	stHelp := "%s: Query location: '%s <location>', Next zone: '%s !next', Last zone: '%s !last', Remaining: '%s !remaining', Source code: https://github.com/ugjka/newyearsbot"
+	stHelp := "%s: Query location: '%s <location>', Time in location: '%s !time <location>', Next zone: '%s !next', Last zone: '%s !last', Remaining: '%s !remaining', Source code: https://github.com/ugjka/newyearsbot"
 	irc.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
 			return msg.Command == dumbirc.PRIVMSG &&
@@ -56,7 +56,7 @@ func (bot *Settings) addTriggers() {
 		},
 		Response: func(msg *dumbirc.Message) {
 			log.Println("Querying !help...")
-			irc.Reply(msg, fmt.Sprintf(stHelp, msg.Name, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger))
+			irc.Reply(msg, fmt.Sprintf(stHelp, msg.Name, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger))
 		},
 	})
 	//Trigger for !next
@@ -109,10 +109,33 @@ func (bot *Settings) addTriggers() {
 			irc.Reply(msg, fmt.Sprintf("%s: %d timezone%s remaining", msg.Name, bot.remaining, ss))
 		},
 	})
+	//Trigger for time in location
+	irc.AddTrigger(dumbirc.Trigger{
+		Condition: func(msg *dumbirc.Message) bool {
+			return msg.Command == dumbirc.PRIVMSG &&
+				strings.HasPrefix(msg.Content, fmt.Sprintf("%s !time ", bot.IrcTrigger))
+		},
+		Response: func(msg *dumbirc.Message) {
+			log.Println("Querying !time...")
+			res, err := bot.getTime(msg.Content[9:])
+			if err == errNoZone || err == errNoPlace {
+				log.Println("Query error:", err)
+				irc.Reply(msg, fmt.Sprintf("%s: %s", msg.Name, err))
+				return
+			}
+			if err != nil {
+				log.Println("Query error:", err)
+				irc.Reply(msg, fmt.Sprintf("%s: Some error occurred!", msg.Name))
+				return
+			}
+			irc.Reply(msg, res)
+		},
+	})
 	//Trigger for location queries
 	irc.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
 			return msg.Command == dumbirc.PRIVMSG &&
+				!strings.Contains(msg.Content, "!time") &&
 				!strings.Contains(msg.Content, "!next") &&
 				!strings.Contains(msg.Content, "!last") &&
 				!strings.Contains(msg.Content, "!help") &&
@@ -153,6 +176,37 @@ func (bot *Settings) getNominatimReqURL(location *string) string {
 
 var stNewYearWillHappen = "New Year in %s will happen in %s"
 var stNewYearHappenned = "New Year in %s happened %s ago"
+
+func (bot *Settings) getTime(location string) (string, error) {
+	log.Println("Querying location:", location)
+	data, err := NominatimGetter(bot.getNominatimReqURL(&location))
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+	var res NominatimResults
+	if err = json.Unmarshal(data, &res); err != nil {
+		log.Println(err)
+		return "", err
+	}
+	if len(res) == 0 {
+		return "", errNoPlace
+	}
+	p := gotz.Point{
+		Lat: res[0].Lat,
+		Lon: res[0].Lon,
+	}
+	tzid, err := gotz.GetZone(p)
+	if err != nil {
+		return "", errNoZone
+	}
+	zone, err := time.LoadLocation(tzid[0])
+	if err != nil {
+		return "", errNoZone
+	}
+	address := res[0].DisplayName
+	return fmt.Sprintf("Time in %s is %s", address, time.Now().In(zone).Format("Mon Jan 2 15:04:05 -0700 MST 2006")), nil
+}
 
 func (bot *Settings) getNewYear(location string) (string, error) {
 	log.Println("Querying location:", location)
