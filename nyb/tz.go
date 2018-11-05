@@ -668,10 +668,6 @@ var Zones = []byte(`[
         "cities": [
           "London"
         ]
-      },
-      {
-        "name": "Western Sahara",
-        "cities": []
       }
     ],
     "offset": 0
