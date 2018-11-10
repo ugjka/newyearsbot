@@ -6,6 +6,7 @@
 [![codecov](https://codecov.io/gh/ugjka/newyearsbot/branch/master/graph/badge.svg)](https://codecov.io/gh/ugjka/newyearsbot)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ugjka/newyearsbot/nyb)](https://goreportcard.com/report/github.com/ugjka/newyearsbot/nyb)
 [![Donate](https://dl.ugjka.net/Donate-PayPal-green.svg)](https://www.paypal.me/ugjka)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fugjka%2Fnewyearsbot.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fugjka%2Fnewyearsbot?ref=badge_shield)
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fugjka%2Fnewyearsbot.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fugjka%2Fnewyearsbot?ref=badge_large)
 
@@ -79,3 +80,7 @@ You need make, go, go-tools, gtk3, glib2
 Build with `make all` (`make cli` if you just want the commandline utility)
 
 Install with `make install`
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fugjka%2Fnewyearsbot.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fugjka%2Fnewyearsbot?ref=badge_large)
