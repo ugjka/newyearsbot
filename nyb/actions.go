@@ -131,6 +131,18 @@ func (bot *Settings) addTriggers() {
 			irc.Reply(msg, res)
 		},
 	})
+	//UTC
+	irc.AddTrigger(dumbirc.Trigger{
+		Condition: func(msg *dumbirc.Message) bool {
+			return msg.Command == dumbirc.PRIVMSG &&
+				msg.Content == fmt.Sprintf("%s !time", bot.IrcTrigger)
+		},
+		Response: func(msg *dumbirc.Message) {
+			log.Println("Querying !time...")
+			res := fmt.Sprintf("Time is %s", time.Now().UTC().Format("Mon Jan 2 15:04:05 -0700 MST 2006"))
+			irc.Reply(msg, res)
+		},
+	})
 	//Trigger for location queries
 	irc.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
