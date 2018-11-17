@@ -35,7 +35,8 @@ Posts New Years for each timezone when they happen
 * `hny !next` upcoming new year
 * `hny !last` previous new year
 * `hny !remaining` number of remaining timezones
-* `hny <location>` query location
+* `hny <location>` get new year status for location
+* `hny !time <location>` get current time in location
 * `hny !help` show help
 
 The `hny` part can be changed by defining a different trigger
@@ -46,6 +47,7 @@ The `hny` part can be changed by defining a different trigger
 * target date wraps around after last zone
 * added `hny !last` command to print where previous new year happened
 * added `hny !remaining` to show how many zones are still remaining
+* query current time in location with `hny !time`
 * uses Nominatim for geocoding (no more google api)
 * you can specify different Nominatim server if you want
 * timezone lookup is done from tz shapefile (no more google api)
@@ -55,7 +57,6 @@ The `hny` part can be changed by defining a different trigger
 ## What's not so great but not too bad
 
 * timezone shapefile is loaded in memory which increases ram usage by 60 to 80MB
-* timezone lookup on slow hardware might be slow
 
 ## Pro-tip
 
@@ -79,6 +80,6 @@ Build with `make all` (`make cli` if you just want the commandline utility)
 
 Install with `make install`
 
-
 ## License
+
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fugjka%2Fnewyearsbot.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fugjka%2Fnewyearsbot?ref=badge_large)
