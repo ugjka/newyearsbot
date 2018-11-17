@@ -1515,8 +1515,7 @@ var Zones = []byte(`[
         "name": "Australia",
         "cities": [
           "Eucla",
-          "Madura",
-          "Mundrabilla"
+          "Madura"
         ]
       }
     ],
