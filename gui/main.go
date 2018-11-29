@@ -12,7 +12,7 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/ugjka/newyearsbot/nyb"
-	"mvdan.cc/xurls"
+	"mvdan.cc/xurls/v2"
 )
 
 var icon = "../icon.png"

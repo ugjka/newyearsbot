@@ -12,7 +12,7 @@ import (
 	"github.com/badoux/checkmail"
 	"github.com/fatih/color"
 	"github.com/ugjka/newyearsbot/nyb"
-	"mvdan.cc/xurls"
+	"mvdan.cc/xurls/v2"
 )
 
 //Custom flag to get irc channelsn to join
