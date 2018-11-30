@@ -20,7 +20,7 @@ golang.org/x/sys v0.0.0-20181128092732-4ed8d59d0b35 h1:YAFjXN64LMvktoUZH9zgY4lGc
 golang.org/x/sys v0.0.0-20181128092732-4ed8d59d0b35/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 gopkg.in/sorcix/irc.v2 v2.0.0-20180626144439-63eed78b082d h1:Qa1MG3xsTnT+SyhctasXKjZX1H7PtTcPRGFr5pyiG2E=
 gopkg.in/sorcix/irc.v2 v2.0.0-20180626144439-63eed78b082d/go.mod h1:9LLe1SvUK2YoWyIuJ+AParKHhu749G8oM+HTQQMZz9E=
-gopkg.in/ugjka/go-tz.v2 v2.0.0-20181130100720-4829d8ecacbd h1:CscDtT0Q+lQ3mC4Jj2MdlpK0osrEaGswyh6kbSFXAPE=
-gopkg.in/ugjka/go-tz.v2 v2.0.0-20181130100720-4829d8ecacbd/go.mod h1:l93M5EnjrSTTaABtGKIqNcl+z08IYbVDS7v1VA8+PgU=
+gopkg.in/ugjka/go-tz.v2 v2.0.1 h1:KjDKSvYmCEi6ew0WoWtlsop4PEXTczo9cuvUyc3NAHs=
+gopkg.in/ugjka/go-tz.v2 v2.0.1/go.mod h1:l93M5EnjrSTTaABtGKIqNcl+z08IYbVDS7v1VA8+PgU=
 mvdan.cc/xurls/v2 v2.0.0 h1:r1zSOSNS/kqtpmATyMMMvaZ4/djsesbYz5kr0+qMRWc=
 mvdan.cc/xurls/v2 v2.0.0/go.mod h1:2/webFPYOXN9jp/lzuj0zuAVlF+9g4KPFJANH1oJhRU=

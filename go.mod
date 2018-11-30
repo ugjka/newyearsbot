@@ -10,6 +10,6 @@ require (
 	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/ugjka/dumbirc v1.0.1
 	golang.org/x/sys v0.0.0-20181128092732-4ed8d59d0b35 // indirect
-	gopkg.in/ugjka/go-tz.v2 v2.0.0-20181130100720-4829d8ecacbd
+	gopkg.in/ugjka/go-tz.v2 v2.0.1
 	mvdan.cc/xurls/v2 v2.0.0
 )
