@@ -13,8 +13,8 @@ import (
 	"sort"
 	"time"
 
-	"github.com/ugjka/go-tz"
 	"github.com/ugjka/newyearsbot/nyb"
+	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
 //Set target year
@@ -95,11 +95,11 @@ func getTimeZone(loc string) (float64, error) {
 	if len(mapj) == 0 {
 		return 0, errors.New("could not find location")
 	}
-	location := gotz.Point{
+	location := tz.Point{
 		Lat: mapj[0].Lat,
 		Lon: mapj[0].Lon,
 	}
-	tzid, err := gotz.GetZone(location)
+	tzid, err := tz.GetZone(location)
 	if err != nil {
 		return 0, err
 	}

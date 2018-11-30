@@ -12,8 +12,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/ugjka/go-tz"
 	"github.com/ugjka/newyearsbot/nyb"
+	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
 var email *string
@@ -43,7 +43,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		gotz.LoadGeoJSON(f)
+		tz.LoadGeoJSON(f)
 	}
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
@@ -77,12 +77,12 @@ func getLocationInfo(loc string) (string, error) {
 	if len(mapj) == 0 {
 		return "", errors.New("status not OK")
 	}
-	location := gotz.Point{
+	location := tz.Point{
 		Lat: mapj[0].Lat,
 		Lon: mapj[0].Lon,
 	}
 	now := time.Now()
-	tzid, err := gotz.GetZone(location)
+	tzid, err := tz.GetZone(location)
 	lookup := time.Now().Sub(now)
 	if err != nil {
 		return "", err
