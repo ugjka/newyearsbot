@@ -16,8 +16,8 @@ github.com/mattn/go-isatty v0.0.4 h1:bnP0vzxcAdeI1zdubAl5PjU6zsERjGZb7raWodagDYs
 github.com/mattn/go-isatty v0.0.4/go.mod h1:M+lRXTBqGeGNdLjl/ufCoiOlB5xdOkqRJdNxMWT7Zi4=
 github.com/ugjka/dumbirc v1.0.1 h1:xqzMtovSAxxecAjjEIxf11OLzN2cN89tNeHVUExq+wo=
 github.com/ugjka/dumbirc v1.0.1/go.mod h1:h3DLJZ/NJlALQ5REHlr8ZFyZkwjM3sMFeEvDAdnLTLY=
-github.com/ugjka/go-tz v1.0.22 h1:KyHrfXQfSrY24DCHxHRjJm1JwdGVKhWJjbjCI7PuulM=
-github.com/ugjka/go-tz v1.0.22/go.mod h1:FCA7A+ynNQQJRIaNHFzECFsbUHHZmlQTE3tEptEGexU=
+github.com/ugjka/go-tz/v2 v2.0.4 h1:8vJzyELWHoiZigVT8JNk2eXesWEH32BH9RL0XC+z7iI=
+github.com/ugjka/go-tz/v2 v2.0.4/go.mod h1:pAwbTrWtxFU1OQdn/8i+tc3dRDErG+CKN1zQJAmrxqw=
 golang.org/x/sys v0.0.0-20181128092732-4ed8d59d0b35 h1:YAFjXN64LMvktoUZH9zgY4lGc/msGN7HQfoSuKCgaDU=
 golang.org/x/sys v0.0.0-20181128092732-4ed8d59d0b35/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 gopkg.in/sorcix/irc.v2 v2.0.0-20180626144439-63eed78b082d h1:Qa1MG3xsTnT+SyhctasXKjZX1H7PtTcPRGFr5pyiG2E=

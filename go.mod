@@ -9,7 +9,7 @@ require (
 	github.com/mattn/go-colorable v0.0.9 // indirect
 	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/ugjka/dumbirc v1.0.1
-	github.com/ugjka/go-tz v1.0.22
+	github.com/ugjka/go-tz/v2 v2.0.4
 	golang.org/x/sys v0.0.0-20181128092732-4ed8d59d0b35 // indirect
 	mvdan.cc/xurls/v2 v2.0.0
 )
