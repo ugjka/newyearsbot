@@ -11,7 +11,7 @@ import (
 
 	"github.com/hako/durafmt"
 	"github.com/ugjka/dumbirc"
-	"github.com/ugjka/go-tz/v2"
+	"github.com/ugjka/go-tz"
 )
 
 var nickChangeInterval = time.Second * 5
@@ -204,11 +204,11 @@ func (bot *Settings) getTime(location string) (string, error) {
 	if len(res) == 0 {
 		return "", errNoPlace
 	}
-	p := tz.Point{
+	p := gotz.Point{
 		Lat: res[0].Lat,
 		Lon: res[0].Lon,
 	}
-	tzid, err := tz.GetZone(p)
+	tzid, err := gotz.GetZone(p)
 	if err != nil {
 		return "", errNoZone
 	}
@@ -235,11 +235,11 @@ func (bot *Settings) getNewYear(location string) (string, error) {
 	if len(res) == 0 {
 		return "", errNoPlace
 	}
-	p := tz.Point{
+	p := gotz.Point{
 		Lat: res[0].Lat,
 		Lon: res[0].Lon,
 	}
-	tzid, err := tz.GetZone(p)
+	tzid, err := gotz.GetZone(p)
 	if err != nil {
 		return "", errNoZone
 	}
