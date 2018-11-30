@@ -4,11 +4,9 @@ GOPATH :=$(PWD)/deps
 appname = newyearsbot
 
 all: cli
-	GOPATH=$(GOPATH) go get -d github.com/ugjka/$(appname)/gui
 	GOPATH=$(GOPATH) go build -v -ldflags="-X main.icon=$(prefix)/share/icons/hicolor/256x256/apps/$(appname).png" -o ./newyearsbot-gui gui/*
 
 cli:
-	GOPATH=$(GOPATH) go get -d github.com/ugjka/$(appname)
 	GOPATH=$(GOPATH) go build -v
 install:
 	install -Dm755 $(appname) $(prefix)/bin/$(appname)
