@@ -122,11 +122,7 @@ func buildCenterCache() {
 			continue
 		}
 		tzid = v.Properties.Tzid
-		for i, poly := range v.Geometry.Coordinates {
-			// ignore bounding boxes
-			if i%2 == 0 {
-				continue
-			}
+		for _, poly := range v.Geometry.Coordinates {
 			centerCache[tzid] = append(centerCache[tzid], polygon(poly).centroid())
 		}
 	}
