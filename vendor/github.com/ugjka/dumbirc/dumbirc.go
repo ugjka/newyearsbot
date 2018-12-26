@@ -473,6 +473,9 @@ func (c *Connection) HandlePingPong() {
 			select {
 			case <-pp:
 				c.Ping()
+			case <-c.destroy:
+				tick.Stop()
+				return
 			default:
 				c.Log.Println("got no pong")
 			}
