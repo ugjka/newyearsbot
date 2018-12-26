@@ -31,6 +31,7 @@ func main() {
 	st.onClose = func() {
 		st.logStopper <- true
 		bot.Stop()
+		bot.Cleanup()
 		st.Close()
 		mv.setActive()
 	}

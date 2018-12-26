@@ -59,6 +59,7 @@ type Connection struct {
 	messenger     *messenger.Messenger
 	prefixlenGet  chan int
 	prefixlenSet  chan []string
+	destroy       chan struct{}
 	sync.WaitGroup
 }
 
@@ -82,6 +83,7 @@ func New(nick, user, server string, tls bool) *Connection {
 		connectedSet: make(chan bool),
 		prefixlenGet: make(chan int),
 		prefixlenSet: make(chan []string),
+		destroy:      make(chan struct{}),
 	}
 	conn.getPrefix()
 	conn.prefix.Name = nick
@@ -90,12 +92,19 @@ func New(nick, user, server string, tls bool) *Connection {
 	return conn
 }
 
+// Destroy terminates monitor goroutines created by New()
+func Destroy(c *Connection) {
+	close(c.destroy)
+}
+
 func connStatusMon(c *Connection) {
 	connected := false
 	for {
 		select {
 		case connected = <-c.connectedSet:
 		case c.connectedGet <- connected:
+		case <-c.destroy:
+			return
 		}
 	}
 }
@@ -114,6 +123,8 @@ func prefixMonitor(c *Connection) {
 				c.prefix.Host = args[2]
 			}
 		case c.prefixlenGet <- c.prefix.Len():
+		case <-c.destroy:
+			return
 		}
 	}
 }

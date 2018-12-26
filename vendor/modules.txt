@@ -16,7 +16,7 @@ github.com/julienschmidt/httprouter
 github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.4
 github.com/mattn/go-isatty
-# github.com/ugjka/dumbirc v1.0.2
+# github.com/ugjka/dumbirc v1.1.0
 github.com/ugjka/dumbirc
 github.com/ugjka/dumbirc/messenger
 # golang.org/x/sys v0.0.0-20181221143128-b4a75ba826a6

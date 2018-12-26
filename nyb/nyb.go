@@ -62,6 +62,13 @@ func New(nick string, chans []string, password, trigger, server string,
 
 var stFinished = "That's it, Year %d is here AoE"
 
+// Cleanup cleans up irc gouroutines if we are not reusing the bot
+func (bot *Settings) Cleanup() {
+	bot.Stop()
+	bot.Wait()
+	dumbirc.Destroy(bot.IrcConn)
+}
+
 //Start starts the bot
 func (bot *Settings) Start() {
 	log.SetOutput(bot.LogChan)
