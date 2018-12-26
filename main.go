@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"regexp"
 	"sync"
+	"syscall"
 
 	"github.com/badoux/checkmail"
 	"github.com/fatih/color"
@@ -141,7 +142,7 @@ func main() {
 	}
 	//Catch interrupt ^C
 	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt)
+	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 
 	bot := nyb.New(*botnick, chans, *nickpass, *trigger, *ircServer, *useTLS, *email, *nominatim)
 	if *ircdebug {
