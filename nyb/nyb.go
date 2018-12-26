@@ -90,6 +90,7 @@ func (bot *Settings) Start() {
 	if bot.IrcPassword != "" {
 		irc.SetPassword(bot.IrcPassword)
 	}
+	irc.SetThrottle(time.Millisecond * 100)
 	irc.Start()
 
 	select {
