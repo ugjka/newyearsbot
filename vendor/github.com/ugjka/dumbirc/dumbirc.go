@@ -10,8 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ugjka/dumbirc/messenger"
-
+	"github.com/ugjka/messenger"
 	irc "gopkg.in/sorcix/irc.v2"
 )
 
@@ -531,7 +530,7 @@ func (c *Connection) Start() {
 	}
 	c.Send = make(chan string)
 	c.connectedSet <- true
-	c.messenger = messenger.New()
+	c.messenger = messenger.New(5, false)
 	err = identify(c)
 	if err != nil {
 		c.Disconnect()
