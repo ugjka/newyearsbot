@@ -105,6 +105,7 @@ func (m *Messenger) Reset() {
 // Kill closes and removes all clients
 // and stops the monitor() goroutine of Messenger,
 // making the Messenger instance unusable.
+// Kill must only be called when all clients have exited.
 func (m *Messenger) Kill() {
 	m.kill <- struct{}{}
 }

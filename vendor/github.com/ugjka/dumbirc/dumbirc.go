@@ -592,12 +592,17 @@ func readLoop(c *Connection) {
 		if !c.IsConnected() {
 			return
 		}
+		timeout := time.AfterFunc(time.Second*300, func() {
+			c.conn.Close()
+		})
 		raw, err := c.conn.Decode()
 		if err != nil {
+			timeout.Stop()
 			c.Disconnect()
 			c.Errchan <- err
 			return
 		}
+		timeout.Stop()
 		c.Debug.Printf("← %s", raw)
 		msg := ParseMessage(raw)
 		go c.messenger.Broadcast(msg)
@@ -617,12 +622,15 @@ func writeLoop(c *Connection) {
 			return
 		}
 		c.Debug.Printf("→ %s", v)
+		timeout := time.AfterFunc(time.Second*300, func() { c.conn.Close() })
 		_, err := fmt.Fprintf(c.conn, "%s%s", v, "\r\n")
 		if err != nil {
+			timeout.Stop()
 			c.Disconnect()
 			c.Errchan <- err
 			return
 		}
+		timeout.Stop()
 		time.Sleep(c.Throttle)
 	}
 }

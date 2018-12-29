@@ -8,7 +8,7 @@ require (
 	github.com/julienschmidt/httprouter v1.2.0
 	github.com/mattn/go-colorable v0.0.9 // indirect
 	github.com/mattn/go-isatty v0.0.4 // indirect
-	github.com/ugjka/dumbirc v1.1.5
+	github.com/ugjka/dumbirc v1.2.1
 	golang.org/x/sys v0.0.0-20181228144115-9a3f9b0469bb // indirect
 	gopkg.in/ugjka/go-tz.v2 v2.0.2
 	mvdan.cc/xurls/v2 v2.0.0
