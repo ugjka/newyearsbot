@@ -15,6 +15,7 @@ type Messenger struct {
 	pool      map[chan interface{}]struct{}
 	reset     chan struct{}
 	kill      chan struct{}
+	killed    chan struct{}
 	blocked   chan interface{} //for testing
 	chanlens  chan []int       //for testing
 }
@@ -31,22 +32,26 @@ func New(buffer uint, drop bool) *Messenger {
 }
 
 func setup(buffer uint, drop bool) *Messenger {
-	m := &Messenger{}
-	m.buffer = int(buffer)
-	m.drop = drop
-	m.get = make(chan chan interface{})
-	m.del = make(chan chan interface{})
-	m.broadcast = make(chan interface{})
-	m.pool = make(map[chan interface{}]struct{})
-	m.reset = make(chan struct{})
-	m.kill = make(chan struct{})
+	m := &Messenger{
+		buffer:    int(buffer),
+		drop:      drop,
+		get:       make(chan chan interface{}),
+		del:       make(chan chan interface{}),
+		broadcast: make(chan interface{}),
+		pool:      make(map[chan interface{}]struct{}),
+		reset:     make(chan struct{}),
+		kill:      make(chan struct{}),
+		killed:    make(chan struct{}),
+	}
+	if buffer == 0 {
+		m.drop = false
+	}
 	return m
 }
 
 // For testing
 func newNoMonitor(buffer uint, drop bool) *Messenger {
-	m := setup(buffer, drop)
-	return m
+	return setup(buffer, drop)
 }
 
 // Main loop where all the action happens.
@@ -72,7 +77,7 @@ func (m *Messenger) monitor() {
 				close(client)
 				delete(m.pool, client)
 			}
-			close(m.get)
+			close(m.killed)
 			return
 		case msg := <-m.broadcast:
 			for client := range m.pool {
@@ -99,15 +104,21 @@ func (m *Messenger) getlens() (l []int) {
 
 // Reset closes and removes all clients.
 func (m *Messenger) Reset() {
-	m.reset <- struct{}{}
+	select {
+	case <-m.killed:
+	case m.reset <- struct{}{}:
+	}
 }
 
 // Kill closes and removes all clients
 // and stops the monitor() goroutine of Messenger,
 // making the Messenger instance unusable.
-// Kill must only be called when all clients have exited.
+// Kill should only be called when all clients have exited.
 func (m *Messenger) Kill() {
-	m.kill <- struct{}{}
+	select {
+	case <-m.killed:
+	case m.kill <- struct{}{}:
+	}
 }
 
 // Sub returns a new client.
@@ -115,22 +126,29 @@ func (m *Messenger) Kill() {
 // Clients should check whether the channel is closed or not.
 // Returns an error if its Messenger instance is Killed
 func (m *Messenger) Sub() (client chan interface{}, err error) {
-	sub, ok := <-m.get
-	if !ok {
+	select {
+	case sub := <-m.get:
+		return sub, nil
+	case <-m.killed:
 		return nil, fmt.Errorf("can't subscribe, messenger killed")
 	}
-	return sub, nil
 }
 
 // Unsub unsubscribes a client and closes its channel.
 func (m *Messenger) Unsub(client chan interface{}) {
 	if m.drop {
-		m.del <- client
+		select {
+		case m.del <- client:
+		case <-m.killed:
+		}
 		return
 	}
 	for {
 		select {
-		case <-client:
+		case _, ok := <-client:
+			if !ok {
+				return
+			}
 		case m.del <- client:
 			return
 		}
@@ -138,7 +156,10 @@ func (m *Messenger) Unsub(client chan interface{}) {
 }
 
 // Broadcast broadcasts a message to all current clients.
-// If a client is not listening and and drop is not set this will block.
+// If a client is not listening and drop is not set this will block.
 func (m *Messenger) Broadcast(msg interface{}) {
-	m.broadcast <- msg
+	select {
+	case <-m.killed:
+	case m.broadcast <- msg:
+	}
 }

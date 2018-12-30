@@ -2,7 +2,7 @@
 github.com/badoux/checkmail
 # github.com/fatih/color v1.7.0
 github.com/fatih/color
-# github.com/gotk3/gotk3 v0.0.0-20181227180931-c97729edddb4
+# github.com/gotk3/gotk3 v0.0.0-20181229173452-91e754d8cb73
 github.com/gotk3/gotk3/glib
 github.com/gotk3/gotk3/gtk
 github.com/gotk3/gotk3/cairo
@@ -16,9 +16,9 @@ github.com/julienschmidt/httprouter
 github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.4
 github.com/mattn/go-isatty
-# github.com/ugjka/dumbirc v1.2.1
+# github.com/ugjka/dumbirc v1.2.2
 github.com/ugjka/dumbirc
-# github.com/ugjka/messenger v1.0.1
+# github.com/ugjka/messenger v1.0.3
 github.com/ugjka/messenger
 # golang.org/x/sys v0.0.0-20181228144115-9a3f9b0469bb
 golang.org/x/sys/unix
