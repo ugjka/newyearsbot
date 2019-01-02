@@ -37,6 +37,7 @@ Posts New Years for each timezone when they happen
 * `hny !remaining` number of remaining timezones
 * `hny <location>` get new year status for location
 * `hny !time <location>` get current time in location
+* `hny !time` UTC time
 * `hny !help` show help
 
 The `hny` part can be changed by defining a different trigger
