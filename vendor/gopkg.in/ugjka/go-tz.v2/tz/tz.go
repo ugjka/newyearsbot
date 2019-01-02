@@ -15,8 +15,6 @@
 // * The shapefile is simplified using a lossy method so it may be innacurate along the borders
 //
 // * This is purerly in-memory. Uses ~50MB of ram
-//
-// * Nautical timezones are not included for practical reasons
 package tz
 
 import (
@@ -24,6 +22,7 @@ import (
 	"compress/gzip"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"math"
 	"runtime/debug"
@@ -62,8 +61,14 @@ type Point struct {
 // ErrNoZoneFound is returned when a zone for the given point is not found in the shapefile
 var ErrNoZoneFound = errors.New("no corresponding zone found in shapefile")
 
+// ErrOutOfRange is returned when latitude exceeds 90 degrees or longitude exceeds 180 degrees
+var ErrOutOfRange = errors.New("point's coordinates out of range")
+
 // GetZone returns a slice of strings containing time zone id's for a given Point
 func GetZone(p Point) (tzid []string, err error) {
+	if p.Lon > 180 || p.Lon < -180 || p.Lat > 90 || p.Lat < -90 {
+		return nil, ErrOutOfRange
+	}
 	var id string
 	for _, v := range tzdata.Features {
 		if v.Properties.Tzid == "" {
@@ -108,9 +113,22 @@ func getClosestZone(point *Point) (tzid []string, err error) {
 	}
 	// Limit search radius
 	if mindist > 2.0 {
-		return tzid, ErrNoZoneFound
+		return getNauticalZone(point)
 	}
 	return append(tzid, winner), nil
+}
+
+func getNauticalZone(point *Point) (tzid []string, err error) {
+	z := point.Lon / 7.5
+	z = (math.Abs(z) + 1) / 2
+	z = math.Floor(z)
+	if z == 0 {
+		return append(tzid, "Etc/GMT"), nil
+	}
+	if point.Lon < 0 {
+		return append(tzid, fmt.Sprintf("Etc/GMT+%.f", z)), nil
+	}
+	return append(tzid, fmt.Sprintf("Etc/GMT-%.f", z)), nil
 }
 
 //BuildCenterCache builds centers for polygons

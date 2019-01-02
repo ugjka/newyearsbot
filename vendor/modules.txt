@@ -18,14 +18,14 @@ github.com/mattn/go-colorable
 github.com/mattn/go-isatty
 # github.com/ugjka/dumbirc v1.2.2
 github.com/ugjka/dumbirc
-# github.com/ugjka/messenger v1.0.3
+# github.com/ugjka/messenger v1.0.4
 github.com/ugjka/messenger
 # golang.org/x/sys v0.0.0-20181228144115-9a3f9b0469bb
 golang.org/x/sys/unix
 # gopkg.in/sorcix/irc.v2 v2.0.0-20180626144439-63eed78b082d
 gopkg.in/sorcix/irc.v2
 gopkg.in/sorcix/irc.v2/internal
-# gopkg.in/ugjka/go-tz.v2 v2.0.2
+# gopkg.in/ugjka/go-tz.v2 v2.0.4
 gopkg.in/ugjka/go-tz.v2/tz
 # mvdan.cc/xurls/v2 v2.0.0
 mvdan.cc/xurls/v2

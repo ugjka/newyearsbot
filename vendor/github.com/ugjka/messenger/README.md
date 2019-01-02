@@ -10,7 +10,7 @@ Simple broadcasting mechanism using go channels
 
 ## What is this
 
-This is a simple broadcasting mechanisms where gouroutines can subscribe and unsubscribe to recieve messages from the Messenger instance.
+This is a simple broadcasting mechanism where gouroutines can subscribe and unsubscribe to recieve messages from the Messenger instance.
 
 Channels can be buffered to reduce blocking and messages can be dropped if channel's buffer is full. These are configurable options.
 
