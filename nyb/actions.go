@@ -48,22 +48,25 @@ func (bot *Settings) addCallbacks() {
 func (bot *Settings) addTriggers() {
 	irc := bot.IrcConn
 	//Trigger for !help
-	stHelp := "%s: Query location: '%s <location>', Time in location: '%s !time <location>', Next zone: '%s !next', Last zone: '%s !last', Remaining: '%s !remaining', Source code: https://github.com/ugjka/newyearsbot"
+	stHelp := "Query location: '%s <location>', Time in location: '%s !time <location>', Next zone: '%s !next', Last zone: '%s !last', Remaining: '%s !remaining'"
+	stSource := "Source code: https://github.com/ugjka/newyearsbot"
 	irc.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
 			return msg.Command == dumbirc.PRIVMSG &&
-				msg.Content == fmt.Sprintf("%s !help", bot.IrcTrigger)
+				strings.HasPrefix(msg.Content, fmt.Sprintf("%s !help", bot.IrcTrigger)) ||
+				msg.Content == fmt.Sprintf("%s help", bot.IrcTrigger)
 		},
 		Response: func(msg *dumbirc.Message) {
 			log.Println("Querying !help...")
-			irc.Reply(msg, fmt.Sprintf(stHelp, msg.Name, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger))
+			irc.Reply(msg, fmt.Sprintf(stHelp+", "+stSource, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger))
 		},
 	})
 	//Trigger for !next
 	irc.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
 			return msg.Command == dumbirc.PRIVMSG &&
-				msg.Content == fmt.Sprintf("%s !next", bot.IrcTrigger)
+				strings.HasPrefix(msg.Content, fmt.Sprintf("%s !next", bot.IrcTrigger)) ||
+				msg.Content == fmt.Sprintf("%s next", bot.IrcTrigger)
 		},
 		Response: func(msg *dumbirc.Message) {
 			log.Println("Querying !next...")
@@ -81,7 +84,8 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
 			return msg.Command == dumbirc.PRIVMSG &&
-				msg.Content == fmt.Sprintf("%s !last", bot.IrcTrigger)
+				strings.HasPrefix(msg.Content, fmt.Sprintf("%s !last", bot.IrcTrigger)) ||
+				msg.Content == fmt.Sprintf("%s last", bot.IrcTrigger)
 		},
 		Response: func(msg *dumbirc.Message) {
 			log.Println("Querying !last...")
@@ -98,7 +102,8 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
 			return msg.Command == dumbirc.PRIVMSG &&
-				msg.Content == fmt.Sprintf("%s !remaining", bot.IrcTrigger)
+				strings.HasPrefix(msg.Content, fmt.Sprintf("%s !remaining", bot.IrcTrigger)) ||
+				msg.Content == fmt.Sprintf("%s remaining", bot.IrcTrigger)
 		},
 		Response: func(msg *dumbirc.Message) {
 			log.Println("Querying !remaining...")
@@ -143,15 +148,33 @@ func (bot *Settings) addTriggers() {
 			irc.Reply(msg, res)
 		},
 	})
+
+	//Trigger for incorrect querries
+	irc.AddTrigger(dumbirc.Trigger{
+		Condition: func(msg *dumbirc.Message) bool {
+			return msg.Command == dumbirc.PRIVMSG &&
+				msg.Content != fmt.Sprintf("%s !time", bot.IrcTrigger) &&
+				!strings.HasPrefix(msg.Content, fmt.Sprintf("%s !time ", bot.IrcTrigger)) &&
+				!strings.HasPrefix(msg.Content, fmt.Sprintf("%s !next", bot.IrcTrigger)) &&
+				!strings.HasPrefix(msg.Content, fmt.Sprintf("%s !last", bot.IrcTrigger)) &&
+				!strings.HasPrefix(msg.Content, fmt.Sprintf("%s !help", bot.IrcTrigger)) &&
+				!strings.HasPrefix(msg.Content, fmt.Sprintf("%s !remaining", bot.IrcTrigger)) &&
+				strings.HasPrefix(msg.Content, fmt.Sprintf("%s !", bot.IrcTrigger))
+		},
+		Response: func(msg *dumbirc.Message) {
+			irc.Reply(msg, fmt.Sprintf("Invalid command, valid commands are: "+stHelp, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger))
+		},
+	})
+
 	//Trigger for location queries
 	irc.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
 			return msg.Command == dumbirc.PRIVMSG &&
-				!strings.Contains(msg.Content, "!time") &&
-				!strings.Contains(msg.Content, "!next") &&
-				!strings.Contains(msg.Content, "!last") &&
-				!strings.Contains(msg.Content, "!help") &&
-				!strings.Contains(msg.Content, "!remaining") &&
+				!strings.HasPrefix(msg.Content, fmt.Sprintf("%s !", bot.IrcTrigger)) &&
+				msg.Content != fmt.Sprintf("%s next", bot.IrcTrigger) &&
+				msg.Content != fmt.Sprintf("%s last", bot.IrcTrigger) &&
+				msg.Content != fmt.Sprintf("%s help", bot.IrcTrigger) &&
+				msg.Content != fmt.Sprintf("%s remaining", bot.IrcTrigger) &&
 				strings.HasPrefix(msg.Content, fmt.Sprintf("%s ", bot.IrcTrigger))
 		},
 		Response: func(msg *dumbirc.Message) {
