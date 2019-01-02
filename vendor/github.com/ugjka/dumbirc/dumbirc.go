@@ -43,6 +43,7 @@ type Connection struct {
 	TLS          bool
 	Password     string
 	Throttle     time.Duration
+	ConnTimeout  time.Duration
 	connectedSet chan bool
 	connectedGet chan bool
 	//Fake Connected status
@@ -70,6 +71,7 @@ func New(nick, user, server string, tls bool) *Connection {
 		Server:       server,
 		TLS:          tls,
 		Throttle:     time.Millisecond * 500,
+		ConnTimeout:  time.Second * 300,
 		conn:         &irc.Conn{},
 		callbacks:    make(map[string][]func(*Message)),
 		triggers:     make([]Trigger, 0),
@@ -592,7 +594,7 @@ func readLoop(c *Connection) {
 		if !c.IsConnected() {
 			return
 		}
-		timeout := time.AfterFunc(time.Second*300, func() {
+		timeout := time.AfterFunc(c.ConnTimeout, func() {
 			c.conn.Close()
 		})
 		raw, err := c.conn.Decode()
@@ -622,7 +624,7 @@ func writeLoop(c *Connection) {
 			return
 		}
 		c.Debug.Printf("→ %s", v)
-		timeout := time.AfterFunc(time.Second*300, func() { c.conn.Close() })
+		timeout := time.AfterFunc(c.ConnTimeout, func() { c.conn.Close() })
 		_, err := fmt.Fprintf(c.conn, "%s%s", v, "\r\n")
 		if err != nil {
 			timeout.Stop()
