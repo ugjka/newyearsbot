@@ -44,20 +44,8 @@ The `hny` part can be changed by defining a different trigger
 
 ## What's new and great for year 2019
 
-* irc identification
-* target date wraps around after last zone
-* added `hny !last` command to print where previous new year happened
-* added `hny !remaining` to show how many zones are still remaining
-* query current time in location with `hny !time`
-* uses Nominatim for geocoding (no more google api)
-* you can specify different Nominatim server if you want
-* timezone lookup is done from tz shapefile (no more google api)
-* code much more readable
-* tests
-
-## What's not so great but not too bad
-
-* timezone shapefile is loaded in memory which increases ram usage by 60 to 80MB
+* better trigger parsing
+* supports nautical time zones
 
 ## Pro-tip
 
