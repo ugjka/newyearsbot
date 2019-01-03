@@ -140,7 +140,8 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
 			return msg.Command == dumbirc.PRIVMSG &&
-				msg.Content == fmt.Sprintf("%s !time", bot.IrcTrigger)
+				msg.Content == fmt.Sprintf("%s !time", bot.IrcTrigger) ||
+				msg.Content == fmt.Sprintf("%s time", bot.IrcTrigger)
 		},
 		Response: func(msg *dumbirc.Message) {
 			log.Println("Querying !time...")
@@ -174,6 +175,7 @@ func (bot *Settings) addTriggers() {
 				msg.Content != fmt.Sprintf("%s next", bot.IrcTrigger) &&
 				msg.Content != fmt.Sprintf("%s last", bot.IrcTrigger) &&
 				msg.Content != fmt.Sprintf("%s help", bot.IrcTrigger) &&
+				msg.Content != fmt.Sprintf("%s time", bot.IrcTrigger) &&
 				msg.Content != fmt.Sprintf("%s remaining", bot.IrcTrigger) &&
 				strings.HasPrefix(msg.Content, fmt.Sprintf("%s ", bot.IrcTrigger))
 		},
