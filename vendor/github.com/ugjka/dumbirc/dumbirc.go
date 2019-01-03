@@ -565,7 +565,7 @@ func identify(c *Connection) (err error) {
 	if c.Password != "" {
 		out := "PASS " + c.Password
 		c.Debug.Printf("→ %s", out)
-		_, err := fmt.Fprintf(c.conn, "%s%s", out, "\r\n")
+		_, err := io.WriteString(c.conn, out)
 		if err != nil {
 			return err
 		}
@@ -575,13 +575,13 @@ func identify(c *Connection) (err error) {
 	}
 	out := "USER " + c.User + " +iw * :" + c.RealN
 	c.Debug.Printf("→ %s", out)
-	_, err = fmt.Fprintf(c.conn, "%s%s", out, "\r\n")
+	_, err = io.WriteString(c.conn, out)
 	if err != nil {
 		return err
 	}
 	out = irc.NICK + " " + c.Nick
 	c.Debug.Printf("→ %s", out)
-	_, err = fmt.Fprintf(c.conn, "%s%s", out, "\r\n")
+	_, err = io.WriteString(c.conn, out)
 	if err != nil {
 		return err
 	}
@@ -594,9 +594,7 @@ func readLoop(c *Connection) {
 		if !c.IsConnected() {
 			return
 		}
-		timeout := time.AfterFunc(c.ConnTimeout, func() {
-			c.conn.Close()
-		})
+		timeout := time.AfterFunc(c.ConnTimeout, func() { c.conn.Close() })
 		raw, err := c.conn.Decode()
 		if err != nil {
 			timeout.Stop()
@@ -625,7 +623,7 @@ func writeLoop(c *Connection) {
 		}
 		c.Debug.Printf("→ %s", v)
 		timeout := time.AfterFunc(c.ConnTimeout, func() { c.conn.Close() })
-		_, err := fmt.Fprintf(c.conn, "%s%s", v, "\r\n")
+		_, err := io.WriteString(c.conn, v)
 		if err != nil {
 			timeout.Stop()
 			c.Disconnect()
