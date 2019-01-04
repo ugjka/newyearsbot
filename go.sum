@@ -14,8 +14,8 @@ github.com/mattn/go-colorable v0.0.9 h1:UVL0vNpWh04HeJXV0KLcaT7r06gOH2l4OW6ddYRU
 github.com/mattn/go-colorable v0.0.9/go.mod h1:9vuHe8Xs5qXnSaW/c/ABM9alt+Vo+STaOChaDxuIBZU=
 github.com/mattn/go-isatty v0.0.4 h1:bnP0vzxcAdeI1zdubAl5PjU6zsERjGZb7raWodagDYs=
 github.com/mattn/go-isatty v0.0.4/go.mod h1:M+lRXTBqGeGNdLjl/ufCoiOlB5xdOkqRJdNxMWT7Zi4=
-github.com/ugjka/dumbirc v1.2.4 h1:CYZ9VUExUOX36op6txcYbXgOQpySpj2TrkA6/mhELsQ=
-github.com/ugjka/dumbirc v1.2.4/go.mod h1:QHtRFG6Pka9VM6ZyfDGQvoEkPbhQb4y9QzLXyoj6FIQ=
+github.com/ugjka/dumbirc v1.2.5 h1:oxMo7I8iawROZ4vsWOd5pDuW/HrP/h7T5Z44Ns0bwtk=
+github.com/ugjka/dumbirc v1.2.5/go.mod h1:QHtRFG6Pka9VM6ZyfDGQvoEkPbhQb4y9QzLXyoj6FIQ=
 github.com/ugjka/messenger v1.0.3 h1:/b31ohwYkTrCD0Gz+wHiqSj9UfFTvuIDgVnFLd7cvI8=
 github.com/ugjka/messenger v1.0.3/go.mod h1:n+FIRUVJezEs4XXv9EtS3l1zK/DNss55vArGVXnCjjI=
 github.com/ugjka/messenger v1.0.4 h1:fi3b4Ra3Z5onovqHxmBucbcWR9Zj5wcCLHGfkEUlT1U=

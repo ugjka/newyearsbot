@@ -60,6 +60,9 @@ type Connection struct {
 	prefixlenGet  chan int
 	prefixlenSet  chan []string
 	destroy       chan struct{}
+	destroywg     sync.WaitGroup
+	pingTick      time.Duration
+	joinTimeout   time.Duration
 	sync.WaitGroup
 }
 
@@ -77,7 +80,7 @@ func New(nick, user, server string, tls bool) *Connection {
 		triggers:     make([]Trigger, 0),
 		Log:          log.New(&devNull{}, "", log.Ldate|log.Ltime),
 		Debug:        log.New(&devNull{}, "debug", log.Ltime),
-		Errchan:      make(chan error),
+		Errchan:      make(chan error, 1),
 		WaitGroup:    sync.WaitGroup{},
 		prefix:       new(irc.Prefix),
 		connectedGet: make(chan bool),
@@ -85,9 +88,13 @@ func New(nick, user, server string, tls bool) *Connection {
 		prefixlenGet: make(chan int),
 		prefixlenSet: make(chan []string),
 		destroy:      make(chan struct{}),
+		destroywg:    sync.WaitGroup{},
+		pingTick:     time.Minute,
+		joinTimeout:  time.Second * 30,
 	}
 	conn.getPrefix()
 	conn.prefix.Name = nick
+	conn.destroywg.Add(2)
 	go connStatusMon(conn)
 	go prefixMonitor(conn)
 	return conn
@@ -96,9 +103,11 @@ func New(nick, user, server string, tls bool) *Connection {
 // Destroy terminates monitor goroutines created by New()
 func Destroy(c *Connection) {
 	close(c.destroy)
+	c.destroywg.Wait()
 }
 
 func connStatusMon(c *Connection) {
+	defer c.destroywg.Done()
 	connected := false
 	for {
 		select {
@@ -111,6 +120,7 @@ func connStatusMon(c *Connection) {
 }
 
 func prefixMonitor(c *Connection) {
+	defer c.destroywg.Done()
 	for {
 		select {
 		case args := <-c.prefixlenSet:
@@ -247,7 +257,7 @@ func (c *Connection) AddTrigger(t Trigger) {
 func (c *Connection) RunTriggers(m *Message) {
 	for _, v := range c.triggers {
 		if v.Condition(m) {
-			v.Response(m)
+			go v.Response(m)
 		}
 	}
 }
@@ -256,12 +266,12 @@ func (c *Connection) RunTriggers(m *Message) {
 func (c *Connection) RunCallbacks(m *Message) {
 	if v, ok := c.callbacks[ANYMESSAGE]; ok {
 		for _, v := range v {
-			v(m)
+			go v(m)
 		}
 	}
 	if v, ok := c.callbacks[m.Command]; ok {
 		for _, v := range v {
-			v(m)
+			go v(m)
 		}
 	}
 }
@@ -468,8 +478,10 @@ func (c *Connection) HandlePingPong() {
 	c.AddCallback(ANYMESSAGE, func(msg *Message) {
 		pingpong(pp)
 	})
-	pingTick := time.NewTicker(time.Minute * 1)
+	pingTick := time.NewTicker(c.pingTick)
+	c.destroywg.Add(1)
 	go func(tick *time.Ticker) {
+		defer c.destroywg.Done()
 		for range tick.C {
 			select {
 			case <-pp:
@@ -493,7 +505,7 @@ func (c *Connection) HandleJoin(chans []string) {
 				return m.Command == NOTICE && strings.Contains(m.Content, "You are now identified for")
 			},
 				func() {},
-				time.Second*30,
+				c.joinTimeout,
 				idConfirmErr,
 			)
 			if err == idConfirmErr {
@@ -599,15 +611,18 @@ func readLoop(c *Connection) {
 		if err != nil {
 			timeout.Stop()
 			c.Disconnect()
-			c.Errchan <- err
+			select {
+			case c.Errchan <- err:
+			default:
+			}
 			return
 		}
 		timeout.Stop()
 		c.Debug.Printf("← %s", raw)
 		msg := ParseMessage(raw)
-		go c.messenger.Broadcast(msg)
-		go c.RunCallbacks(msg)
-		go c.RunTriggers(msg)
+		c.RunCallbacks(msg)
+		c.RunTriggers(msg)
+		c.messenger.Broadcast(msg)
 	}
 }
 
@@ -627,7 +642,10 @@ func writeLoop(c *Connection) {
 		if err != nil {
 			timeout.Stop()
 			c.Disconnect()
-			c.Errchan <- err
+			select {
+			case c.Errchan <- err:
+			default:
+			}
 			return
 		}
 		timeout.Stop()
