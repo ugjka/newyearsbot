@@ -61,6 +61,7 @@ type Connection struct {
 	pingTick      time.Duration
 	joinTimeout   time.Duration
 	connected     bool
+	disconnect    chan struct{}
 	connectedMu   sync.Mutex
 	sync.WaitGroup
 }
@@ -263,7 +264,10 @@ func (c *Connection) send(msg string) {
 	if !c.IsConnected() {
 		return
 	}
-	c.Send <- msg
+	select {
+	case c.Send <- msg:
+	case <-c.disconnect:
+	}
 }
 
 //Join channels
@@ -361,17 +365,7 @@ func (c *Connection) Disconnect() {
 	c.connected = false
 	c.conn.Close()
 	c.messenger.Kill()
-	for {
-		select {
-		case _, ok := <-c.Send:
-			if !ok {
-				return
-			}
-		default:
-			close(c.Send)
-			return
-		}
-	}
+	close(c.disconnect)
 }
 
 func changeNick(nick string) string {
@@ -528,11 +522,12 @@ func (c *Connection) Start() {
 		c.Errchan <- err
 		return
 	}
-	c.Send = make(chan string)
 	c.connectedMu.Lock()
+	c.Send = make(chan string)
+	c.disconnect = make(chan struct{})
 	c.connected = true
-	c.connectedMu.Unlock()
 	c.messenger = messenger.New(5, false)
+	c.connectedMu.Unlock()
 	err = identify(c)
 	if err != nil {
 		c.Disconnect()
@@ -591,9 +586,6 @@ func identify(c *Connection) (err error) {
 func readLoop(c *Connection) {
 	defer c.Done()
 	for {
-		if !c.IsConnected() {
-			return
-		}
 		timeout := time.AfterFunc(c.ConnTimeout, func() { c.conn.Close() })
 		raw, err := c.conn.Decode()
 		if err != nil {
@@ -617,12 +609,11 @@ func readLoop(c *Connection) {
 func writeLoop(c *Connection) {
 	defer c.Done()
 	for {
-		if !c.IsConnected() {
+		var v string
+		select {
+		case <-c.disconnect:
 			return
-		}
-		v, ok := <-c.Send
-		if !ok {
-			return
+		case v = <-c.Send:
 		}
 		c.Debug.Printf("→ %s", v)
 		timeout := time.AfterFunc(c.ConnTimeout, func() { c.conn.Close() })
