@@ -63,6 +63,8 @@ type Connection struct {
 	connected     bool
 	disconnect    chan struct{}
 	connectedMu   sync.Mutex
+	testing       bool
+	testchan      chan struct{}
 	sync.WaitGroup
 }
 
@@ -90,6 +92,7 @@ func New(nick, user, server string, tls bool) *Connection {
 		joinTimeout:  time.Second * 30,
 		connected:    false,
 		connectedMu:  sync.Mutex{},
+		testchan:     make(chan struct{}),
 	}
 	conn.getPrefix()
 	conn.prefix.Name = nick
@@ -171,7 +174,9 @@ func (c *Connection) WaitFor(filter func(*Message) bool, cmd func(), timeout tim
 	if err != nil {
 		return notConnErr
 	}
+	c.sendTestBeakon()
 	defer func() {
+		c.sendTestBeakon()
 		c.messenger.Unsub(client)
 	}()
 	for {
@@ -261,7 +266,7 @@ func (c *Connection) RunCallbacks(m *Message) {
 }
 
 func (c *Connection) send(msg string) {
-	if !c.IsConnected() {
+	if !c.IsConnected() { // is this unnecesarry?
 		return
 	}
 	select {
@@ -500,12 +505,20 @@ func (c *Connection) HandleJoin(chans []string) {
 	})
 }
 
+func (c *Connection) sendTestBeakon() {
+	if !c.testing {
+		return
+	}
+	c.testchan <- struct{}{}
+}
+
 func (c *Connection) getPrefix() {
 	c.AddTrigger(Trigger{
 		Condition: func(m *Message) bool {
 			return m.Command == JOIN && m.Name == c.Nick
 		},
 		Response: func(m *Message) {
+			c.sendTestBeakon()
 			c.prefixlenSet <- []string{m.Name, m.User, m.Host}
 		},
 	})
