@@ -2,7 +2,7 @@
 github.com/badoux/checkmail
 # github.com/fatih/color v1.7.0
 github.com/fatih/color
-# github.com/gotk3/gotk3 v0.0.0-20190106024811-8deb6b3f8d38
+# github.com/gotk3/gotk3 v0.0.0-20190108052711-d09d58ef3476
 github.com/gotk3/gotk3/glib
 github.com/gotk3/gotk3/gtk
 github.com/gotk3/gotk3/cairo
@@ -16,11 +16,11 @@ github.com/julienschmidt/httprouter
 github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.4
 github.com/mattn/go-isatty
-# github.com/ugjka/dumbirc v1.2.10
+# github.com/ugjka/dumbirc v1.2.11
 github.com/ugjka/dumbirc
 # github.com/ugjka/messenger v1.0.4
 github.com/ugjka/messenger
-# golang.org/x/sys v0.0.0-20190105165716-badf5585203e
+# golang.org/x/sys v0.0.0-20190109145017-48ac38b7c8cb
 golang.org/x/sys/unix
 # gopkg.in/sorcix/irc.v2 v2.0.0-20180626144439-63eed78b082d
 gopkg.in/sorcix/irc.v2

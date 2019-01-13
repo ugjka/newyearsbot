@@ -54,9 +54,8 @@ type Connection struct {
 	Errchan       chan error
 	Send          chan string
 	prefix        *irc.Prefix
+	prefixMu      sync.Mutex
 	messenger     *messenger.Messenger
-	prefixlenGet  chan int
-	prefixlenSet  chan []string
 	destroy       chan struct{}
 	pingTick      time.Duration
 	joinTimeout   time.Duration
@@ -71,32 +70,30 @@ type Connection struct {
 //New creates a new irc object
 func New(nick, user, server string, tls bool) *Connection {
 	conn := &Connection{
-		Nick:         nick,
-		User:         user,
-		Server:       server,
-		TLS:          tls,
-		Throttle:     time.Millisecond * 500,
-		ConnTimeout:  time.Second * 300,
-		conn:         &irc.Conn{},
-		callbacks:    make(map[string][]func(*Message)),
-		triggers:     make([]Trigger, 0),
-		Log:          log.New(&devNull{}, "", log.Ldate|log.Ltime),
-		Debug:        log.New(&devNull{}, "debug", log.Ltime),
-		Errchan:      make(chan error, 1),
-		WaitGroup:    sync.WaitGroup{},
-		prefix:       new(irc.Prefix),
-		prefixlenGet: make(chan int),
-		prefixlenSet: make(chan []string),
-		destroy:      make(chan struct{}),
-		pingTick:     time.Minute,
-		joinTimeout:  time.Second * 30,
-		connected:    false,
-		connectedMu:  sync.Mutex{},
-		testchan:     make(chan struct{}),
+		Nick:        nick,
+		User:        user,
+		Server:      server,
+		TLS:         tls,
+		Throttle:    time.Millisecond * 500,
+		ConnTimeout: time.Second * 300,
+		conn:        &irc.Conn{},
+		callbacks:   make(map[string][]func(*Message)),
+		triggers:    make([]Trigger, 0),
+		Log:         log.New(&devNull{}, "", log.Ldate|log.Ltime),
+		Debug:       log.New(&devNull{}, "debug", log.Ltime),
+		Errchan:     make(chan error, 1),
+		WaitGroup:   sync.WaitGroup{},
+		prefix:      new(irc.Prefix),
+		prefixMu:    sync.Mutex{},
+		destroy:     make(chan struct{}),
+		pingTick:    time.Minute,
+		joinTimeout: time.Second * 30,
+		connected:   false,
+		connectedMu: sync.Mutex{},
+		testchan:    make(chan struct{}),
 	}
 	conn.getPrefix()
 	conn.prefix.Name = nick
-	go prefixMonitor(conn)
 	return conn
 }
 
@@ -105,24 +102,19 @@ func Destroy(c *Connection) {
 	close(c.destroy)
 }
 
-func prefixMonitor(c *Connection) {
-	for {
-		select {
-		case args := <-c.prefixlenSet:
-			if args[0] != "" {
-				c.prefix.Name = args[0]
-			}
-			if args[1] != "" {
-				c.prefix.User = args[1]
-			}
-			if args[2] != "" {
-				c.prefix.Host = args[2]
-			}
-		case c.prefixlenGet <- c.prefix.Len():
-		case <-c.destroy:
-			return
-		}
-	}
+// TODO: this is wrong
+func (c *Connection) prefixSet(args []string) {
+	c.prefixMu.Lock()
+	defer c.prefixMu.Unlock()
+	c.prefix.Name = args[0]
+	c.prefix.User = args[1]
+	c.prefix.Host = args[2]
+}
+
+func (c *Connection) prefixlenGet() int {
+	c.prefixMu.Lock()
+	defer c.prefixMu.Unlock()
+	return c.prefix.Len()
 }
 
 //Message event
@@ -304,7 +296,7 @@ func (c *Connection) Action(dest, msg string) {
 // Notice sends a NOTICE message to 'dest' (user or channel)
 func (c *Connection) Notice(dest, msg string) {
 	msg = replacer.Replace(msg)
-	prefLen := 2 + <-c.prefixlenGet + len("NOTICE "+dest+" :")
+	prefLen := 2 + c.prefixlenGet() + len("NOTICE "+dest+" :")
 	for prefLen+len(msg) > 510 {
 		c.send("NOTICE " + dest + " :" + msg[:510-prefLen])
 		msg = msg[510-prefLen:]
@@ -330,7 +322,7 @@ func (c *Connection) Cmd(command string) {
 //Msg sends privmessage
 func (c *Connection) Msg(dest, msg string) {
 	msg = replacer.Replace(msg)
-	prefLen := 2 + <-c.prefixlenGet + len(irc.PRIVMSG+" "+dest+" :")
+	prefLen := 2 + c.prefixlenGet() + len(irc.PRIVMSG+" "+dest+" :")
 	for prefLen+len(msg) > 510 {
 		c.send(irc.PRIVMSG + " " + dest + " :" + msg[:510-prefLen])
 		msg = msg[510-prefLen:]
@@ -348,7 +340,7 @@ func (c *Connection) MsgBulk(dest []string, msg string) {
 //NewNick Changes nick
 func (c *Connection) NewNick(nick string) {
 	c.send(irc.NICK + " " + nick)
-	c.prefixlenSet <- []string{nick, "", ""}
+	c.prefixSet([]string{nick, "", ""})
 }
 
 //Reply replies to a message
@@ -519,7 +511,8 @@ func (c *Connection) getPrefix() {
 		},
 		Response: func(m *Message) {
 			c.sendTestBeakon()
-			c.prefixlenSet <- []string{m.Name, m.User, m.Host}
+			c.prefixSet([]string{m.Name, m.User, m.Host})
+			c.sendTestBeakon()
 		},
 	})
 }
