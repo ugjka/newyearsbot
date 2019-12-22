@@ -77,7 +77,7 @@ func (bot *Settings) addTriggers() {
 			}
 			humandur := durafmt.Parse(target.Sub(timeNow().UTC().Add(dur)))
 			irc.Reply(msg, fmt.Sprintf("Next New Year in %s in %s",
-				removeMilliseconds(humandur), bot.next))
+				roundDuration(humandur), bot.next))
 		},
 	})
 	//Trigger for !last
@@ -95,7 +95,7 @@ func (bot *Settings) addTriggers() {
 				humandur = durafmt.Parse(timeNow().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
 			}
 			irc.Reply(msg, fmt.Sprintf("Last New Year %s ago in %s",
-				removeMilliseconds(humandur), bot.last))
+				roundDuration(humandur), bot.last))
 		},
 	})
 	//Trigger for !remaining
@@ -277,8 +277,8 @@ func (bot *Settings) getNewYear(location string) (string, error) {
 
 	if timeNow().UTC().Add(offset).Before(target) {
 		humandur := durafmt.Parse(target.Sub(timeNow().UTC().Add(offset)))
-		return fmt.Sprintf(stNewYearWillHappen, address, removeMilliseconds(humandur)), nil
+		return fmt.Sprintf(stNewYearWillHappen, address, roundDuration(humandur)), nil
 	}
 	humandur := durafmt.Parse(timeNow().UTC().Add(offset).Sub(target))
-	return fmt.Sprintf(stNewYearHappenned, address, removeMilliseconds(humandur)), nil
+	return fmt.Sprintf(stNewYearHappenned, address, roundDuration(humandur)), nil
 }

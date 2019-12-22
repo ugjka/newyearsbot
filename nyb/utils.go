@@ -1,18 +1,17 @@
 package nyb
 
 import (
+	"github.com/hako/durafmt"
 	"strings"
 	"time"
-
-	"github.com/hako/durafmt"
 )
 
-func removeMilliseconds(dur *durafmt.Durafmt) string {
+func roundDuration(dur *durafmt.Durafmt) string {
 	arr := strings.Split(dur.String(), " ")
-	if len(arr) < 3 {
-		return dur.String()
+	if len(arr) > 2 {
+		return strings.Join(arr[:4], " ")
 	}
-	return strings.Join(arr[:len(arr)-2], " ")
+	return strings.Join(arr[:2], " ")
 }
 
 func getOffset(target time.Time, zone *time.Location) int {
