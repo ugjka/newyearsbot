@@ -53,7 +53,7 @@ The `hny` part can be changed by defining a different trigger
 
 ## Installation
 
-### 2020 versions coming soon... meanwhile
+### 2020 versions
 
 Arch linux PKGBUILD in archlinux folder
 
