@@ -45,10 +45,11 @@ func (bot *Settings) addCallbacks() {
 	})
 }
 
+var stHelp = "Query location: '%s <location>', Time in location: '%s !time <location>', Next zone: '%s !next', Last zone: '%s !last', Remaining: '%s !remaining'"
+
 func (bot *Settings) addTriggers() {
 	irc := bot.IrcConn
 	//Trigger for !help
-	stHelp := "Query location: '%s <location>', Time in location: '%s !time <location>', Next zone: '%s !next', Last zone: '%s !last', Remaining: '%s !remaining'"
 	stSource := "Source code: https://github.com/ugjka/newyearsbot"
 	irc.AddTrigger(dumbirc.Trigger{
 		Condition: func(msg *dumbirc.Message) bool {
