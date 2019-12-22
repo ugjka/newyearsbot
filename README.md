@@ -42,10 +42,9 @@ Posts New Years for each timezone when they happen
 
 The `hny` part can be changed by defining a different trigger
 
-## What's new and great for year 2019
+## What's new and great for year 2020
 
-* better trigger parsing
-* supports nautical time zones
+* minor things
 
 ## Pro-tip
 
