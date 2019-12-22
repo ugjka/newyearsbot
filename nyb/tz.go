@@ -478,20 +478,15 @@ var Zones = []byte(`[
           "Amapá",
           "Bahia",
           "Belém",
-          "Campo Grande",
           "Ceará",
           "Fortaleza",
           "Maranhão",
-          "Mato Grosso",
-          "Mato Grosso do Sul",
           "Paraíba",
-          "Pará",
-          "Pernambuco",
-          "Piauí",
-          "Recife",
-          "Rio Grande do Norte",
+          "Rio de Janeiro",
           "Salvador",
+          "Santa Catarina",
           "Sergipe",
+          "São Paulo",
           "Tocantins"
         ]
       },
@@ -540,18 +535,7 @@ var Zones = []byte(`[
       {
         "name": "Brazil",
         "cities": [
-          "Belo Horizonte",
-          "Curitiba",
-          "Espírito Santo",
-          "Federal District",
-          "Goiás",
-          "Minas Gerais",
-          "Paraná",
-          "Porto Alegre",
-          "Rio Grande do Sul",
-          "Rio de Janeiro",
-          "Santa Catarina",
-          "São Paulo"
+          "Fernando de Noronha, Pernambuco"
         ]
       },
       {
@@ -1545,6 +1529,12 @@ var Zones = []byte(`[
         ]
       },
       {
+        "name": "North Korea",
+        "cities": [
+          "Pyongyang"
+        ]
+      },
+      {
         "name": "Palau",
         "cities": []
       },
@@ -1559,12 +1549,6 @@ var Zones = []byte(`[
         "name": "South Korea",
         "cities": [
           "Seoul"
-        ]
-      },
-      {
-        "name": "North Korea",
-        "cities": [
-          "Pyongyang"
         ]
       }
     ],
@@ -1663,12 +1647,6 @@ var Zones = []byte(`[
         ]
       },
       {
-        "name": "Norfolk Island",
-        "cities": [
-          "Kingston"
-        ]
-      },
-      {
         "name": "Solomon Islands",
         "cities": [
           "Honiara"
@@ -1700,6 +1678,12 @@ var Zones = []byte(`[
       {
         "name": "Nauru",
         "cities": []
+      },
+      {
+        "name": "Norfolk Island",
+        "cities": [
+          "Kingston"
+        ]
       },
       {
         "name": "Russia",
