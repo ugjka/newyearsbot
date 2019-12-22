@@ -1,0 +1,17 @@
+language: go
+go:
+  - 1.x
+os:
+  - linux
+  - osx
+sudo: required
+before_install:
+  - go get -u golang.org/x/lint/golint
+  - go get -d ./...
+script:
+  - go build ./...
+  - go vet ./...
+  - golint -set_exit_status ./...
+  - go test -race ./... -coverprofile=coverage.txt
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
