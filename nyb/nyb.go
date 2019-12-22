@@ -60,7 +60,7 @@ func New(nick string, chans []string, password, trigger, server string,
 	}
 }
 
-var stFinished = "That's it, Year %d is here AoE"
+var stFinished = "That's it, Year %d is here Anywhere on Earth"
 
 // Cleanup cleans up irc gouroutines if we are not reusing the bot
 func (bot *Settings) Cleanup() {
