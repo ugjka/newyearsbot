@@ -186,7 +186,7 @@ func (bot *Settings) loopTimeZones() {
 			log.Println("Zone pending:", zones[i].Offset)
 			humandur := durafmt.Parse(target.Sub(timeNow().UTC().Add(dur)))
 			msg := fmt.Sprintf(stNextNewYear, roundDuration(humandur), zones[i])
-			help := fmt.Sprintf(stHelp, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger)
+			help := fmt.Sprintf(stHelp, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger)
 			irc.MsgBulk(bot.IrcChans, msg)
 			irc.MsgBulk(bot.IrcChans, help)
 			//Wait till Target in Timezone

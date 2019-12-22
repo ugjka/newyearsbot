@@ -45,7 +45,7 @@ func (bot *Settings) addCallbacks() {
 	})
 }
 
-var stHelp = "Query location: '%s <location>', Time in location: '%s !time <location>', Next zone: '%s !next', Last zone: '%s !last', Remaining: '%s !remaining'"
+var stHelp = "Query location: '%s <location>', Time in location: '%s !time <location>', Next zone: '%s !next', Last zone: '%s !last', Remaining: '%s !remaining', Print this: '%s !help'"
 
 func (bot *Settings) addTriggers() {
 	irc := bot.IrcConn
@@ -59,7 +59,7 @@ func (bot *Settings) addTriggers() {
 		},
 		Response: func(msg *dumbirc.Message) {
 			log.Println("Querying !help...")
-			irc.Reply(msg, fmt.Sprintf(stHelp+", "+stSource, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger))
+			irc.Reply(msg, fmt.Sprintf(stHelp+", "+stSource, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger))
 		},
 	})
 	//Trigger for !next
