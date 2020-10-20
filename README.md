@@ -1,11 +1,11 @@
 # NewYearsBot
 
-## Preparing for 2020
+## Preparing for 2021
 
 [![Build Status](https://travis-ci.org/ugjka/newyearsbot.svg?branch=master)](https://travis-ci.org/ugjka/newyearsbot)
 [![codecov](https://codecov.io/gh/ugjka/newyearsbot/branch/master/graph/badge.svg)](https://codecov.io/gh/ugjka/newyearsbot)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ugjka/newyearsbot/nyb)](https://goreportcard.com/report/github.com/ugjka/newyearsbot/nyb)
-[![Donate](https://dl.ugjka.net/Donate-PayPal-green.svg)](https://www.paypal.me/ugjka)
+[![Donate](https://share.ugjka.net/paypal.svg)](https://www.paypal.me/ugjka)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fugjka%2Fnewyearsbot.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fugjka%2Fnewyearsbot?ref=badge_shield)
 
 Irc Bot for celebrating New Year Eve
@@ -24,31 +24,21 @@ Posts New Years for each timezone when they happen
 <hny2020> Next New Year in 14 minutes 57 seconds in India (Ahmedabad, Bangalore, Chennai, Hyderabad, Kanpur, Kolkata, Mumbai, New Delhi, Pune, Surat), Sri Lanka (Colombo)
 ```
 
-## Has GTK3 gui (standalone cli tool also)
-
-![alt text](https://i.imgur.com/wcFYRO8.png "Main window")
-
-![alt text](https://i.imgur.com/ze0V82J.png "Bot status")
-
 ## Bot's commands
 
-* `hny !next` upcoming new year
-* `hny !last` previous new year
-* `hny !remaining` number of remaining timezones
-* `hny <location>` get new year status for location
-* `hny !time <location>` get current time in location
-* `hny !time` UTC time
-* `hny !help` show help
+- `hny !next` upcoming new year
+- `hny !last` previous new year
+- `hny !remaining` number of remaining timezones
+- `hny <location>` get new year status for location
+- `hny !time <location>` get current time in location
+- `hny !time` UTC time
+- `hny !help` show help
 
 The `hny` part can be changed by defining a different trigger
 
-## What's new and great for year 2020
-
-* minor things
-
 ## Pro-tip
 
-* make sure your system's time is synchronized with NTP
+- make sure your system's time is synchronized with NTP
 
 ## Installation
 
@@ -62,9 +52,9 @@ DEB on [releases page](https://github.com/ugjka/newyearsbot/releases)
 
 ### Using make
 
-You need make, go, go-tools, gtk3, glib2
+You need make, go, go-tools
 
-Build with `make all` (`make cli` if you just want the commandline utility)
+Build with `make all`
 
 Install with `make install`
 
