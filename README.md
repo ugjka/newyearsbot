@@ -46,10 +46,6 @@ The `hny` part can be changed by defining a different trigger
 
 Arch linux PKGBUILD in archlinux folder
 
-RPM on [releases page](https://github.com/ugjka/newyearsbot/releases)
-
-DEB on [releases page](https://github.com/ugjka/newyearsbot/releases)
-
 ### Using make
 
 You need make, go, go-tools
