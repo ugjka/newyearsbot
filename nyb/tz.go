@@ -111,8 +111,7 @@ var Zones = []byte(`[
         "cities": [
           "British Columbia",
           "Surrey",
-          "Vancouver",
-          "Yukon"
+          "Vancouver"
         ]
       },
       {
@@ -152,7 +151,8 @@ var Zones = []byte(`[
           "Alberta",
           "Calgary",
           "Edmonton",
-          "Northwest Territories"
+          "Northwest Territories",
+          "Yukon"
         ]
       },
       {
