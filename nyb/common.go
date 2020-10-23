@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -171,7 +170,6 @@ func NominatimGetter(url string) (data []byte, err error) {
 	nominatim.RLock()
 	if v, ok := nominatim.cache[url]; ok {
 		nominatim.RUnlock()
-		log.Println("Nominatim: using cached result")
 		return v, nil
 	}
 	nominatim.RUnlock()

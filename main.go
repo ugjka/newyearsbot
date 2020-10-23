@@ -5,14 +5,12 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"os/signal"
 	"regexp"
-	"sync"
-	"syscall"
 
 	"github.com/badoux/checkmail"
 	"github.com/fatih/color"
 	"github.com/ugjka/newyearsbot/nyb"
+	log "gopkg.in/inconshreveable/log15.v2"
 	"mvdan.cc/xurls/v2"
 )
 
@@ -45,8 +43,6 @@ CMD Options:
 `
 
 func main() {
-	//Syncing for graceful exit
-	var wait sync.WaitGroup
 
 	//Flags
 	botnick := flag.String("botnick", "", "irc nick for the bot")
@@ -140,35 +136,12 @@ func main() {
 		flag.Usage()
 		return
 	}
-	//Catch interrupt ^C
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 
 	bot := nyb.New(*botnick, chans, *nickpass, *trigger, *ircServer, *useTLS, *email, *nominatim)
 	if *ircdebug {
-		bot.IrcConn.SetDebugOutput(bot.LogChan)
+		bot.LogLvl(log.LvlDebug)
+	} else {
+		bot.LogLvl(log.LvlInfo)
 	}
-	//Log printer
-	wait.Add(1)
-	go func() {
-		defer wait.Done()
-		for {
-			select {
-			case msg, ok := <-bot.LogChan:
-				if !ok {
-					return
-				}
-				green.Fprintf(os.Stdout, "%s", msg)
-			}
-		}
-	}()
-	//Iterrupt catcher
-	go func() {
-		<-stop
-		bot.Stop()
-	}()
 	bot.Start()
-
-	close(bot.LogChan)
-	wait.Wait()
 }
