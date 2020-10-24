@@ -13,7 +13,7 @@ import (
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
-var stHelp = "Query location: '%s <location>', Time in location: '%s !time <location>', Next zone: '%s !next', Last zone: '%s !last', Remaining: '%s !remaining', Print this: '%s !help'"
+const stHelp = "Query location: '%s <location>', Time in location: '%s !time <location>', Next zone: '%s !next', Last zone: '%s !last', Remaining: '%s !remaining', Print this: '%s !help'"
 
 func (bot *Settings) addTriggers() {
 	irc := bot.IrcBot
@@ -28,7 +28,6 @@ func (bot *Settings) addTriggers() {
 	})
 
 	//Trigger for !help
-	stSource := "Source code: https://github.com/ugjka/newyearsbot"
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
@@ -37,6 +36,7 @@ func (bot *Settings) addTriggers() {
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying !help...")
+			const stSource = "Source code: https://github.com/ugjka/newyearsbot"
 			b.Reply(m, fmt.Sprintf(stHelp+", "+stSource, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger))
 		},
 	})
@@ -142,7 +142,7 @@ func (bot *Settings) addTriggers() {
 				strings.HasPrefix(m.Content, fmt.Sprintf("%s !", bot.IrcTrigger))
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
-			irc.Reply(m, fmt.Sprintf("Invalid command, valid commands are: "+stHelp, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger))
+			irc.Reply(m, fmt.Sprintf("Invalid command, valid commands are: "+stHelp, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger))
 		},
 	})
 
@@ -189,9 +189,6 @@ func (bot *Settings) getNominatimReqURL(location *string) string {
 	maps.Add("email", bot.Email)
 	return bot.Nominatim + NominatimEndpoint + maps.Encode()
 }
-
-var stNewYearWillHappen = "New Year in %s will happen in %s"
-var stNewYearHappenned = "New Year in %s happened %s ago"
 
 func (bot *Settings) getTime(location string) (string, error) {
 	bot.IrcBot.Info("Querying location: " + location)
@@ -256,8 +253,10 @@ func (bot *Settings) getNewYear(location string) (string, error) {
 
 	if timeNow().UTC().Add(offset).Before(target) {
 		humandur := durafmt.Parse(target.Sub(timeNow().UTC().Add(offset)))
+		const stNewYearWillHappen = "New Year in %s will happen in %s"
 		return fmt.Sprintf(stNewYearWillHappen, address, roundDuration(humandur)), nil
 	}
 	humandur := durafmt.Parse(timeNow().UTC().Add(offset).Sub(target))
+	const stNewYearHappenned = "New Year in %s happened %s ago"
 	return fmt.Sprintf(stNewYearHappenned, address, roundDuration(humandur)), nil
 }

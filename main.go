@@ -21,7 +21,7 @@ func init() {
 	flag.Var(&chans, "chans", "comma separated list of irc channels to join")
 }
 
-var usage = `
+const usage = `
 New Year Eve Party Irc Bot
 This bot announces new years as they happen in each timezone
 You can query location using "hny" trigger for example "hny New York"

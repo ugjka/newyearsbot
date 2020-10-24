@@ -50,8 +50,6 @@ func (bot *Settings) LogLvl(Lvl log.Lvl) {
 	bot.IrcBot.Logger.SetHandler(logHandler)
 }
 
-var stFinished = "That's it, Year %d is here Anywhere on Earth"
-
 //Start starts the bot
 func (bot *Settings) Start() {
 	irc := bot.IrcBot
@@ -69,6 +67,7 @@ func (bot *Settings) Start() {
 	}
 	for {
 		bot.loopTimeZones()
+		const stFinished = "That's it, Year %d is here Anywhere on Earth"
 		for _, ch := range irc.Channels {
 			irc.Msg(ch, fmt.Sprintf(stFinished, target.Year()))
 		}
@@ -97,9 +96,6 @@ func (bot *Settings) ircControl() {
 	}
 }
 
-var stNextNewYear = "Next New Year in %s in %s"
-var stHappyNewYear = "Happy New Year in %s"
-
 func (bot *Settings) loopTimeZones() {
 	zones := bot.zones
 	irc := bot.IrcBot
@@ -116,6 +112,7 @@ func (bot *Settings) loopTimeZones() {
 			time.Sleep(time.Second * 2)
 			irc.Info(fmt.Sprintf("Zone pending: %.2f", zones[i].Offset))
 			humandur := durafmt.Parse(target.Sub(timeNow().UTC().Add(dur)))
+			const stNextNewYear = "Next New Year in %s in %s"
 			msg := fmt.Sprintf(stNextNewYear, roundDuration(humandur), zones[i])
 			help := fmt.Sprintf(stHelp, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger)
 			for _, ch := range irc.Channels {
@@ -127,6 +124,7 @@ func (bot *Settings) loopTimeZones() {
 			select {
 			case <-timer.C:
 				timer.Stop()
+				const stHappyNewYear = "Happy New Year in %s"
 				msg = fmt.Sprintf(stHappyNewYear, zones[i])
 				for _, ch := range irc.Channels {
 					irc.Msg(ch, msg)
