@@ -24,20 +24,20 @@ func init() {
 const usage = `
 New Year Eve Party Irc Bot
 This bot announces new years as they happen in each timezone
-You can query location using "hny" trigger for example "hny New York"
+You can query location using "!hny" command for example "!hny New York"
 
 CMD Options:
 [mandatory]
 -channels	comma separated list of irc channels to join eg. "#test, #test2"
--nick		nick for the bot
+-nick		irc nick
 -email		referrer email for Nominatim
 
 [optional]
--password	nick password
--server		irc server to use (default: chat.freenode.net:6697)
--trigger	trigger used for queries. (default: hny)
--ssl		use ssl encryption for irc. (default: true)
--nominatim	Nominatim server to use (default: http://nominatim.openstreetmap.org)
+-password	irc password
+-server		irc server (default: chat.freenode.net:6697)
+-prefix		command prefix (default: !)
+-ssl		use ssl for irc (default: true)
+-nominatim	Nominatim server (default: http://nominatim.openstreetmap.org)
 -debug		debug irc traffic
 
 `
@@ -45,13 +45,13 @@ CMD Options:
 func main() {
 
 	//Flags
-	nick := flag.String("nick", "", "irc nick for the bot")
+	nick := flag.String("nick", "", "irc nick")
 	email := flag.String("email", "", "referrer email for Nominatim")
-	server := flag.String("server", "chat.freenode.net:6697", "irc server to use")
-	password := flag.String("password", "", "nick password")
-	trigger := flag.String("trigger", "hny", "trigger for queries")
+	server := flag.String("server", "chat.freenode.net:6697", "irc server")
+	password := flag.String("password", "", "irc password")
+	prefix := flag.String("prefix", "!", "command prefix")
 	ssl := flag.Bool("ssl", true, "use ssl for irc")
-	nominatim := flag.String("nominatim", "http://nominatim.openstreetmap.org", "nominatim server to use")
+	nominatim := flag.String("nominatim", "http://nominatim.openstreetmap.org", "nominatim server")
 	debug := flag.Bool("debug", false, "debug irc traffic")
 
 	green := color.New(color.FgGreen)
@@ -69,9 +69,9 @@ func main() {
 		flag.Usage()
 		return
 	}
-	chanReg := regexp.MustCompile("^([#&][^\\x07\\x2C\\s]{0,200})$")
+	channelReg := regexp.MustCompile("^([#&][^\\x07\\x2C\\s]{0,200})$")
 	for _, ch := range channels {
-		if !chanReg.MatchString(ch) {
+		if !channelReg.MatchString(ch) {
 			red.Fprintf(os.Stderr, "error: invalid channel name: %s\n", ch)
 			flag.Usage()
 			return
@@ -87,8 +87,8 @@ func main() {
 		flag.Usage()
 		return
 	}
-	botnickReg := regexp.MustCompile("^\\A[a-z_\\-\\[\\]\\^{}|`][a-z0-9_\\-\\[\\]\\^{}|`]{1,15}\\z$")
-	if !botnickReg.MatchString(*nick) {
+	nickReg := regexp.MustCompile("^\\A[a-z_\\-\\[\\]\\^{}|`][a-z0-9_\\-\\[\\]\\^{}|`]{1,15}\\z$")
+	if !nickReg.MatchString(*nick) {
 		red.Fprintln(os.Stderr, "error: invalid nickname")
 		flag.Usage()
 		return
@@ -115,14 +115,14 @@ func main() {
 		flag.Usage()
 		return
 	}
-	if *trigger == "" {
-		red.Fprintln(os.Stderr, "error: no trigger defined")
+	if *prefix == "" {
+		red.Fprintln(os.Stderr, "error: no command prefix defined")
 		flag.Usage()
 		return
 	}
-	triggerReg := regexp.MustCompile("^\\S+$")
-	if !triggerReg.MatchString(*trigger) {
-		red.Fprintln(os.Stderr, "error: trigger contains white space")
+	prefixReg := regexp.MustCompile("^\\W+$")
+	if !prefixReg.MatchString(*prefix) {
+		red.Fprintln(os.Stderr, "error: prefix must be non-alphanumeric characters")
 		flag.Usage()
 		return
 	}
@@ -137,7 +137,7 @@ func main() {
 		return
 	}
 
-	bot := nyb.New(*nick, channels, *password, *trigger, *server, *ssl, *email, *nominatim)
+	bot := nyb.New(*nick, channels, *password, *prefix, *server, *ssl, *email, *nominatim)
 	if *debug {
 		bot.LogLvl(log.LvlDebug)
 	} else {

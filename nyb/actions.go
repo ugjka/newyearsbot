@@ -13,10 +13,10 @@ import (
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
-const stHelp = "Query location: '%s <location>', Time in location: '%s !time <location>', Next zone: '%s !next', Last zone: '%s !last', Remaining: '%s !remaining', Print this: '%s !help'"
+const stHelp = "Query location: '%shny <location>', Time in location: '%stime <location>', Next zone: '%snext', Previous zone: '%sprevious', Remaining zones: '%sremaining', Help: '%shelp'"
 
 func (bot *Settings) addTriggers() {
-	irc := bot.IrcBot
+	irc := bot.IRC
 	//Log Notices
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
@@ -31,24 +31,22 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
-				strings.HasPrefix(m.Content, fmt.Sprintf("%s !help", bot.IrcTrigger)) ||
-				m.Content == fmt.Sprintf("%s help", bot.IrcTrigger)
+				strings.HasPrefix(normalize(m.Content), fmt.Sprintf("%shelp", bot.Prefix)) ||
+				normalize(m.Content) == fmt.Sprintf("%shny", bot.Prefix)
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
-			b.Info("Querying !help...")
-			const stSource = "Source code: https://github.com/ugjka/newyearsbot"
-			b.Reply(m, fmt.Sprintf(stHelp+", "+stSource, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger))
+			b.Info("Querying help...")
+			b.Reply(m, fmt.Sprintf(stHelp, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix))
 		},
 	})
 	//Trigger for !next
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
-				strings.HasPrefix(m.Content, fmt.Sprintf("%s !next", bot.IrcTrigger)) ||
-				m.Content == fmt.Sprintf("%s next", bot.IrcTrigger)
+				strings.HasPrefix(normalize(m.Content), fmt.Sprintf("%snext", bot.Prefix))
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
-			b.Info("Querying !next...")
+			b.Info("Querying next...")
 			dur := time.Minute * time.Duration(bot.next.Offset*60)
 			if timeNow().UTC().Add(dur).After(target) {
 				irc.Reply(m, fmt.Sprintf("No more next, %d is here AoE", target.Year()))
@@ -59,33 +57,31 @@ func (bot *Settings) addTriggers() {
 				roundDuration(humandur), bot.next))
 		},
 	})
-	//Trigger for !last
+	//Trigger for !previous
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
-				strings.HasPrefix(m.Content, fmt.Sprintf("%s !last", bot.IrcTrigger)) ||
-				m.Content == fmt.Sprintf("%s last", bot.IrcTrigger)
+				strings.HasPrefix(normalize(m.Content), fmt.Sprintf("%sprevious", bot.Prefix))
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
-			b.Info("Querying !last...")
-			dur := time.Minute * time.Duration(bot.last.Offset*60)
+			b.Info("Querying previous...")
+			dur := time.Minute * time.Duration(bot.previous.Offset*60)
 			humandur := durafmt.Parse(timeNow().UTC().Add(dur).Sub(target))
-			if bot.last.Offset == -12 {
+			if bot.previous.Offset == -12 {
 				humandur = durafmt.Parse(timeNow().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
 			}
-			irc.Reply(m, fmt.Sprintf("Last New Year %s ago in %s",
-				roundDuration(humandur), bot.last))
+			irc.Reply(m, fmt.Sprintf("Previous New Year %s ago in %s",
+				roundDuration(humandur), bot.previous))
 		},
 	})
 	//Trigger for !remaining
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
-				strings.HasPrefix(m.Content, fmt.Sprintf("%s !remaining", bot.IrcTrigger)) ||
-				m.Content == fmt.Sprintf("%s remaining", bot.IrcTrigger)
+				strings.HasPrefix(normalize(m.Content), fmt.Sprintf("%sremaining", bot.Prefix))
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
-			b.Info("Querying !remaining...")
+			b.Info("Querying remaining...")
 			ss := "s"
 			if bot.remaining == 1 {
 				ss = ""
@@ -97,11 +93,11 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
-				strings.HasPrefix(m.Content, fmt.Sprintf("%s !time ", bot.IrcTrigger))
+				strings.HasPrefix(normalize(m.Content), fmt.Sprintf("%stime ", bot.Prefix))
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
-			b.Info("Querying !time...")
-			res, err := bot.getTime(m.Content[len(bot.IrcTrigger)+7:])
+			b.Info("Querying time...")
+			res, err := bot.getTime(normalize(m.Content)[len(bot.Prefix)+len("time")+1:])
 			if err == errNoZone || err == errNoPlace {
 				b.Warn("Query error: " + err.Error())
 				irc.Reply(m, fmt.Sprintf("%s: %s", m.Name, err))
@@ -119,30 +115,12 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
-				m.Content == fmt.Sprintf("%s !time", bot.IrcTrigger) ||
-				m.Content == fmt.Sprintf("%s time", bot.IrcTrigger)
+				normalize(m.Content) == fmt.Sprintf("%stime", bot.Prefix)
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
-			b.Info("Querying !time...")
+			b.Info("Querying time...")
 			res := fmt.Sprintf("Time is %s", time.Now().UTC().Format("Mon Jan 2 15:04:05 -0700 MST 2006"))
 			irc.Reply(m, res)
-		},
-	})
-
-	//Trigger for incorrect querries
-	irc.AddTrigger(kitty.Trigger{
-		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
-			return m.Command == "PRIVMSG" &&
-				m.Content != fmt.Sprintf("%s !time", bot.IrcTrigger) &&
-				!strings.HasPrefix(m.Content, fmt.Sprintf("%s !time ", bot.IrcTrigger)) &&
-				!strings.HasPrefix(m.Content, fmt.Sprintf("%s !next", bot.IrcTrigger)) &&
-				!strings.HasPrefix(m.Content, fmt.Sprintf("%s !last", bot.IrcTrigger)) &&
-				!strings.HasPrefix(m.Content, fmt.Sprintf("%s !help", bot.IrcTrigger)) &&
-				!strings.HasPrefix(m.Content, fmt.Sprintf("%s !remaining", bot.IrcTrigger)) &&
-				strings.HasPrefix(m.Content, fmt.Sprintf("%s !", bot.IrcTrigger))
-		},
-		Action: func(b *kitty.Bot, m *kitty.Message) {
-			irc.Reply(m, fmt.Sprintf("Invalid command, valid commands are: "+stHelp, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger))
 		},
 	})
 
@@ -150,16 +128,10 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
-				!strings.HasPrefix(m.Content, fmt.Sprintf("%s !", bot.IrcTrigger)) &&
-				m.Content != fmt.Sprintf("%s next", bot.IrcTrigger) &&
-				m.Content != fmt.Sprintf("%s last", bot.IrcTrigger) &&
-				m.Content != fmt.Sprintf("%s help", bot.IrcTrigger) &&
-				m.Content != fmt.Sprintf("%s time", bot.IrcTrigger) &&
-				m.Content != fmt.Sprintf("%s remaining", bot.IrcTrigger) &&
-				strings.HasPrefix(m.Content, fmt.Sprintf("%s ", bot.IrcTrigger))
+				strings.HasPrefix(normalize(m.Content), fmt.Sprintf("%shny ", bot.Prefix))
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
-			tz, err := bot.getNewYear(m.Content[len(bot.IrcTrigger)+1:])
+			tz, err := bot.getNewYear(normalize(m.Content)[len(bot.Prefix)+len("hny")+1:])
 			if err == errNoZone || err == errNoPlace {
 				b.Warn("Query error: " + err.Error())
 				irc.Reply(m, fmt.Sprintf("%s: %s", m.Name, err))
@@ -191,15 +163,15 @@ func (bot *Settings) getNominatimReqURL(location *string) string {
 }
 
 func (bot *Settings) getTime(location string) (string, error) {
-	bot.IrcBot.Info("Querying location: " + location)
+	bot.IRC.Info("Querying location: " + location)
 	data, err := NominatimGetter(bot.getNominatimReqURL(&location))
 	if err != nil {
-		bot.IrcBot.Warn("Nominatim error: " + err.Error())
+		bot.IRC.Warn("Nominatim error: " + err.Error())
 		return "", err
 	}
 	var res NominatimResults
 	if err = json.Unmarshal(data, &res); err != nil {
-		bot.IrcBot.Warn("Nominatim error: " + err.Error())
+		bot.IRC.Warn("Nominatim error: " + err.Error())
 		return "", err
 	}
 	if len(res) == 0 {
@@ -222,15 +194,15 @@ func (bot *Settings) getTime(location string) (string, error) {
 }
 
 func (bot *Settings) getNewYear(location string) (string, error) {
-	bot.IrcBot.Info("Querying location: " + location)
+	bot.IRC.Info("Querying location: " + location)
 	data, err := NominatimGetter(bot.getNominatimReqURL(&location))
 	if err != nil {
-		bot.IrcBot.Warn("Nominatim error: " + err.Error())
+		bot.IRC.Warn("Nominatim error: " + err.Error())
 		return "", err
 	}
 	var res NominatimResults
 	if err = json.Unmarshal(data, &res); err != nil {
-		bot.IrcBot.Warn("Nominatim error: " + err.Error())
+		bot.IRC.Warn("Nominatim error: " + err.Error())
 		return "", err
 	}
 	if len(res) == 0 {
@@ -259,4 +231,18 @@ func (bot *Settings) getNewYear(location string) (string, error) {
 	humandur := durafmt.Parse(timeNow().UTC().Add(offset).Sub(target))
 	const stNewYearHappenned = "New Year in %s happened %s ago"
 	return fmt.Sprintf(stNewYearHappenned, address, roundDuration(humandur)), nil
+}
+
+func normalize(s string) string {
+	s = strings.TrimSpace(s)
+	s = strings.ToLower(s)
+	split := strings.Split(s, " ")
+	s = ""
+	for _, w := range split {
+		if w == "" {
+			continue
+		}
+		s += w + " "
+	}
+	return s[:len(s)-1]
 }

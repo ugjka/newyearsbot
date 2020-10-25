@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/hako/durafmt"
@@ -13,16 +14,16 @@ import (
 
 //Settings for bot
 type Settings struct {
-	IrcTrigger string
-	IrcBot     *kitty.Bot
-	Email      string
-	Nominatim  string
+	Prefix    string
+	IRC       *kitty.Bot
+	Email     string
+	Nominatim string
 	extra
 }
 
 type extra struct {
 	zones     TZS
-	last      TZ
+	previous  TZ
 	next      TZ
 	remaining int
 }
@@ -30,7 +31,7 @@ type extra struct {
 //New creates new bot
 func New(nick string, chans []string, password, trigger, server string,
 	tls bool, email, nominatim string) *Settings {
-
+	trigger = strings.ToLower(trigger)
 	return &Settings{
 		trigger,
 		kitty.NewBot(server, nick, func(bot *kitty.Bot) {
@@ -47,12 +48,12 @@ func New(nick string, chans []string, password, trigger, server string,
 // LogLvl sets log level
 func (bot *Settings) LogLvl(Lvl log.Lvl) {
 	logHandler := log.LvlFilterHandler(Lvl, log.StdoutHandler)
-	bot.IrcBot.Logger.SetHandler(logHandler)
+	bot.IRC.Logger.SetHandler(logHandler)
 }
 
 //Start starts the bot
 func (bot *Settings) Start() {
-	irc := bot.IrcBot
+	irc := bot.IRC
 	irc.Info("Starting the bot...")
 
 	bot.addTriggers()
@@ -88,7 +89,7 @@ func (bot *Settings) decodeZones(z []byte) error {
 var reconnectInterval = time.Second * 30
 
 func (bot *Settings) ircControl() {
-	irc := bot.IrcBot
+	irc := bot.IRC
 	for {
 		irc.Run()
 		irc.Info("Reconnecting...")
@@ -98,14 +99,14 @@ func (bot *Settings) ircControl() {
 
 func (bot *Settings) loopTimeZones() {
 	zones := bot.zones
-	irc := bot.IrcBot
+	irc := bot.IRC
 	for i := 0; i < len(zones); i++ {
 		dur := time.Minute * time.Duration(zones[i].Offset*60)
 		bot.next = zones[i]
 		if i == 0 {
-			bot.last = zones[len(zones)-1]
+			bot.previous = zones[len(zones)-1]
 		} else {
-			bot.last = zones[i-1]
+			bot.previous = zones[i-1]
 		}
 		bot.remaining = len(zones) - i
 		if timeNow().UTC().Add(dur).Before(target) {
@@ -114,7 +115,7 @@ func (bot *Settings) loopTimeZones() {
 			humandur := durafmt.Parse(target.Sub(timeNow().UTC().Add(dur)))
 			const stNextNewYear = "Next New Year in %s in %s"
 			msg := fmt.Sprintf(stNextNewYear, roundDuration(humandur), zones[i])
-			help := fmt.Sprintf(stHelp, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger, bot.IrcTrigger)
+			help := fmt.Sprintf(stHelp, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix)
 			for _, ch := range irc.Channels {
 				irc.Msg(ch, msg)
 				irc.Msg(ch, help)

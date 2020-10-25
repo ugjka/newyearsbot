@@ -12,11 +12,11 @@ Posts New Years for each timezone when they happen
 
 ```text
 <hny2021> Happy New Year in American Samoa (Pago Pago), Niue (Alofi), United States of America (Midway Atoll)
-<ugjka> hny !next
+<ugjka> !next
 <hny2021> Next New Year in 25 minutes 9 seconds in Cambodia (Phnom Penh, Takeo), Christmas Island, Indonesia (Bandung, Bekasi, Depok, Jakarta, Medan, Palembang, Semarang, South Tangerang, Surabaya, Tangerang), Laos (Pakxe, Vientiane), Mongolia (Khovd), Russia (Krasnoyarsk, Novokuznetsk, Novosibirsk), Thailand (Bangkok, Chon Buri, Mueang Nonthaburi, Udon Thani), Vietnam
-<ugjka> hny !last
+<ugjka> !last
 <hny2021> Last NewYear 34 minutes 55 seconds ago in Australia (Mandurah, Perth, Western Australia), Brunei (Bandar Seri Begawan), China (Beijing, Chengdu, Chongqing, Dongguan, Guangzhou, Nanjing, Shanghai, Shenzhen, Tianjin, Wuhan), Hong Kong, Indonesia (Balikpapan, Banjarmasin, Makassar), Macau, Malaysia (Klang, Kota Bharu, Kuala Lumpur), Mongolia (Erdenet, Ulan Bator), Philippines (Manila), Russia (Irkutsk), Singapore, Taiwan
-<ugjka> hny Riga
+<ugjka> !hny Riga
 <hny2021> ugjka: New Year in Riga, Rīga, Vidzeme, LV-1050, Latvia will happen in 5 hours 25 minutes
 <hny2021> Happy New Year in Nepal (Biratnagar, Kathmandu, Pokhara)
 <hny2021> Next New Year in 14 minutes 57 seconds in India (Ahmedabad, Bangalore, Chennai, Hyderabad, Kanpur, Kolkata, Mumbai, New Delhi, Pune, Surat), Sri Lanka (Colombo)
@@ -24,15 +24,15 @@ Posts New Years for each timezone when they happen
 
 ## Bot's commands
 
-- `hny !next` upcoming new year
-- `hny !last` previous new year
-- `hny !remaining` number of remaining timezones
-- `hny <location>` get new year status for location
-- `hny !time <location>` get current time in location
-- `hny !time` UTC time
-- `hny !help` show help
+- `!next` upcoming new year
+- `!previous` previous new year
+- `!remaining` number of remaining timezones
+- `!hny <location>` get new year status for location
+- `!time <location>` get current time in location
+- `!time` UTC time
+- `!help` show help
 
-The `hny` part can be changed by defining a different trigger
+The command prefix `!` can be changed using the -prefix flag
 
 ## Pro-tip
 
