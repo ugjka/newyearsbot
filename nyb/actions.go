@@ -13,7 +13,7 @@ import (
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
-const stHelp = "Query location: '%shny <location>', Time in location: '%stime <location>', Next zone: '%snext', Previous zone: '%sprevious', Remaining zones: '%sremaining', Help: '%shelp'"
+const stHelp = "COMMANDS: '%shny <location>', '%stime <location>', '%snext', '%sprevious', '%sremaining', '%shelp', '%ssource'"
 
 func (bot *Settings) addTriggers() {
 	irc := bot.IRC
@@ -27,6 +27,17 @@ func (bot *Settings) addTriggers() {
 		},
 	})
 
+	//Trigger for !source
+	irc.AddTrigger(kitty.Trigger{
+		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
+			return m.Command == "PRIVMSG" &&
+				strings.HasPrefix(normalize(m.Content), fmt.Sprintf("%ssource", bot.Prefix))
+		},
+		Action: func(b *kitty.Bot, m *kitty.Message) {
+			b.Reply(m, "https://github.com/ugjka/newyearsbot")
+		},
+	})
+
 	//Trigger for !help
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
@@ -36,7 +47,7 @@ func (bot *Settings) addTriggers() {
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying help...")
-			b.Reply(m, fmt.Sprintf(stHelp, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix))
+			b.Reply(m, fmt.Sprintf(stHelp, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix))
 		},
 	})
 	//Trigger for !next
@@ -49,11 +60,11 @@ func (bot *Settings) addTriggers() {
 			b.Info("Querying next...")
 			dur := time.Minute * time.Duration(bot.next.Offset*60)
 			if timeNow().UTC().Add(dur).After(target) {
-				irc.Reply(m, fmt.Sprintf("No more next, %d is here AoE", target.Year()))
+				b.Reply(m, fmt.Sprintf("No more next, %d is here AoE", target.Year()))
 				return
 			}
 			humandur := durafmt.Parse(target.Sub(timeNow().UTC().Add(dur)))
-			irc.Reply(m, fmt.Sprintf("Next New Year in %s in %s",
+			b.Reply(m, fmt.Sprintf("Next New Year in %s in %s",
 				roundDuration(humandur), bot.next))
 		},
 	})
@@ -70,7 +81,7 @@ func (bot *Settings) addTriggers() {
 			if bot.previous.Offset == -12 {
 				humandur = durafmt.Parse(timeNow().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
 			}
-			irc.Reply(m, fmt.Sprintf("Previous New Year %s ago in %s",
+			b.Reply(m, fmt.Sprintf("Previous New Year %s ago in %s",
 				roundDuration(humandur), bot.previous))
 		},
 	})
@@ -86,7 +97,7 @@ func (bot *Settings) addTriggers() {
 			if bot.remaining == 1 {
 				ss = ""
 			}
-			irc.Reply(m, fmt.Sprintf("%s: %d timezone%s remaining", m.Name, bot.remaining, ss))
+			b.Reply(m, fmt.Sprintf("%s: %d timezone%s remaining", m.Name, bot.remaining, ss))
 		},
 	})
 	//Trigger for time in location
@@ -100,15 +111,15 @@ func (bot *Settings) addTriggers() {
 			res, err := bot.getTime(normalize(m.Content)[len(bot.Prefix)+len("time")+1:])
 			if err == errNoZone || err == errNoPlace {
 				b.Warn("Query error: " + err.Error())
-				irc.Reply(m, fmt.Sprintf("%s: %s", m.Name, err))
+				b.Reply(m, fmt.Sprintf("%s: %s", m.Name, err))
 				return
 			}
 			if err != nil {
 				b.Warn("Query error: " + err.Error())
-				irc.Reply(m, fmt.Sprintf("%s: Some error occurred!", m.Name))
+				b.Reply(m, fmt.Sprintf("%s: Some error occurred!", m.Name))
 				return
 			}
-			irc.Reply(m, res)
+			b.Reply(m, res)
 		},
 	})
 	//UTC
@@ -120,7 +131,7 @@ func (bot *Settings) addTriggers() {
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying time...")
 			res := fmt.Sprintf("Time is %s", time.Now().UTC().Format("Mon Jan 2 15:04:05 -0700 MST 2006"))
-			irc.Reply(m, res)
+			b.Reply(m, res)
 		},
 	})
 
@@ -134,15 +145,15 @@ func (bot *Settings) addTriggers() {
 			tz, err := bot.getNewYear(normalize(m.Content)[len(bot.Prefix)+len("hny")+1:])
 			if err == errNoZone || err == errNoPlace {
 				b.Warn("Query error: " + err.Error())
-				irc.Reply(m, fmt.Sprintf("%s: %s", m.Name, err))
+				b.Reply(m, fmt.Sprintf("%s: %s", m.Name, err))
 				return
 			}
 			if err != nil {
 				b.Warn("Query error: " + err.Error())
-				irc.Reply(m, fmt.Sprintf("%s: Some error occurred!", m.Name))
+				b.Reply(m, fmt.Sprintf("%s: Some error occurred!", m.Name))
 				return
 			}
-			irc.Reply(m, fmt.Sprintf("%s: %s", m.Name, tz))
+			b.Reply(m, fmt.Sprintf("%s: %s", m.Name, tz))
 		},
 	})
 }

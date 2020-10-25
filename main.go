@@ -1,4 +1,4 @@
-//Irc Bot for New Years Eve Celebration. Posts to irc when new year happens in each timezone
+//New Year's Eve IRC party bot
 package main
 
 import (
@@ -14,30 +14,29 @@ import (
 	"mvdan.cc/xurls/v2"
 )
 
-//Custom flag to get irc channelsn to join
+//Custom flag for IRC channels
 var channels nyb.IrcChans
 
 func init() {
-	flag.Var(&channels, "channels", "comma separated list of irc channels to join")
+	flag.Var(&channels, "channels", "comma separated list of channels")
 }
 
 const usage = `
-New Year Eve Party Irc Bot
-This bot announces new years as they happen in each timezone
-You can query location using "!hny" command for example "!hny New York"
+New Year's Eve IRC party bot
+Announces new years as they happen in each timezone
 
 CMD Options:
 [mandatory]
--channels	comma separated list of irc channels to join eg. "#test, #test2"
+-channels	comma separated list of channels eg. "#test, #test2"
 -nick		irc nick
--email		referrer email for Nominatim
+-email		email for nominatim
 
 [optional]
 -password	irc password
 -server		irc server (default: chat.freenode.net:6697)
 -prefix		command prefix (default: !)
 -ssl		use ssl for irc (default: true)
--nominatim	Nominatim server (default: http://nominatim.openstreetmap.org)
+-nominatim	nominatim server (default: http://nominatim.openstreetmap.org)
 -debug		debug irc traffic
 
 `
@@ -46,7 +45,7 @@ func main() {
 
 	//Flags
 	nick := flag.String("nick", "", "irc nick")
-	email := flag.String("email", "", "referrer email for Nominatim")
+	email := flag.String("email", "", "email for Nominatim")
 	server := flag.String("server", "chat.freenode.net:6697", "irc server")
 	password := flag.String("password", "", "irc password")
 	prefix := flag.String("prefix", "!", "command prefix")
@@ -83,18 +82,18 @@ func main() {
 		return
 	}
 	if len(*nick) > 16 {
-		red.Fprintln(os.Stderr, "error: nick can't be longer than 16 characters")
+		red.Fprintln(os.Stderr, "error: nick too long")
 		flag.Usage()
 		return
 	}
 	nickReg := regexp.MustCompile("^\\A[a-z_\\-\\[\\]\\^{}|`][a-z0-9_\\-\\[\\]\\^{}|`]{1,15}\\z$")
 	if !nickReg.MatchString(*nick) {
-		red.Fprintln(os.Stderr, "error: invalid nickname")
+		red.Fprintln(os.Stderr, "error: invalid nick")
 		flag.Usage()
 		return
 	}
 	if *email == "" {
-		red.Fprintln(os.Stderr, "error: need to provide referrer email for Nominatim")
+		red.Fprintln(os.Stderr, "error: no email provided")
 		flag.Usage()
 		return
 	}
@@ -122,17 +121,17 @@ func main() {
 	}
 	prefixReg := regexp.MustCompile("^\\W+$")
 	if !prefixReg.MatchString(*prefix) {
-		red.Fprintln(os.Stderr, "error: prefix must be non-alphanumeric characters")
+		red.Fprintln(os.Stderr, "error: prefix must be non-alphanumeric")
 		flag.Usage()
 		return
 	}
 	if *nominatim == "" {
-		red.Fprintln(os.Stderr, "error: need to provide a Nominatim Server url")
+		red.Fprintln(os.Stderr, "error: no nominatim server provided")
 		flag.Usage()
 		return
 	}
 	if !xurls.Strict().MatchString(*nominatim) {
-		red.Fprintln(os.Stderr, "error: invalid Nominatim server url")
+		red.Fprintln(os.Stderr, "error: invalid nominatim server url")
 		flag.Usage()
 		return
 	}

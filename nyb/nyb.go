@@ -115,7 +115,7 @@ func (bot *Settings) loopTimeZones() {
 			humandur := durafmt.Parse(target.Sub(timeNow().UTC().Add(dur)))
 			const stNextNewYear = "Next New Year in %s in %s"
 			msg := fmt.Sprintf(stNextNewYear, roundDuration(humandur), zones[i])
-			help := fmt.Sprintf(stHelp, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix)
+			help := fmt.Sprintf(stHelp, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix)
 			for _, ch := range irc.Channels {
 				irc.Msg(ch, msg)
 				irc.Msg(ch, help)
