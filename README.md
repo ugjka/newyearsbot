@@ -6,7 +6,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/ugjka/newyearsbot/nyb)](https://goreportcard.com/report/github.com/ugjka/newyearsbot/nyb)
 [![Donate](https://share.ugjka.net/paypal.svg)](https://www.paypal.me/ugjka)
 
-Irc Bot for celebrating New Year Eve
+New Year's Eve IRC party bot
 
 Posts New Years for each timezone when they happen
 
