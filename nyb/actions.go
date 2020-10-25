@@ -31,7 +31,7 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
-				strings.HasPrefix(normalize(m.Content), fmt.Sprintf("%ssource", bot.Prefix))
+				strings.HasPrefix(normalize(m.Content), bot.Prefix+"source")
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Reply(m, "https://github.com/ugjka/newyearsbot")
@@ -42,8 +42,8 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
-				strings.HasPrefix(normalize(m.Content), fmt.Sprintf("%shelp", bot.Prefix)) ||
-				normalize(m.Content) == fmt.Sprintf("%shny", bot.Prefix)
+				strings.HasPrefix(normalize(m.Content), bot.Prefix+"help") ||
+				normalize(m.Content) == bot.Prefix+"hny"
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying help...")
@@ -54,7 +54,7 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
-				strings.HasPrefix(normalize(m.Content), fmt.Sprintf("%snext", bot.Prefix))
+				strings.HasPrefix(normalize(m.Content), bot.Prefix+"next")
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying next...")
@@ -72,7 +72,7 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
-				strings.HasPrefix(normalize(m.Content), fmt.Sprintf("%sprevious", bot.Prefix))
+				strings.HasPrefix(normalize(m.Content), bot.Prefix+"previous")
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying previous...")
@@ -89,7 +89,7 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
-				strings.HasPrefix(normalize(m.Content), fmt.Sprintf("%sremaining", bot.Prefix))
+				strings.HasPrefix(normalize(m.Content), bot.Prefix+"remaining")
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying remaining...")
@@ -104,7 +104,7 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
-				strings.HasPrefix(normalize(m.Content), fmt.Sprintf("%stime ", bot.Prefix))
+				strings.HasPrefix(normalize(m.Content), bot.Prefix+"time ")
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying time...")
@@ -126,11 +126,11 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
-				normalize(m.Content) == fmt.Sprintf("%stime", bot.Prefix)
+				normalize(m.Content) == bot.Prefix+"time"
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying time...")
-			result := fmt.Sprintf("Time is %s", time.Now().UTC().Format("Mon Jan 2 15:04:05 -0700 MST 2006"))
+			result := "Time is " + time.Now().UTC().Format("Mon Jan 2 15:04:05 -0700 MST 2006")
 			b.Reply(m, result)
 		},
 	})
@@ -139,7 +139,7 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
-				strings.HasPrefix(normalize(m.Content), fmt.Sprintf("%shny ", bot.Prefix))
+				strings.HasPrefix(normalize(m.Content), bot.Prefix+"hny ")
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			result, err := bot.getNewYear(normalize(m.Content)[len(bot.Prefix)+len("hny")+1:])
@@ -249,11 +249,14 @@ func normalize(s string) string {
 	s = strings.ToLower(s)
 	split := strings.Split(s, " ")
 	s = ""
-	for _, w := range split {
+	for i, w := range split {
 		if w == "" {
 			continue
 		}
-		s += w + " "
+		s += w
+		if i != len(split)-1 {
+			s += " "
+		}
 	}
-	return s[:len(s)-1]
+	return s
 }
