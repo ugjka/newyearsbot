@@ -125,8 +125,7 @@ func (bot *Settings) loopTimeZones() {
 			select {
 			case <-timer.C:
 				timer.Stop()
-				const newYearAnnounceMsg = "Happy New Year in %s"
-				msg = fmt.Sprintf(newYearAnnounceMsg, zones[i])
+				msg = "Happy New Year in " + zones[i].String()
 				for _, ch := range irc.Channels {
 					irc.Msg(ch, msg)
 				}

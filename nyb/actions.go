@@ -201,7 +201,8 @@ func (bot *Settings) getTime(location string) (string, error) {
 		return "", errNoZone
 	}
 	address := res[0].DisplayName
-	return fmt.Sprintf("Time in %s is %s", address, time.Now().In(zone).Format("Mon Jan 2 15:04:05 -0700 MST 2006")), nil
+	msg := fmt.Sprintf("Time in %s is %s", address, time.Now().In(zone).Format("Mon Jan 2 15:04:05 -0700 MST 2006"))
+	return msg, nil
 }
 
 func (bot *Settings) getNewYear(location string) (string, error) {
