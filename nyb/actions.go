@@ -93,11 +93,11 @@ func (bot *Settings) addTriggers() {
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying remaining...")
-			ss := "s"
+			plural := "s"
 			if bot.remaining == 1 {
-				ss = ""
+				plural = ""
 			}
-			b.Reply(m, fmt.Sprintf("%s: %d timezone%s remaining", m.Name, bot.remaining, ss))
+			b.Reply(m, fmt.Sprintf("%d timezone%s remaining", bot.remaining, plural))
 		},
 	})
 	//Trigger for time in location
@@ -108,18 +108,18 @@ func (bot *Settings) addTriggers() {
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying time...")
-			res, err := bot.getTime(normalize(m.Content)[len(bot.Prefix)+len("time")+1:])
+			result, err := bot.getTime(normalize(m.Content)[len(bot.Prefix)+len("time")+1:])
 			if err == errNoZone || err == errNoPlace {
 				b.Warn("Query error: " + err.Error())
-				b.Reply(m, fmt.Sprintf("%s: %s", m.Name, err))
+				b.Reply(m, err.Error())
 				return
 			}
 			if err != nil {
 				b.Warn("Query error: " + err.Error())
-				b.Reply(m, fmt.Sprintf("%s: Some error occurred!", m.Name))
+				b.Reply(m, "Some error occurred!")
 				return
 			}
-			b.Reply(m, res)
+			b.Reply(m, result)
 		},
 	})
 	//UTC
@@ -130,8 +130,8 @@ func (bot *Settings) addTriggers() {
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying time...")
-			res := fmt.Sprintf("Time is %s", time.Now().UTC().Format("Mon Jan 2 15:04:05 -0700 MST 2006"))
-			b.Reply(m, res)
+			result := fmt.Sprintf("Time is %s", time.Now().UTC().Format("Mon Jan 2 15:04:05 -0700 MST 2006"))
+			b.Reply(m, result)
 		},
 	})
 
@@ -142,18 +142,18 @@ func (bot *Settings) addTriggers() {
 				strings.HasPrefix(normalize(m.Content), fmt.Sprintf("%shny ", bot.Prefix))
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
-			tz, err := bot.getNewYear(normalize(m.Content)[len(bot.Prefix)+len("hny")+1:])
+			result, err := bot.getNewYear(normalize(m.Content)[len(bot.Prefix)+len("hny")+1:])
 			if err == errNoZone || err == errNoPlace {
 				b.Warn("Query error: " + err.Error())
-				b.Reply(m, fmt.Sprintf("%s: %s", m.Name, err))
+				b.Reply(m, err.Error())
 				return
 			}
 			if err != nil {
 				b.Warn("Query error: " + err.Error())
-				b.Reply(m, fmt.Sprintf("%s: Some error occurred!", m.Name))
+				b.Reply(m, "Some error occurred!")
 				return
 			}
-			b.Reply(m, fmt.Sprintf("%s: %s", m.Name, tz))
+			b.Reply(m, result)
 		},
 	})
 }
