@@ -48,8 +48,10 @@ Arch linux PKGBUILD in archlinux folder
 
 You need make, go, go-tools
 
-Build with `make all`
+Build with `make`
 
 Install with `make install`
+
+Uninstall with `make uninstall`
 
 Clean up with `make clean`
