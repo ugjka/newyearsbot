@@ -12,7 +12,7 @@ import (
 	log "gopkg.in/inconshreveable/log15.v2"
 )
 
-//Settings for bot
+//Settings for the bot
 type Settings struct {
 	Prefix    string
 	IRC       *kitty.Bot
@@ -28,16 +28,16 @@ type extra struct {
 	remaining int
 }
 
-//New creates new bot
-func New(nick string, chans []string, password, trigger, server string,
-	tls bool, email, nominatim string) *Settings {
-	trigger = strings.ToLower(trigger)
+//New creates a new bot
+func New(nick string, channels []string, password, prefix, server string,
+	ssl bool, email, nominatim string) *Settings {
+	prefix = strings.ToLower(prefix)
 	return &Settings{
-		trigger,
+		prefix,
 		kitty.NewBot(server, nick, func(bot *kitty.Bot) {
-			bot.Channels = chans
+			bot.Channels = channels
 			bot.Password = password
-			bot.SSL = tls
+			bot.SSL = ssl
 		}),
 		email,
 		nominatim,
@@ -68,9 +68,9 @@ func (bot *Settings) Start() {
 	}
 	for {
 		bot.loopTimeZones()
-		const stFinished = "That's it, Year %d is here Anywhere on Earth"
+		const zonesFinishedMsg = "That's it, Year %d is here Anywhere on Earth"
 		for _, ch := range irc.Channels {
-			irc.Msg(ch, fmt.Sprintf(stFinished, target.Year()))
+			irc.Msg(ch, fmt.Sprintf(zonesFinishedMsg, target.Year()))
 		}
 		irc.Info("All zones finished...")
 		target = target.AddDate(1, 0, 0)
@@ -86,7 +86,7 @@ func (bot *Settings) decodeZones(z []byte) error {
 	return nil
 }
 
-var reconnectInterval = time.Second * 30
+const reconnectInterval = time.Second * 30
 
 func (bot *Settings) ircControl() {
 	irc := bot.IRC
@@ -113,9 +113,9 @@ func (bot *Settings) loopTimeZones() {
 			time.Sleep(time.Second * 2)
 			irc.Info(fmt.Sprintf("Zone pending: %.2f", zones[i].Offset))
 			humandur := durafmt.Parse(target.Sub(timeNow().UTC().Add(dur)))
-			const stNextNewYear = "Next New Year in %s in %s"
-			msg := fmt.Sprintf(stNextNewYear, roundDuration(humandur), zones[i])
-			help := fmt.Sprintf(stHelp, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix)
+			const nextYearAnnounceMsg = "Next New Year in %s in %s"
+			msg := fmt.Sprintf(nextYearAnnounceMsg, roundDuration(humandur), zones[i])
+			help := fmt.Sprintf(helpMsg, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix)
 			for _, ch := range irc.Channels {
 				irc.Msg(ch, msg)
 				irc.Msg(ch, help)
@@ -125,8 +125,8 @@ func (bot *Settings) loopTimeZones() {
 			select {
 			case <-timer.C:
 				timer.Stop()
-				const stHappyNewYear = "Happy New Year in %s"
-				msg = fmt.Sprintf(stHappyNewYear, zones[i])
+				const newYearAnnounceMsg = "Happy New Year in %s"
+				msg = fmt.Sprintf(newYearAnnounceMsg, zones[i])
 				for _, ch := range irc.Channels {
 					irc.Msg(ch, msg)
 				}

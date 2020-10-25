@@ -13,7 +13,7 @@ import (
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
-const stHelp = "COMMANDS: '%shny <location>', '%stime <location>', '%snext', '%sprevious', '%sremaining', '%shelp', '%ssource'"
+const helpMsg = "COMMANDS: '%shny <location>', '%stime <location>', '%snext', '%sprevious', '%sremaining', '%shelp', '%ssource'"
 
 func (bot *Settings) addTriggers() {
 	irc := bot.IRC
@@ -47,7 +47,7 @@ func (bot *Settings) addTriggers() {
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying help...")
-			b.Reply(m, fmt.Sprintf(stHelp, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix))
+			b.Reply(m, fmt.Sprintf(helpMsg, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix))
 		},
 	})
 	//Trigger for !next
@@ -236,12 +236,12 @@ func (bot *Settings) getNewYear(location string) (string, error) {
 
 	if timeNow().UTC().Add(offset).Before(target) {
 		humandur := durafmt.Parse(target.Sub(timeNow().UTC().Add(offset)))
-		const stNewYearWillHappen = "New Year in %s will happen in %s"
-		return fmt.Sprintf(stNewYearWillHappen, address, roundDuration(humandur)), nil
+		const newYearFutureMsg = "New Year in %s will happen in %s"
+		return fmt.Sprintf(newYearFutureMsg, address, roundDuration(humandur)), nil
 	}
 	humandur := durafmt.Parse(timeNow().UTC().Add(offset).Sub(target))
-	const stNewYearHappenned = "New Year in %s happened %s ago"
-	return fmt.Sprintf(stNewYearHappenned, address, roundDuration(humandur)), nil
+	const newYearPastMsg = "New Year in %s happened %s ago"
+	return fmt.Sprintf(newYearPastMsg, address, roundDuration(humandur)), nil
 }
 
 func normalize(s string) string {
