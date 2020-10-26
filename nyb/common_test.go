@@ -45,7 +45,7 @@ func TestNominatimUnmarshal(t *testing.T) {
 	//Lat fail
 	data, err := json.Marshal(v)
 	if err != nil {
-		t.Error("could no marshal the test case")
+		t.Error("could not marshal the test case")
 	}
 	test := make(NominatimResults, 0)
 	err = json.Unmarshal(data, &test)
@@ -57,7 +57,7 @@ func TestNominatimUnmarshal(t *testing.T) {
 	v[0].Lon = "fail"
 	data, err = json.Marshal(v)
 	if err != nil {
-		t.Error("could no marshal the test case")
+		t.Error("could not marshal the test case")
 	}
 	test = make(NominatimResults, 0)
 	err = json.Unmarshal(data, &test)

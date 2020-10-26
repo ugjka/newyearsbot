@@ -109,9 +109,9 @@ func (bot *Settings) loopTimeZones() {
 		if timeNow().UTC().Add(dur).Before(target) {
 			time.Sleep(time.Second * 2)
 			irc.Info(fmt.Sprintf("Zone pending: %.2f", zones[i].Offset))
-			h := humanDur(target.Sub(timeNow().UTC().Add(dur)))
+			hdur := humanDur(target.Sub(timeNow().UTC().Add(dur)))
 			const nextYearAnnounceMsg = "Next New Year in %s in %s"
-			msg := fmt.Sprintf(nextYearAnnounceMsg, h, zones[i])
+			msg := fmt.Sprintf(nextYearAnnounceMsg, hdur, zones[i])
 			help := fmt.Sprintf(helpMsg, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix)
 			for _, ch := range irc.Channels {
 				irc.Msg(ch, msg)

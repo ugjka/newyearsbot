@@ -61,9 +61,9 @@ func (bot *Settings) addTriggers() {
 				b.Reply(m, fmt.Sprintf("No more next, %d is here AoE", target.Year()))
 				return
 			}
-			h := humanDur(target.Sub(timeNow().UTC().Add(dur)))
+			hdur := humanDur(target.Sub(timeNow().UTC().Add(dur)))
 			b.Reply(m, fmt.Sprintf("Next New Year in %s in %s",
-				h, bot.next))
+				hdur, bot.next))
 		},
 	})
 	//Trigger for !previous
@@ -75,12 +75,12 @@ func (bot *Settings) addTriggers() {
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying previous...")
 			dur := time.Minute * time.Duration(bot.previous.Offset*60)
-			h := humanDur(timeNow().UTC().Add(dur).Sub(target))
+			hdur := humanDur(timeNow().UTC().Add(dur).Sub(target))
 			if bot.previous.Offset == -12 {
-				h = humanDur(timeNow().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
+				hdur = humanDur(timeNow().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
 			}
 			b.Reply(m, fmt.Sprintf("Previous New Year %s ago in %s",
-				h, bot.previous))
+				hdur, bot.previous))
 		},
 	})
 	//Trigger for !remaining
@@ -224,12 +224,12 @@ func (bot *Settings) newYear(location string) (string, error) {
 	address := res[0].DisplayName
 
 	if timeNow().UTC().Add(offset).Before(target) {
-		h := humanDur(target.Sub(timeNow().UTC().Add(offset)))
+		hdur := humanDur(target.Sub(timeNow().UTC().Add(offset)))
 		const newYearFutureMsg = "New Year in %s will happen in %s"
-		return fmt.Sprintf(newYearFutureMsg, address, h), nil
+		return fmt.Sprintf(newYearFutureMsg, address, hdur), nil
 	}
 
-	h := humanDur(timeNow().UTC().Add(offset).Sub(target))
+	hdur := humanDur(timeNow().UTC().Add(offset).Sub(target))
 	const newYearPastMsg = "New Year in %s happened %s ago"
-	return fmt.Sprintf(newYearPastMsg, address, h), nil
+	return fmt.Sprintf(newYearPastMsg, address, hdur), nil
 }

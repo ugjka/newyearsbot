@@ -19,8 +19,8 @@ var timeNow = func() time.Time {
 }
 
 func humanDur(d time.Duration) string {
-	h := durafmt.Parse(d)
-	arr := strings.Split(h.String(), " ")
+	hdur := durafmt.Parse(d)
+	arr := strings.Split(hdur.String(), " ")
 	if len(arr) > 2 {
 		return strings.Join(arr[:4], " ")
 	}
