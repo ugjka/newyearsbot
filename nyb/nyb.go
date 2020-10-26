@@ -35,10 +35,10 @@ type extra struct {
 //New creates a new bot
 func New(s *Settings) *Settings {
 	s.irc = kitty.NewBot(s.Server, s.Nick,
-		func(bot *kitty.Bot) {
-			bot.Channels = s.Channels
-			bot.Password = s.Password
-			bot.SSL = s.SSL
+		func(irc *kitty.Bot) {
+			irc.Channels = s.Channels
+			irc.Password = s.Password
+			irc.SSL = s.SSL
 		})
 	return s
 }
