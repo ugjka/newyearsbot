@@ -231,7 +231,7 @@ func (bot *Settings) newYear(location string) (string, error) {
 	if err != nil {
 		return "", errNoZone
 	}
-	offset := time.Second * time.Duration(zoneOffset(target, zone))
+	offset := zoneOffset(target, zone)
 	address := res[0].DisplayName
 
 	if timeNow().UTC().Add(offset).Before(target) {

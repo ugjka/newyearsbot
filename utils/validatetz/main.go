@@ -48,7 +48,7 @@ func main() {
 		fmt.Println("Zone:", zone.Offset)
 		for _, country := range zone.Countries {
 			if len(country.Cities) == 0 {
-				remoteOffset, err := getTimeZone(country.Name)
+				remoteOffset, err := timeZone(country.Name)
 				if err != nil {
 					log.Println(country.Name, err)
 				} else {
@@ -59,7 +59,7 @@ func main() {
 				}
 			}
 			for _, city := range country.Cities {
-				remoteOffset, err := getTimeZone(city + ", " + country.Name)
+				remoteOffset, err := timeZone(city + ", " + country.Name)
 				if err != nil {
 					log.Println(city+", "+country.Name, err)
 				} else {
@@ -74,7 +74,7 @@ func main() {
 }
 
 //Get Timezone Offset
-func getTimeZone(loc string) (float64, error) {
+func timeZone(loc string) (float64, error) {
 	maps := url.Values{}
 	maps.Add("q", loc)
 	maps.Add("format", "json")
