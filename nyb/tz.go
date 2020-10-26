@@ -1,6 +1,6 @@
 package nyb
 
-//Zones contains time zone info in json format
+//Zones contains time zone information in JSON format
 var Zones = []byte(`[
   {
     "countries": [

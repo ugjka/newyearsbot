@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-//TZ holds info for Time Zone
+//TZ holds time zone data
 type TZ struct {
 	Countries []struct {
 		Name   string   `json:"name"`
@@ -44,7 +44,7 @@ func (t TZ) String() (x string) {
 	return
 }
 
-//TZS is a slice of TZ
+//TZS is a slice of timezones
 type TZS []TZ
 
 func (t TZS) Len() int {
@@ -59,17 +59,17 @@ func (t TZS) Less(i, j int) bool {
 	return t[i].Offset < t[j].Offset
 }
 
-//IrcChans is a custom flag
-type IrcChans []string
+//Channels is a flag that parses a list of IRC channels
+type Channels []string
 
-func (i *IrcChans) String() string {
+func (i *Channels) String() string {
 	return fmt.Sprint(*i)
 }
 
-//Set satisfies flag Interface?
-func (i *IrcChans) Set(value string) error {
+//Set satisfies the flag Interface
+func (i *Channels) Set(value string) error {
 	if len(*i) > 0 {
-		return errors.New("interval flag already set")
+		return errors.New("channel flag already set")
 	}
 	for _, dt := range strings.Split(value, ",") {
 		*i = append(*i, strings.TrimSpace(dt))
@@ -85,9 +85,8 @@ type Timer struct {
 	ticker *time.Ticker
 }
 
-//NewTimer returns ticker based timer
-//We need this to take into account time taken in suspend and hibernation
-//Golang time.Timers suck
+//NewTimer returns a ticker based timer.
+//We need this to take into account time taken in suspend, hibernation or if system time is changed.
 func NewTimer(dur time.Duration) *Timer {
 	t := &Timer{}
 	t.C = make(chan bool)
@@ -154,7 +153,7 @@ func (n *NominatimResult) UnmarshalJSON(data []byte) (err error) {
 	return
 }
 
-//cache and client
+//cache and client for NominatimFetcher
 var nominatim = struct {
 	cache map[string][]byte
 	sync.RWMutex

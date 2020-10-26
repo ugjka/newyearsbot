@@ -15,7 +15,7 @@ import (
 )
 
 //Custom flag for IRC channels
-var channels nyb.IrcChans
+var channels nyb.Channels
 
 func init() {
 	flag.Var(&channels, "channels", "comma separated list of channels")

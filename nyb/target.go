@@ -2,7 +2,7 @@ package nyb
 
 import "time"
 
-//Set target year
+//Set the target year
 var target = func() time.Time {
 	tmp := time.Now().UTC()
 	if tmp.Month() == time.January && tmp.Day() < 2 {

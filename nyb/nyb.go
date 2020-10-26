@@ -42,7 +42,7 @@ func New(s *Settings) *Settings {
 	return s
 }
 
-// LogLvl sets log level
+// LogLvl sets the log level
 func (bot *Settings) LogLvl(Lvl log.Lvl) {
 	logHandler := log.LvlFilterHandler(Lvl, log.StdoutHandler)
 	bot.irc.Logger.SetHandler(logHandler)

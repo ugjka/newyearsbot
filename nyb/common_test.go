@@ -16,13 +16,13 @@ func TestTimer(t *testing.T) {
 }
 
 func TestIrcChans(t *testing.T) {
-	var ch IrcChans
+	var ch Channels
 	cases := "#test1 #test2 #test3"
 	if err := ch.Set(cases); err != nil {
 		t.Error(err)
 	}
 	if !(ch.String() == fmt.Sprintf("%v", ch)) {
-		t.Error("chans string don't match")
+		t.Error("channels string doesn't match")
 	}
 	if err := ch.Set("already set"); err == nil {
 		t.Error("did not catch already set")
@@ -50,7 +50,7 @@ func TestNominatimUnmarshal(t *testing.T) {
 	test := make(NominatimResults, 0)
 	err = json.Unmarshal(data, &test)
 	if err == nil {
-		t.Error("Lat did not fail")
+		t.Error("lat did not fail")
 	}
 	//Lon fail
 	v[0].Lat = "1.00"
@@ -62,6 +62,6 @@ func TestNominatimUnmarshal(t *testing.T) {
 	test = make(NominatimResults, 0)
 	err = json.Unmarshal(data, &test)
 	if err == nil {
-		t.Error("Lon did not fail")
+		t.Error("lon did not fail")
 	}
 }

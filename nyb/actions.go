@@ -15,6 +15,7 @@ const helpMsg = "COMMANDS: '%shny <location>', '%stime <location>', '%snext', '%
 
 func (bot *Settings) addTriggers() {
 	irc := bot.irc
+
 	//Log Notices
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
@@ -48,6 +49,7 @@ func (bot *Settings) addTriggers() {
 			b.Reply(m, fmt.Sprintf(helpMsg, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix))
 		},
 	})
+
 	//Trigger for !next
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
@@ -66,6 +68,7 @@ func (bot *Settings) addTriggers() {
 				hdur, bot.next))
 		},
 	})
+
 	//Trigger for !previous
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
@@ -83,6 +86,7 @@ func (bot *Settings) addTriggers() {
 				hdur, bot.previous))
 		},
 	})
+
 	//Trigger for !remaining
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
@@ -98,6 +102,7 @@ func (bot *Settings) addTriggers() {
 			b.Reply(m, fmt.Sprintf("%d timezone%s remaining", bot.remaining, plural))
 		},
 	})
+
 	//Trigger for time in location
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
@@ -120,7 +125,8 @@ func (bot *Settings) addTriggers() {
 			b.Reply(m, result)
 		},
 	})
-	//UTC
+
+	//Trigger for UTC time
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
@@ -133,7 +139,7 @@ func (bot *Settings) addTriggers() {
 		},
 	})
 
-	//Trigger for location queries
+	//Trigger for new year in location
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
@@ -222,13 +228,11 @@ func (bot *Settings) newYear(location string) (string, error) {
 	}
 	offset := zoneOffset(target, zone)
 	address := res[0].DisplayName
-
 	if timeNow().UTC().Add(offset).Before(target) {
 		hdur := humanDur(target.Sub(timeNow().UTC().Add(offset)))
 		const newYearFutureMsg = "New Year in %s will happen in %s"
 		return fmt.Sprintf(newYearFutureMsg, address, hdur), nil
 	}
-
 	hdur := humanDur(timeNow().UTC().Add(offset).Sub(target))
 	const newYearPastMsg = "New Year in %s happened %s ago"
 	return fmt.Sprintf(newYearPastMsg, address, hdur), nil
