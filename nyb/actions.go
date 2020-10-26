@@ -157,7 +157,7 @@ func (bot *Settings) addTriggers() {
 }
 
 var (
-	errNoZone  = errors.New("couldn't get the timezone for that location")
+	errNoZone  = errors.New("couldn't get timezone for that location")
 	errNoPlace = errors.New("Couldn't find that place")
 )
 
@@ -170,7 +170,7 @@ func (bot *Settings) time(location string) (string, error) {
 	}
 	var res NominatimResults
 	if err = json.Unmarshal(data, &res); err != nil {
-		bot.irc.Warn("Nominatim error: " + err.Error())
+		bot.irc.Warn("Nominatim JSON error: " + err.Error())
 		return "", err
 	}
 	if len(res) == 0 {
@@ -202,7 +202,7 @@ func (bot *Settings) newYear(location string) (string, error) {
 	}
 	var res NominatimResults
 	if err = json.Unmarshal(data, &res); err != nil {
-		bot.irc.Warn("Nominatim error: " + err.Error())
+		bot.irc.Warn("Nominatim JSON error: " + err.Error())
 		return "", err
 	}
 	if len(res) == 0 {
