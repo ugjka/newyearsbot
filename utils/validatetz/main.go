@@ -8,7 +8,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net/url"
 	"os"
 	"sort"
 	"time"
@@ -26,14 +25,14 @@ var target = func() time.Time {
 	return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 }()
 
-var ircEmail *string
-var ircNominatim *string
+var email *string
+var nominatim *string
 
 func main() {
-	ircEmail = flag.String("email", "", "Email for Open Street Map")
-	ircNominatim = flag.String("nominatim", "http://nominatim.openstreetmap.org", "Nominatim server to use")
+	email = flag.String("email", "", "nominatim email")
+	nominatim = flag.String("nominatim", "http://nominatim.openstreetmap.org", "nominatim server")
 	flag.Parse()
-	if *ircEmail == "" {
+	if *email == "" {
 		fmt.Fprintf(os.Stderr, "%s", "provide email with -email flag\n")
 		return
 	}
@@ -53,7 +52,7 @@ func main() {
 					log.Println(country.Name, err)
 				} else {
 					if remoteOffset != zone.Offset {
-						fmt.Printf("%s: Offset mismatch Loc: %v, Rem: %v\n",
+						fmt.Printf("%s: Offset mismatch; Local: %v, Remote: %v\n",
 							country.Name, zone.Offset, remoteOffset)
 					}
 				}
@@ -64,7 +63,7 @@ func main() {
 					log.Println(city+", "+country.Name, err)
 				} else {
 					if remoteOffset != zone.Offset {
-						fmt.Printf("%s, %s: Offset mismatch Loc: %v, Rem: %v\n",
+						fmt.Printf("%s, %s: Offset mismatch; Local: %v, Remote: %v\n",
 							city, country.Name, zone.Offset, remoteOffset)
 					}
 				}
@@ -74,17 +73,9 @@ func main() {
 }
 
 //Get Timezone Offset
-func timeZone(loc string) (float64, error) {
-	maps := url.Values{}
-	maps.Add("q", loc)
-	maps.Add("format", "json")
-	maps.Add("accept-language", "en")
-	maps.Add("limit", "1")
-	maps.Add("email", *ircEmail)
-	var data []byte
-	var err error
+func timeZone(location string) (float64, error) {
 	time.Sleep(time.Second * 2)
-	data, err = nyb.NominatimFetcher(*ircNominatim + nyb.NominatimEndpoint + maps.Encode())
+	data, err := nyb.NominatimFetcher(email, nominatim, &location)
 	if err != nil {
 		return 0, err
 	}
@@ -95,11 +86,11 @@ func timeZone(loc string) (float64, error) {
 	if len(mapj) == 0 {
 		return 0, errors.New("could not find location")
 	}
-	location := tz.Point{
+	point := tz.Point{
 		Lat: mapj[0].Lat,
 		Lon: mapj[0].Lon,
 	}
-	tzid, err := tz.GetZone(location)
+	tzid, err := tz.GetZone(point)
 	if err != nil {
 		return 0, err
 	}

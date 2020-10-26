@@ -29,7 +29,7 @@ CMD Options:
 [mandatory]
 -channels	comma separated list of channels eg. "#test, #test2"
 -nick		irc nick
--email		email for nominatim
+-email		nominatim email
 
 [optional]
 -password	irc password
@@ -45,7 +45,7 @@ func main() {
 
 	//Flags
 	nick := flag.String("nick", "", "irc nick")
-	email := flag.String("email", "", "email for Nominatim")
+	email := flag.String("email", "", "nominatim email")
 	server := flag.String("server", "chat.freenode.net:6697", "irc server")
 	password := flag.String("password", "", "irc password")
 	prefix := flag.String("prefix", "!", "command prefix")

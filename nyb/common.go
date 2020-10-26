@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"sync"
@@ -153,9 +154,6 @@ func (n *NominatimResult) UnmarshalJSON(data []byte) (err error) {
 //NominatimResults ...
 type NominatimResults []NominatimResult
 
-//NominatimEndpoint api url
-const NominatimEndpoint = "/search?"
-
 //cache and client
 var nominatim = struct {
 	cache map[string][]byte
@@ -165,8 +163,15 @@ var nominatim = struct {
 	cache: make(map[string][]byte),
 }
 
-//NominatimFetcher make an api request
-func NominatimFetcher(url string) (data []byte, err error) {
+//NominatimFetcher makes Nominatim API request
+func NominatimFetcher(email, server, location *string) (data []byte, err error) {
+	maps := url.Values{}
+	maps.Add("q", *location)
+	maps.Add("format", "json")
+	maps.Add("accept-language", "en")
+	maps.Add("limit", "1")
+	maps.Add("email", *email)
+	url := *server + "/search?" + maps.Encode()
 	nominatim.RLock()
 	if v, ok := nominatim.cache[url]; ok {
 		nominatim.RUnlock()
@@ -177,15 +182,15 @@ func NominatimFetcher(url string) (data []byte, err error) {
 	if err != nil {
 		return nil, err
 	}
-	get, err := nominatim.Do(req)
+	resp, err := nominatim.Do(req)
 	if err != nil {
 		return
 	}
-	defer get.Body.Close()
-	if get.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("Status: %d", get.StatusCode)
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status: %d", resp.StatusCode)
 	}
-	data, err = ioutil.ReadAll(get.Body)
+	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}

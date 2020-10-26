@@ -18,11 +18,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	sort.Sort(sort.Reverse(zones))
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', tabwriter.AlignRight|tabwriter.Debug)
+
 	for _, k := range zones {
 		tmp := len([]byte(k.String()))
-		//if tmp > 396 {
 		if tmp > 0 {
 			fmt.Fprintf(w, "%v\t%d\t%d\t\n", k.Offset, tmp, tmp-396)
 		}

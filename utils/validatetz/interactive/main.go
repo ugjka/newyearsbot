@@ -8,7 +8,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"net/url"
 	"os"
 	"time"
 
@@ -17,7 +16,7 @@ import (
 )
 
 var email *string
-var ircNominatim *string
+var nominatim *string
 var ext *string
 
 //Set target year
@@ -31,8 +30,8 @@ var target = func() time.Time {
 
 func main() {
 	ext = flag.String("ext", "", "external geojson")
-	email = flag.String("email", "", "Email for Open Street Map")
-	ircNominatim = flag.String("nominatim", "http://nominatim.openstreetmap.org", "Nominatim server to use")
+	email = flag.String("email", "", "nominatim email")
+	nominatim = flag.String("nominatim", "http://nominatim.openstreetmap.org", "nominatim server")
 	flag.Parse()
 	if *email == "" {
 		fmt.Fprintf(os.Stderr, "%s", "provide email with -email flag\n")
@@ -56,16 +55,8 @@ func main() {
 	}
 }
 
-func locationInfo(loc string) (string, error) {
-	maps := url.Values{}
-	maps.Add("q", loc)
-	maps.Add("format", "json")
-	maps.Add("accept-language", "en")
-	maps.Add("limit", "1")
-	maps.Add("email", *email)
-	var data []byte
-	var err error
-	data, err = nyb.NominatimFetcher(*ircNominatim + nyb.NominatimEndpoint + maps.Encode())
+func locationInfo(location string) (string, error) {
+	data, err := nyb.NominatimFetcher(email, nominatim, &location)
 	if err != nil {
 		return "", err
 	}
@@ -77,12 +68,12 @@ func locationInfo(loc string) (string, error) {
 	if len(mapj) == 0 {
 		return "", errors.New("status not OK")
 	}
-	location := tz.Point{
+	point := tz.Point{
 		Lat: mapj[0].Lat,
 		Lon: mapj[0].Lon,
 	}
 	now := time.Now()
-	tzid, err := tz.GetZone(location)
+	tzid, err := tz.GetZone(point)
 	lookup := time.Now().Sub(now)
 	if err != nil {
 		return "", err

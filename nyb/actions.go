@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/url"
 	"strings"
 	"time"
 
@@ -162,19 +161,9 @@ var (
 	errNoPlace = errors.New("Couldn't find that place")
 )
 
-func (bot *Settings) nominatimRequest(location *string) string {
-	maps := url.Values{}
-	maps.Add("q", *location)
-	maps.Add("format", "json")
-	maps.Add("accept-language", "en")
-	maps.Add("limit", "1")
-	maps.Add("email", bot.Email)
-	return bot.Nominatim + NominatimEndpoint + maps.Encode()
-}
-
 func (bot *Settings) time(location string) (string, error) {
 	bot.irc.Info("Querying location: " + location)
-	data, err := NominatimFetcher(bot.nominatimRequest(&location))
+	data, err := NominatimFetcher(&bot.Email, &bot.Nominatim, &location)
 	if err != nil {
 		bot.irc.Warn("Nominatim error: " + err.Error())
 		return "", err
@@ -206,7 +195,7 @@ func (bot *Settings) time(location string) (string, error) {
 
 func (bot *Settings) newYear(location string) (string, error) {
 	bot.irc.Info("Querying location: " + location)
-	data, err := NominatimFetcher(bot.nominatimRequest(&location))
+	data, err := NominatimFetcher(&bot.Email, &bot.Nominatim, &location)
 	if err != nil {
 		bot.irc.Warn("Nominatim error: " + err.Error())
 		return "", err
