@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
-	"strings"
 	"time"
 
 	"github.com/hako/durafmt"
@@ -14,10 +13,15 @@ import (
 
 //Settings for the bot
 type Settings struct {
+	Nick      string
+	Channels  []string
+	Server    string
+	SSL       bool
+	Password  string
 	Prefix    string
-	IRC       *kitty.Bot
 	Email     string
 	Nominatim string
+	irc       *kitty.Bot
 	extra
 }
 
@@ -29,31 +33,25 @@ type extra struct {
 }
 
 //New creates a new bot
-func New(nick string, channels []string, password, prefix, server string,
-	ssl bool, email, nominatim string) *Settings {
-	prefix = strings.ToLower(prefix)
-	return &Settings{
-		prefix,
-		kitty.NewBot(server, nick, func(bot *kitty.Bot) {
-			bot.Channels = channels
-			bot.Password = password
-			bot.SSL = ssl
-		}),
-		email,
-		nominatim,
-		extra{},
-	}
+func New(s *Settings) *Settings {
+	s.irc = kitty.NewBot(s.Server, s.Nick,
+		func(bot *kitty.Bot) {
+			bot.Channels = s.Channels
+			bot.Password = s.Password
+			bot.SSL = s.SSL
+		})
+	return s
 }
 
 // LogLvl sets log level
 func (bot *Settings) LogLvl(Lvl log.Lvl) {
 	logHandler := log.LvlFilterHandler(Lvl, log.StdoutHandler)
-	bot.IRC.Logger.SetHandler(logHandler)
+	bot.irc.Logger.SetHandler(logHandler)
 }
 
 //Start starts the bot
 func (bot *Settings) Start() {
-	irc := bot.IRC
+	irc := bot.irc
 	irc.Info("Starting the bot...")
 
 	bot.addTriggers()
@@ -89,7 +87,7 @@ func (bot *Settings) decodeZones(z []byte) error {
 const reconnectInterval = time.Second * 30
 
 func (bot *Settings) ircControl() {
-	irc := bot.IRC
+	irc := bot.irc
 	for {
 		irc.Run()
 		irc.Info("Reconnecting...")
@@ -99,7 +97,7 @@ func (bot *Settings) ircControl() {
 
 func (bot *Settings) loopTimeZones() {
 	zones := bot.zones
-	irc := bot.IRC
+	irc := bot.irc
 	for i := 0; i < len(zones); i++ {
 		dur := time.Minute * time.Duration(zones[i].Offset*60)
 		bot.next = zones[i]

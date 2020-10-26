@@ -136,7 +136,16 @@ func main() {
 		return
 	}
 
-	bot := nyb.New(*nick, channels, *password, *prefix, *server, *ssl, *email, *nominatim)
+	bot := nyb.New(&nyb.Settings{
+		Nick:      *nick,
+		Channels:  channels,
+		Server:    *server,
+		SSL:       *ssl,
+		Password:  *password,
+		Prefix:    *prefix,
+		Email:     *email,
+		Nominatim: *nominatim,
+	})
 	if *debug {
 		bot.LogLvl(log.LvlDebug)
 	} else {

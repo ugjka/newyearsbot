@@ -16,7 +16,7 @@ import (
 const helpMsg = "COMMANDS: '%shny <location>', '%stime <location>', '%snext', '%sprevious', '%sremaining', '%shelp', '%ssource'"
 
 func (bot *Settings) addTriggers() {
-	irc := bot.IRC
+	irc := bot.irc
 	//Log Notices
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
@@ -163,6 +163,7 @@ var (
 	errNoPlace = errors.New("Couldn't find that place")
 )
 
+// TODO: streamline the nominatim stuff
 func (bot *Settings) getNominatimReqURL(location *string) string {
 	maps := url.Values{}
 	maps.Add("q", *location)
@@ -174,15 +175,15 @@ func (bot *Settings) getNominatimReqURL(location *string) string {
 }
 
 func (bot *Settings) getTime(location string) (string, error) {
-	bot.IRC.Info("Querying location: " + location)
+	bot.irc.Info("Querying location: " + location)
 	data, err := NominatimGetter(bot.getNominatimReqURL(&location))
 	if err != nil {
-		bot.IRC.Warn("Nominatim error: " + err.Error())
+		bot.irc.Warn("Nominatim error: " + err.Error())
 		return "", err
 	}
 	var res NominatimResults
 	if err = json.Unmarshal(data, &res); err != nil {
-		bot.IRC.Warn("Nominatim error: " + err.Error())
+		bot.irc.Warn("Nominatim error: " + err.Error())
 		return "", err
 	}
 	if len(res) == 0 {
@@ -206,15 +207,15 @@ func (bot *Settings) getTime(location string) (string, error) {
 }
 
 func (bot *Settings) getNewYear(location string) (string, error) {
-	bot.IRC.Info("Querying location: " + location)
+	bot.irc.Info("Querying location: " + location)
 	data, err := NominatimGetter(bot.getNominatimReqURL(&location))
 	if err != nil {
-		bot.IRC.Warn("Nominatim error: " + err.Error())
+		bot.irc.Warn("Nominatim error: " + err.Error())
 		return "", err
 	}
 	var res NominatimResults
 	if err = json.Unmarshal(data, &res); err != nil {
-		bot.IRC.Warn("Nominatim error: " + err.Error())
+		bot.irc.Warn("Nominatim error: " + err.Error())
 		return "", err
 	}
 	if len(res) == 0 {
@@ -240,6 +241,7 @@ func (bot *Settings) getNewYear(location string) (string, error) {
 		const newYearFutureMsg = "New Year in %s will happen in %s"
 		return fmt.Sprintf(newYearFutureMsg, address, roundDuration(humandur)), nil
 	}
+	// TODO: write a wrapper for durafmt
 	humandur := durafmt.Parse(timeNow().UTC().Add(offset).Sub(target))
 	const newYearPastMsg = "New Year in %s happened %s ago"
 	return fmt.Sprintf(newYearPastMsg, address, roundDuration(humandur)), nil
