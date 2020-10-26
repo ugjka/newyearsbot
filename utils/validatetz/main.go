@@ -84,7 +84,7 @@ func getTimeZone(loc string) (float64, error) {
 	var data []byte
 	var err error
 	time.Sleep(time.Second * 2)
-	data, err = nyb.NominatimGetter(*ircNominatim + nyb.NominatimEndpoint + maps.Encode())
+	data, err = nyb.NominatimFetcher(*ircNominatim + nyb.NominatimEndpoint + maps.Encode())
 	if err != nil {
 		return 0, err
 	}
@@ -107,11 +107,11 @@ func getTimeZone(loc string) (float64, error) {
 	if err != nil {
 		return 0, err
 	}
-	offset := getOffset(target, zone)
+	offset := zoneOffset(target, zone)
 	return float64(offset) / 60 / 60, nil
 }
 
-func getOffset(target time.Time, zone *time.Location) int {
+func zoneOffset(target time.Time, zone *time.Location) int {
 	_, offset := time.Date(target.Year(), target.Month(), target.Day(),
 		target.Hour(), target.Minute(), target.Second(),
 		target.Nanosecond(), zone).Zone()

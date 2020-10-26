@@ -47,7 +47,7 @@ func main() {
 	}
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
-		result, err := getLocationInfo(scanner.Text())
+		result, err := locationInfo(scanner.Text())
 		if err == nil {
 			fmt.Printf("%s\n", result)
 		} else {
@@ -56,7 +56,7 @@ func main() {
 	}
 }
 
-func getLocationInfo(loc string) (string, error) {
+func locationInfo(loc string) (string, error) {
 	maps := url.Values{}
 	maps.Add("q", loc)
 	maps.Add("format", "json")
@@ -65,7 +65,7 @@ func getLocationInfo(loc string) (string, error) {
 	maps.Add("email", *email)
 	var data []byte
 	var err error
-	data, err = nyb.NominatimGetter(*ircNominatim + nyb.NominatimEndpoint + maps.Encode())
+	data, err = nyb.NominatimFetcher(*ircNominatim + nyb.NominatimEndpoint + maps.Encode())
 	if err != nil {
 		return "", err
 	}
@@ -91,11 +91,11 @@ func getLocationInfo(loc string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	offset := getOffset(target, zone)
+	offset := zoneOffset(target, zone)
 	return fmt.Sprintf("%s, Offset %v, zone: %s, time now: %s, tz dur %s", mapj[0].DisplayName, float64(offset)/60/60, zone, time.Now().In(zone), lookup), nil
 }
 
-func getOffset(target time.Time, zone *time.Location) int {
+func zoneOffset(target time.Time, zone *time.Location) int {
 	_, offset := time.Date(target.Year(), target.Month(), target.Day(),
 		target.Hour(), target.Minute(), target.Second(),
 		target.Nanosecond(), zone).Zone()

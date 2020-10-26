@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hako/durafmt"
 	kitty "github.com/ugjka/kittybot"
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
@@ -63,9 +62,9 @@ func (bot *Settings) addTriggers() {
 				b.Reply(m, fmt.Sprintf("No more next, %d is here AoE", target.Year()))
 				return
 			}
-			humandur := durafmt.Parse(target.Sub(timeNow().UTC().Add(dur)))
+			h := humanDur(target.Sub(timeNow().UTC().Add(dur)))
 			b.Reply(m, fmt.Sprintf("Next New Year in %s in %s",
-				roundDuration(humandur), bot.next))
+				h, bot.next))
 		},
 	})
 	//Trigger for !previous
@@ -77,12 +76,12 @@ func (bot *Settings) addTriggers() {
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying previous...")
 			dur := time.Minute * time.Duration(bot.previous.Offset*60)
-			humandur := durafmt.Parse(timeNow().UTC().Add(dur).Sub(target))
+			h := humanDur(timeNow().UTC().Add(dur).Sub(target))
 			if bot.previous.Offset == -12 {
-				humandur = durafmt.Parse(timeNow().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
+				h = humanDur(timeNow().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
 			}
 			b.Reply(m, fmt.Sprintf("Previous New Year %s ago in %s",
-				roundDuration(humandur), bot.previous))
+				h, bot.previous))
 		},
 	})
 	//Trigger for !remaining
@@ -108,7 +107,7 @@ func (bot *Settings) addTriggers() {
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying time...")
-			result, err := bot.getTime(normalize(m.Content)[len(bot.Prefix)+len("time")+1:])
+			result, err := bot.time(normalize(m.Content)[len(bot.Prefix)+len("time")+1:])
 			if err == errNoZone || err == errNoPlace {
 				b.Warn("Query error: " + err.Error())
 				b.Reply(m, err.Error())
@@ -142,7 +141,7 @@ func (bot *Settings) addTriggers() {
 				strings.HasPrefix(normalize(m.Content), bot.Prefix+"hny ")
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
-			result, err := bot.getNewYear(normalize(m.Content)[len(bot.Prefix)+len("hny")+1:])
+			result, err := bot.newYear(normalize(m.Content)[len(bot.Prefix)+len("hny")+1:])
 			if err == errNoZone || err == errNoPlace {
 				b.Warn("Query error: " + err.Error())
 				b.Reply(m, err.Error())
@@ -163,8 +162,7 @@ var (
 	errNoPlace = errors.New("Couldn't find that place")
 )
 
-// TODO: streamline the nominatim stuff
-func (bot *Settings) getNominatimReqURL(location *string) string {
+func (bot *Settings) nominatimRequest(location *string) string {
 	maps := url.Values{}
 	maps.Add("q", *location)
 	maps.Add("format", "json")
@@ -174,9 +172,9 @@ func (bot *Settings) getNominatimReqURL(location *string) string {
 	return bot.Nominatim + NominatimEndpoint + maps.Encode()
 }
 
-func (bot *Settings) getTime(location string) (string, error) {
+func (bot *Settings) time(location string) (string, error) {
 	bot.irc.Info("Querying location: " + location)
-	data, err := NominatimGetter(bot.getNominatimReqURL(&location))
+	data, err := NominatimFetcher(bot.nominatimRequest(&location))
 	if err != nil {
 		bot.irc.Warn("Nominatim error: " + err.Error())
 		return "", err
@@ -206,9 +204,9 @@ func (bot *Settings) getTime(location string) (string, error) {
 	return msg, nil
 }
 
-func (bot *Settings) getNewYear(location string) (string, error) {
+func (bot *Settings) newYear(location string) (string, error) {
 	bot.irc.Info("Querying location: " + location)
-	data, err := NominatimGetter(bot.getNominatimReqURL(&location))
+	data, err := NominatimFetcher(bot.nominatimRequest(&location))
 	if err != nil {
 		bot.irc.Warn("Nominatim error: " + err.Error())
 		return "", err
@@ -233,33 +231,16 @@ func (bot *Settings) getNewYear(location string) (string, error) {
 	if err != nil {
 		return "", errNoZone
 	}
-	offset := time.Second * time.Duration(getOffset(target, zone))
+	offset := time.Second * time.Duration(zoneOffset(target, zone))
 	address := res[0].DisplayName
 
 	if timeNow().UTC().Add(offset).Before(target) {
-		humandur := durafmt.Parse(target.Sub(timeNow().UTC().Add(offset)))
+		h := humanDur(target.Sub(timeNow().UTC().Add(offset)))
 		const newYearFutureMsg = "New Year in %s will happen in %s"
-		return fmt.Sprintf(newYearFutureMsg, address, roundDuration(humandur)), nil
+		return fmt.Sprintf(newYearFutureMsg, address, h), nil
 	}
-	// TODO: write a wrapper for durafmt
-	humandur := durafmt.Parse(timeNow().UTC().Add(offset).Sub(target))
-	const newYearPastMsg = "New Year in %s happened %s ago"
-	return fmt.Sprintf(newYearPastMsg, address, roundDuration(humandur)), nil
-}
 
-func normalize(s string) string {
-	s = strings.TrimSpace(s)
-	s = strings.ToLower(s)
-	split := strings.Split(s, " ")
-	s = ""
-	for i, w := range split {
-		if w == "" {
-			continue
-		}
-		s += w
-		if i != len(split)-1 {
-			s += " "
-		}
-	}
-	return s
+	h := humanDur(timeNow().UTC().Add(offset).Sub(target))
+	const newYearPastMsg = "New Year in %s happened %s ago"
+	return fmt.Sprintf(newYearPastMsg, address, h), nil
 }

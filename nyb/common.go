@@ -165,8 +165,8 @@ var nominatim = struct {
 	cache: make(map[string][]byte),
 }
 
-//NominatimGetter make an api request
-func NominatimGetter(url string) (data []byte, err error) {
+//NominatimFetcher make an api request
+func NominatimFetcher(url string) (data []byte, err error) {
 	nominatim.RLock()
 	if v, ok := nominatim.cache[url]; ok {
 		nominatim.RUnlock()

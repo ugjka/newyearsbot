@@ -6,7 +6,6 @@ import (
 	"sort"
 	"time"
 
-	"github.com/hako/durafmt"
 	kitty "github.com/ugjka/kittybot"
 	log "gopkg.in/inconshreveable/log15.v2"
 )
@@ -110,9 +109,9 @@ func (bot *Settings) loopTimeZones() {
 		if timeNow().UTC().Add(dur).Before(target) {
 			time.Sleep(time.Second * 2)
 			irc.Info(fmt.Sprintf("Zone pending: %.2f", zones[i].Offset))
-			humandur := durafmt.Parse(target.Sub(timeNow().UTC().Add(dur)))
+			h := humanDur(target.Sub(timeNow().UTC().Add(dur)))
 			const nextYearAnnounceMsg = "Next New Year in %s in %s"
-			msg := fmt.Sprintf(nextYearAnnounceMsg, roundDuration(humandur), zones[i])
+			msg := fmt.Sprintf(nextYearAnnounceMsg, h, zones[i])
 			help := fmt.Sprintf(helpMsg, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix)
 			for _, ch := range irc.Channels {
 				irc.Msg(ch, msg)
