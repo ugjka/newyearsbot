@@ -128,6 +128,9 @@ type NominatimResult struct {
 	DisplayName string `json:"Display_name"`
 }
 
+//NominatimResults ...
+type NominatimResults []NominatimResult
+
 //UnmarshalJSON ...
 func (n *NominatimResult) UnmarshalJSON(data []byte) (err error) {
 	v := struct {
@@ -150,9 +153,6 @@ func (n *NominatimResult) UnmarshalJSON(data []byte) (err error) {
 	n.DisplayName = v.DisplayName
 	return
 }
-
-//NominatimResults ...
-type NominatimResults []NominatimResult
 
 //cache and client
 var nominatim = struct {
