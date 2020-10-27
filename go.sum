@@ -27,8 +27,8 @@ github.com/mattn/go-isatty v0.0.12/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Ky
 github.com/rogpeppe/go-internal v1.5.2/go.mod h1:xXDCJY+GAPziupqXw64V24skbSoqbTEfhy4qGm1nDQc=
 github.com/ugjka/ircmsg v0.0.3 h1:/yyB8HJm/y+UgA5aUJzVg6K4MqLa4PiEE8dIoQSHlL4=
 github.com/ugjka/ircmsg v0.0.3/go.mod h1:aAhyU2onRMc8CvDO4QDK/0VMKQBh4riIt2GnwupgTlE=
-github.com/ugjka/kittybot v0.0.35 h1:4RPIWgNz4OusXMxc5PFtQnhP3IxP6QuOvrowRQmcjO8=
-github.com/ugjka/kittybot v0.0.35/go.mod h1:mxm24HTbi8Ggr/MovTUFm4veM0XkzYMXMsNxLZp27Vk=
+github.com/ugjka/kittybot v0.0.36 h1:CSCmbRX1eV0Ahz83RpZOvDdxfHtntrQ+BmOFgSS8FkA=
+github.com/ugjka/kittybot v0.0.36/go.mod h1:mxm24HTbi8Ggr/MovTUFm4veM0XkzYMXMsNxLZp27Vk=
 golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 golang.org/x/sys v0.0.0-20191026070338-33540a1f6037/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20200116001909-b77594299b42/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
