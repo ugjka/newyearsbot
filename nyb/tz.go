@@ -5,7 +5,7 @@ var Zones = []byte(`[
   {
     "countries": [
       {
-        "name": "United States of America (Minor Outlying Islands)",
+        "name": "United States of America",
         "cities": [
           "Baker Island",
           "Howland Island"
@@ -1664,6 +1664,12 @@ var Zones = []byte(`[
   {
     "countries": [
       {
+        "name": "France",
+        "cities": [
+          "Wallis and Futuna"
+        ]
+      },
+      {
         "name": "Kiribati",
         "cities": [
           "Gilbert Islands"
@@ -1696,15 +1702,9 @@ var Zones = []byte(`[
         "cities": []
       },
       {
-        "name": "United States of America (Minor Outlying Islands)",
+        "name": "United States of America",
         "cities": [
           "Wake Island"
-        ]
-      },
-      {
-        "name": "Wallis and Futuna",
-        "cities": [
-          "Mata-Utu"
         ]
       }
     ],
