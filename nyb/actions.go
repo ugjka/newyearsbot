@@ -99,8 +99,8 @@ func (bot *Settings) addTriggers() {
 			if bot.remaining == 1 {
 				plural = ""
 			}
-			pct := (len(bot.zones) - bot.remaining) * 100 / (len(bot.zones) * 100)
-			b.Reply(m, fmt.Sprintf("%d timezone%s remaining. %d%% are in the new year", bot.remaining, plural, pct))
+			pct := ((float64(len(bot.zones)) - float64(bot.remaining)) / float64(len(bot.zones)) * 100)
+			b.Reply(m, fmt.Sprintf("%d timezone%s remaining. %.2f%% are in the new year", bot.remaining, plural, pct))
 		},
 	})
 
