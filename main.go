@@ -86,12 +86,6 @@ func main() {
 		flag.Usage()
 		return
 	}
-	nickReg := regexp.MustCompile("^\\A[a-z_\\-\\[\\]\\^{}|`][a-z0-9_\\-\\[\\]\\^{}|`]{1,15}\\z$")
-	if !nickReg.MatchString(*nick) {
-		red.Fprintln(os.Stderr, "error: invalid nick")
-		flag.Usage()
-		return
-	}
 	if *email == "" {
 		red.Fprintln(os.Stderr, "error: no email provided")
 		flag.Usage()
