@@ -1,6 +1,6 @@
 prefix=/usr/local
 PWD := $(shell pwd)
-GOPATH :=$(PWD)/deps
+GOPATH=/usr/local/go
 appname = newyearsbot
 
 all:
