@@ -1,10 +1,7 @@
 # NewYearsBot
 
-## ~~Preparing for 2022~~
-## It is dead, Jim, I no longer use IRC and I no longer care about holidays
-
-[![Build Status](https://travis-ci.org/ugjka/newyearsbot.svg?branch=master)](https://travis-ci.org/ugjka/newyearsbot)
-[![Go Report Card](https://goreportcard.com/badge/github.com/ugjka/newyearsbot/nyb)](https://goreportcard.com/report/github.com/ugjka/newyearsbot/nyb)
+## Preparing for 2023
+[![Go Report Card](https://goreportcard.com/badge/github.com/rhinosf1/newyearsbot/nyb)](https://goreportcard.com/report/github.com/rhinosf1/newyearsbot/nyb)
 
 New Year's Eve IRC party bot
 
