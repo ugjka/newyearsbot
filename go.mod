@@ -7,7 +7,7 @@ require (
 	github.com/ugjka/kittybot v0.0.39
 	golang.org/x/sys v0.0.0-20201110211018-35f3e6cf4a65 // indirect
 	gopkg.in/inconshreveable/log15.v2 v2.0.0-20200109203555-b30bc20e4fd1
-	gopkg.in/ugjka/go-tz.v2 v2.0.12
+	gopkg.in/ugjka/go-tz.v2 v2.0.13
 	mvdan.cc/xurls/v2 v2.2.0
 )
 
