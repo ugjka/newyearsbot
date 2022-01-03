@@ -9,7 +9,7 @@ import (
 	"sort"
 	"text/tabwriter"
 
-	"github.com/ugjka/newyearsbot/nyb"
+	"github.com/rhinosf1/newyearsbot/nyb"
 )
 
 func main() {

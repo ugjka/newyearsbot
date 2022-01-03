@@ -7,7 +7,7 @@ import (
 	"os"
 	"sort"
 
-	nyb "github.com/ugjka/newyearsbot/nyb"
+	nyb "github.com/rhinosf1/newyearsbot/nyb"
 )
 
 func main() {

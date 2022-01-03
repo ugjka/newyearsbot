@@ -9,7 +9,7 @@ import (
 
 	"github.com/badoux/checkmail"
 	"github.com/fatih/color"
-	"github.com/ugjka/newyearsbot/nyb"
+	"github.com/rhinosf1/newyearsbot/nyb"
 	log "gopkg.in/inconshreveable/log15.v2"
 	"mvdan.cc/xurls/v2"
 )

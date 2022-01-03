@@ -1,4 +1,4 @@
-module github.com/ugjka/newyearsbot
+module github.com/rhinosf1/newyearsbot
 
 require (
 	github.com/badoux/checkmail v1.2.1

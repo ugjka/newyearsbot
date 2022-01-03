@@ -12,7 +12,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/ugjka/newyearsbot/nyb"
+	"github.com/rhinosf1/newyearsbot/nyb"
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
