@@ -1,0 +1,36 @@
+name: 'Main CI Build'
+on: [push, pull_request_target]
+
+jobs:
+  test:
+    name: Test Build (Go ${{ matrix.go }} on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go: ['1.16', '1.17']
+        os: ['ubuntu-latest', 'macos-latest']
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v2.4.0
+        with:
+          submodules: true
+      - name: Setup Go ${{ matrix.go }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2.1.5
+        with:
+          go-version: ${{ matrix.go }} 
+      - name: Install packages
+        run: |
+          go get -u golang.org/x/lint/golint
+          go get -d -t ./nyb/...
+      - name: Show go version
+        run: |
+          go --version
+      - name: Run tests
+        run: |
+          go build ./nyb/...
+          go vet ./nyb/...
+          golint -set_exit_status ./nyb/...
+          go test ./nyb/...
