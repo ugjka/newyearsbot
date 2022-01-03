@@ -27,7 +27,7 @@ jobs:
           go get -d -t ./nyb/...
       - name: Show go version
         run: |
-          go --version
+          go version
       - name: Run tests
         run: |
           go build ./nyb/...
