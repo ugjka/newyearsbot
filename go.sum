@@ -22,12 +22,11 @@ github.com/mattn/go-isatty v0.0.12/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Ky
 github.com/mattn/go-isatty v0.0.14 h1:yVuAays6BHfxijgZPzw+3Zlu5yQgKGP2/hcQbHb7S9Y=
 github.com/mattn/go-isatty v0.0.14/go.mod h1:7GGIvUiUoEMVVmxf/4nioHXj79iQHKdU27kJ6hsGG94=
 github.com/pkg/diff v0.0.0-20210226163009-20ebb0f2a09e/go.mod h1:pJLUxLENpZxwdsKMEsNbx1VGcRFpLqf3715MtcvvzbA=
-github.com/rhinosf1/ircmsg v0.0.4/go.mod h1:Ug6OayKK8LCX7kLSO3YThdXPKh3syyM+kEdLWVURb0E=
-github.com/rhinosf1/kittybot v0.0.40 h1:QYykZMg7UpiPda607Z7HeMf2GA5ApXBIZGQm9AZzhZI=
-github.com/rhinosf1/kittybot v0.0.40/go.mod h1:ln9mplnKs5A3VYDOmaK2S6RZz6at3WawiaJQNlrJ/Y0=
+github.com/rhinosf1/ircmsg v0.0.5 h1:HptFC6+B8LS6bdx5ZO/zxjQaZJqEWXr+jyll1PY5OnI=
+github.com/rhinosf1/ircmsg v0.0.5/go.mod h1:Ug6OayKK8LCX7kLSO3YThdXPKh3syyM+kEdLWVURb0E=
+github.com/rhinosf1/kittybot v0.0.41 h1:C1a91Gt668V8OcF6PFysuK1ZnKzJWwBCvyx8QMtVw3I=
+github.com/rhinosf1/kittybot v0.0.41/go.mod h1:N5bK+kD0gvgmg7GuEYupNp92F/DZfY7MrNtfe4j+Dqk=
 github.com/rogpeppe/go-internal v1.8.0/go.mod h1:WmiCO8CzOY8rg0OYDC4/i/2WRWAB6poM+XZ2dLUbcbE=
-github.com/ugjka/ircmsg v0.0.3 h1:/yyB8HJm/y+UgA5aUJzVg6K4MqLa4PiEE8dIoQSHlL4=
-github.com/ugjka/ircmsg v0.0.3/go.mod h1:aAhyU2onRMc8CvDO4QDK/0VMKQBh4riIt2GnwupgTlE=
 golang.org/x/sys v0.0.0-20200116001909-b77594299b42/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20200223170610-d5e6a3e2c0ae/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20201022201747-fb209a7c41cd/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
