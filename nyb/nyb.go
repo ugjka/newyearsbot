@@ -6,7 +6,7 @@ import (
 	"sort"
 	"time"
 
-	kitty "github.com/ugjka/kittybot"
+	kitty "github.com/rhinosf1/kittybot"
 	log "gopkg.in/inconshreveable/log15.v2"
 )
 
