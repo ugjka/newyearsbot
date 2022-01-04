@@ -22,11 +22,12 @@ github.com/mattn/go-isatty v0.0.12/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Ky
 github.com/mattn/go-isatty v0.0.14 h1:yVuAays6BHfxijgZPzw+3Zlu5yQgKGP2/hcQbHb7S9Y=
 github.com/mattn/go-isatty v0.0.14/go.mod h1:7GGIvUiUoEMVVmxf/4nioHXj79iQHKdU27kJ6hsGG94=
 github.com/pkg/diff v0.0.0-20210226163009-20ebb0f2a09e/go.mod h1:pJLUxLENpZxwdsKMEsNbx1VGcRFpLqf3715MtcvvzbA=
+github.com/rhinosf1/ircmsg v0.0.4/go.mod h1:Ug6OayKK8LCX7kLSO3YThdXPKh3syyM+kEdLWVURb0E=
+github.com/rhinosf1/kittybot v0.0.40 h1:QYykZMg7UpiPda607Z7HeMf2GA5ApXBIZGQm9AZzhZI=
+github.com/rhinosf1/kittybot v0.0.40/go.mod h1:ln9mplnKs5A3VYDOmaK2S6RZz6at3WawiaJQNlrJ/Y0=
 github.com/rogpeppe/go-internal v1.8.0/go.mod h1:WmiCO8CzOY8rg0OYDC4/i/2WRWAB6poM+XZ2dLUbcbE=
 github.com/ugjka/ircmsg v0.0.3 h1:/yyB8HJm/y+UgA5aUJzVg6K4MqLa4PiEE8dIoQSHlL4=
 github.com/ugjka/ircmsg v0.0.3/go.mod h1:aAhyU2onRMc8CvDO4QDK/0VMKQBh4riIt2GnwupgTlE=
-github.com/rhinosf1/kittybot v0.0.40 h1:QYykZMg7UpiPda607Z7HeMf2GA5ApXBIZGQm9AZzhZI=
-github.com/rhinosf1/kittybot v0.0.40/go.mod h1:ln9mplnKs5A3VYDOmaK2S6RZz6at3WawiaJQNlrJ/Y0=
 golang.org/x/sys v0.0.0-20200116001909-b77594299b42/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20200223170610-d5e6a3e2c0ae/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20201022201747-fb209a7c41cd/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
@@ -36,7 +37,7 @@ gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127/go.mod h1:Co6ibVJAznAaIkqp8
 gopkg.in/errgo.v2 v2.1.0/go.mod h1:hNsd1EY+bozCKY1Ytp96fpM3vjJbqLJn88ws8XvfDNI=
 gopkg.in/inconshreveable/log15.v2 v2.0.0-20200109203555-b30bc20e4fd1 h1:iiHuQZCNgYPmFQxd3BBN/Nc5+dAwzZuq5y40s20oQw0=
 gopkg.in/inconshreveable/log15.v2 v2.0.0-20200109203555-b30bc20e4fd1/go.mod h1:aPpfJ7XW+gOuirDoZ8gHhLh3kZ1B08FtV2bbmy7Jv3s=
-gopkg.in/rhinosf1/go-tz.v2 v2.0.14 h1:qINe+KRaz7zGkoKBmpYWaMvkxjV8XtcESzs7LJ5Fw4A=
-gopkg.in/rhinosf1/go-tz.v2 v2.0.14/go.mod h1:HVGPe7sK1ZG1+p0I8P7dS8pDR5c5RIAHS//a2VGlVaQ=
+gopkg.in/rhinosf1/go-tz.v2 v2.0.15 h1:A2sdQQFAO1iedP7rPho0RKp6DJQbzTyEMOrGIxkC+u8=
+gopkg.in/rhinosf1/go-tz.v2 v2.0.15/go.mod h1:HVGPe7sK1ZG1+p0I8P7dS8pDR5c5RIAHS//a2VGlVaQ=
 mvdan.cc/xurls/v2 v2.3.0 h1:59Olnbt67UKpxF1EwVBopJvkSUBmgtb468E4GVWIZ1I=
 mvdan.cc/xurls/v2 v2.3.0/go.mod h1:AjuTy7gEiUArFMjgBBDU4SMxlfUYsRokpJQgNWOt3e4=
