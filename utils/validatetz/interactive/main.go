@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/rhinosf1/newyearsbot/nyb"
-	"gopkg.in/ugjka/go-tz.v2/tz"
+	"gopkg.in/rhinosf1/go-tz.v2/tz"
 )
 
 var email *string
