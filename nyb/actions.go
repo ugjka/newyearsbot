@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	kitty "github.com/ugjka/kittybot"
-	"gopkg.in/ugjka/go-tz.v2/tz"
+	kitty "github.com/rhinosf1/kittybot"
+	"gopkg.in/rhinosf1/go-tz.v2/tz"
 )
 
 const helpMsg = "COMMANDS: '%shny <location>', '%stime <location>', '%snext', '%sprevious', '%sremaining', '%shelp', '%ssource'"
