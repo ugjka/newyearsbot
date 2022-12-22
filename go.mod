@@ -10,4 +10,4 @@ require (
 	mvdan.cc/xurls/v2 v2.3.0
 )
 
-go 1.17.13
+go 1.17
