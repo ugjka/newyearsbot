@@ -26,7 +26,8 @@ github.com/rhinosf1/ircmsg v0.0.5 h1:HptFC6+B8LS6bdx5ZO/zxjQaZJqEWXr+jyll1PY5OnI
 github.com/rhinosf1/ircmsg v0.0.5/go.mod h1:Ug6OayKK8LCX7kLSO3YThdXPKh3syyM+kEdLWVURb0E=
 github.com/rhinosf1/kittybot v0.0.41 h1:C1a91Gt668V8OcF6PFysuK1ZnKzJWwBCvyx8QMtVw3I=
 github.com/rhinosf1/kittybot v0.0.41/go.mod h1:N5bK+kD0gvgmg7GuEYupNp92F/DZfY7MrNtfe4j+Dqk=
-github.com/rogpeppe/go-internal v1.8.0/go.mod h1:WmiCO8CzOY8rg0OYDC4/i/2WRWAB6poM+XZ2dLUbcbE=
+github.com/rogpeppe/go-internal v1.8.1/go.mod h1:JeRgkft04UBgHMgCIwADu4Pn6Mtm5d4nPKWu0nJ5d+o=
+golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 golang.org/x/sys v0.0.0-20200116001909-b77594299b42/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20200223170610-d5e6a3e2c0ae/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20201022201747-fb209a7c41cd/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
@@ -38,5 +39,5 @@ gopkg.in/inconshreveable/log15.v2 v2.0.0-20200109203555-b30bc20e4fd1 h1:iiHuQZCN
 gopkg.in/inconshreveable/log15.v2 v2.0.0-20200109203555-b30bc20e4fd1/go.mod h1:aPpfJ7XW+gOuirDoZ8gHhLh3kZ1B08FtV2bbmy7Jv3s=
 gopkg.in/rhinosf1/go-tz.v2 v2.0.15 h1:A2sdQQFAO1iedP7rPho0RKp6DJQbzTyEMOrGIxkC+u8=
 gopkg.in/rhinosf1/go-tz.v2 v2.0.15/go.mod h1:HVGPe7sK1ZG1+p0I8P7dS8pDR5c5RIAHS//a2VGlVaQ=
-mvdan.cc/xurls/v2 v2.3.0 h1:59Olnbt67UKpxF1EwVBopJvkSUBmgtb468E4GVWIZ1I=
-mvdan.cc/xurls/v2 v2.3.0/go.mod h1:AjuTy7gEiUArFMjgBBDU4SMxlfUYsRokpJQgNWOt3e4=
+mvdan.cc/xurls/v2 v2.4.0 h1:tzxjVAj+wSBmDcF6zBB7/myTy3gX9xvi8Tyr28AuQgc=
+mvdan.cc/xurls/v2 v2.4.0/go.mod h1:+GEjq9uNjqs8LQfM9nVnM8rff0OQ5Iash5rzX+N1CSg=
