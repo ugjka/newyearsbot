@@ -18,7 +18,7 @@ jobs:
         with:
           submodules: true
       - name: Setup Go ${{ matrix.go }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v3.5.0
         with:
           go-version: ${{ matrix.go }} 
       - name: Install packages
