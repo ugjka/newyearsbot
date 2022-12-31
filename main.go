@@ -44,7 +44,7 @@ CMD Options:
 func main() {
 
 	//Flags
-	nick := flag.String("nick", "", "irc nick")
+	nick := flag.String("nick", "NewYearBot", "irc nick")
 	email := flag.String("email", "", "nominatim email")
 	server := flag.String("server", "irc.libera.chat:6697", "irc server")
 	password := flag.String("password", "", "irc password")
@@ -83,12 +83,6 @@ func main() {
 	}
 	if len(*nick) > 16 {
 		red.Fprintln(os.Stderr, "error: nick too long")
-		flag.Usage()
-		return
-	}
-	nickReg := regexp.MustCompile("^\\A[a-z_\\-\\[\\]\\^{}|`][a-z0-9_\\-\\[\\]\\^{}|`]{1,15}\\z$")
-	if !nickReg.MatchString(*nick) {
-		red.Fprintln(os.Stderr, "error: invalid nick")
 		flag.Usage()
 		return
 	}

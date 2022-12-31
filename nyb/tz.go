@@ -1322,14 +1322,14 @@ var Zones = []byte(`[
   {
     "countries": [
       {
-        "name": "Burma",
+        "name": "Myanmar",
         "cities": [
           "Naypyidaw",
           "Yangon"
         ]
       },
       {
-        "name": "Cocos [Keeling,] Islands",
+        "name": "Cocos (Keeling) Islands",
         "cities": []
       }
     ],

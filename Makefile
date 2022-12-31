@@ -1,12 +1,12 @@
 prefix=/usr/local
 PWD := $(shell pwd)
-GOPATH :=$(PWD)/deps
+GOPATH=/usr/local/go/bin/go
 appname = newyearsbot
 
 all:
 	GOPATH=$(GOPATH) go build -v
 install:
-	install -Dm755 $(appname) $(prefix)/bin/$(appname)
+	install -Dm755 $(appname) /home/rhinos/newyearsbot
 	install -Dm644 LICENSE "$(prefix)/share/licenses/$(appname)/LICENSE"
 
 uninstall:

@@ -19,7 +19,7 @@ var email *string
 var nominatim *string
 var ext *string
 
-//Set target year
+// Set target year
 var target = func() time.Time {
 	tmp := time.Now().UTC()
 	if tmp.Month() == time.January && tmp.Day() < 2 {

@@ -1,5 +1,5 @@
-//Util for sorting the TZ json
-//To make it neat and nice after manual edits
+// Util for sorting the TZ json
+// To make it neat and nice after manual edits
 package main
 
 import (
@@ -28,11 +28,11 @@ func main() {
 	enc.Encode(v)
 }
 
-//Cities ...
+// Cities ...
 type Cities []string
 
-//TZ holds infor for Time Zone
-//TZ holds info for Time Zone
+// TZ holds infor for Time Zone
+// TZ holds info for Time Zone
 type TZ struct {
 	Countries []struct {
 		Name   string `json:"name"`
@@ -41,7 +41,7 @@ type TZ struct {
 	Offset float64 `json:"offset"`
 }
 
-//TZS is a slice of TZ
+// TZS is a slice of TZ
 type TZS []TZ
 
 func (t Cities) Len() int {
