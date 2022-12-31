@@ -1297,10 +1297,6 @@ var Zones = []byte(`[
         ]
       },
       {
-        "name": "British Indian Ocean Territory",
-        "cities": []
-      },
-      {
         "name": "Kazakhstan",
         "cities": [
           "Almaty",
