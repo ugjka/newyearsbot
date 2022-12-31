@@ -28,7 +28,7 @@ Announces new years as they happen in each timezone
 CMD Options:
 [mandatory]
 -channels	comma separated list of channels eg. "#test, #test2"
-			channel key can be specifed after ":" e.g #channelname:channelkey
+		channel key can be specifed after ":" e.g #channelname:channelkey
 -nick		irc nick
 -email		nominatim email
 
