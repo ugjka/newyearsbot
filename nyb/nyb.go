@@ -51,7 +51,7 @@ func (bot *Settings) LogLvl(Lvl log.Lvl) {
 
 // Start starts the bot
 func (bot *Settings) Start() {
-	bot.now = time.Now()
+	bot.now = time.Now().Add(-time.Second)
 	irc := bot.irc
 	irc.Info("Starting the bot...")
 
