@@ -121,15 +121,13 @@ func (bot *Settings) loopTimeZones() {
 			}
 			//Wait till Target in Timezone
 			timer := NewTimer(target.Sub(timeNow().UTC().Add(dur)))
-			select {
-			case <-timer.C:
-				timer.Stop()
-				msg = "Happy New Year in " + zones[i].String()
-				for _, ch := range irc.Channels {
-					irc.Msg(ch, msg)
-				}
-				irc.Info(fmt.Sprintf("Announcing zone: %.2f", zones[i].Offset))
+			<-timer.C
+			timer.Stop()
+			msg = "Happy New Year in " + zones[i].String()
+			for _, ch := range irc.Channels {
+				irc.Msg(ch, msg)
 			}
+			irc.Info(fmt.Sprintf("Announcing zone: %.2f", zones[i].Offset))
 		}
 	}
 }

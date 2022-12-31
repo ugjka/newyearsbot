@@ -199,7 +199,7 @@ func (bot *Settings) addTriggers() {
 
 var (
 	errNoZone  = errors.New("couldn't get timezone for that location")
-	errNoPlace = errors.New("Couldn't find that place")
+	errNoPlace = errors.New("couldn't find that place")
 )
 
 func (bot *Settings) time(location string) (string, error) {
