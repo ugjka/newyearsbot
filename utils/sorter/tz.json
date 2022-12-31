@@ -1,7 +1,4 @@
-package nyb
-
-// Zones contains time zone information in JSON format
-var Zones = []byte(`[
+[
   {
     "countries": [
       {
@@ -1761,4 +1758,4 @@ var Zones = []byte(`[
     ],
     "offset": 14
   }
-]`)
+]

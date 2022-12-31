@@ -10,7 +10,7 @@ import (
 	log "gopkg.in/inconshreveable/log15.v2"
 )
 
-//Settings for the bot
+// Settings for the bot
 type Settings struct {
 	Nick      string
 	Channels  []string
@@ -29,9 +29,10 @@ type extra struct {
 	previous  TZ
 	next      TZ
 	remaining int
+	now       time.Time
 }
 
-//New creates a new bot
+// New creates a new bot
 func New(s *Settings) *Settings {
 	s.irc = kitty.NewBot(s.Server, s.Nick,
 		func(irc *kitty.Bot) {
@@ -48,8 +49,9 @@ func (bot *Settings) LogLvl(Lvl log.Lvl) {
 	bot.irc.Logger.SetHandler(logHandler)
 }
 
-//Start starts the bot
+// Start starts the bot
 func (bot *Settings) Start() {
+	bot.now = time.Now()
 	irc := bot.irc
 	irc.Info("Starting the bot...")
 

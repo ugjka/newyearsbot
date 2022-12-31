@@ -1,4 +1,4 @@
-//New Year's Eve IRC party bot
+// New Year's Eve IRC party bot
 package main
 
 import (
@@ -14,7 +14,7 @@ import (
 	"mvdan.cc/xurls/v2"
 )
 
-//Custom flag for IRC channels
+// Custom flag for IRC channels
 var channels nyb.Channels
 
 func init() {
@@ -46,7 +46,7 @@ func main() {
 	//Flags
 	nick := flag.String("nick", "", "irc nick")
 	email := flag.String("email", "", "nominatim email")
-	server := flag.String("server", "chat.freenode.net:6697", "irc server")
+	server := flag.String("server", "irc.libera.chat:6697", "irc server")
 	password := flag.String("password", "", "irc password")
 	prefix := flag.String("prefix", "!", "command prefix")
 	ssl := flag.Bool("ssl", true, "use ssl for irc")
