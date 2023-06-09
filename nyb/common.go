@@ -44,6 +44,35 @@ func (t TZ) String() (x string) {
 	return
 }
 
+func (t TZ) Split(max int) (x string) {
+	var prev int
+	var total int = max
+	for i, country := range t.Countries {
+		prev = len(x)
+		x += country.Name
+		for i, city := range country.Cities {
+			if i == 0 {
+				x += " ("
+			}
+			x += city
+			if i < len(country.Cities)-1 {
+				x += ", "
+			}
+			if i == len(country.Cities)-1 {
+				x += ")"
+			}
+		}
+		if len(x) > total {
+			x = x[:prev-1] + "\n" + x[prev:]
+			total += max
+		}
+		if i < len(t.Countries)-1 {
+			x += ", "
+		}
+	}
+	return
+}
+
 // TZS is a slice of timezones
 type TZS []TZ
 

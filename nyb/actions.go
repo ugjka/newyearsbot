@@ -64,9 +64,12 @@ func (bot *Settings) addTriggers() {
 				return
 			}
 			hdur := humanDur(target.Sub(timeNow().UTC().Add(dur)))
-
-			b.Reply(m, fmt.Sprintf("Next New Year in %s in %s",
-				hdur, bot.next))
+			const next = "Next New Year in "
+			max := b.ReplyMaxSize(m)
+			max -= len(next)
+			max -= len(hdur)
+			max -= 4
+			b.Reply(m, next+hdur+" in "+bot.next.Split(max))
 		},
 	})
 
@@ -83,8 +86,12 @@ func (bot *Settings) addTriggers() {
 			if bot.previous.Offset == -12 {
 				hdur = humanDur(timeNow().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
 			}
-			b.Reply(m, fmt.Sprintf("Previous New Year %s ago in %s",
-				hdur, bot.previous))
+			const prev = "Previous New Year "
+			max := b.ReplyMaxSize(m)
+			max -= len(prev)
+			max -= len(hdur)
+			max -= 8
+			b.Reply(m, prev+hdur+" ago in "+bot.previous.Split(max))
 		},
 	})
 

@@ -61,6 +61,8 @@ func (bot *Settings) Start() {
 	go bot.ircControl()
 
 	<-irc.Joined
+	// Neet to wait a bit for prefix
+	time.Sleep(time.Second * 5)
 	irc.Info("Got start...")
 
 	if err := bot.decodeZones(Zones); err != nil {
@@ -114,20 +116,25 @@ func (bot *Settings) loopTimeZones() {
 			time.Sleep(time.Second * 2)
 			irc.Info(fmt.Sprintf("Zone pending: %.2f", zones[i].Offset))
 			hdur := humanDur(target.Sub(timeNow().UTC().Add(dur)))
-			const nextYearAnnounceMsg = "Next New Year in %s in %s"
-			msg := fmt.Sprintf(nextYearAnnounceMsg, hdur, zones[i])
+			const next = "Next New Year in "
 			help := fmt.Sprintf(helpMsg, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix)
 			for _, ch := range irc.Channels {
-				irc.Msg(ch, msg)
+				max := irc.MsgMaxSize(ch)
+				max -= len(next)
+				max -= len(hdur)
+				max -= 4
+				irc.Msg(ch, next+hdur+" in "+zones[i].Split(max))
 				irc.Msg(ch, help)
 			}
 			//Wait till Target in Timezone
 			timer := NewTimer(target.Sub(timeNow().UTC().Add(dur)))
 			<-timer.C
 			timer.Stop()
-			msg = "Happy New Year in " + zones[i].String()
+			const happy = "Happy New Year in "
 			for _, ch := range irc.Channels {
-				irc.Msg(ch, msg)
+				max := irc.MsgMaxSize(ch)
+				max -= len(happy)
+				irc.Msg(ch, happy+zones[i].Split(max))
 			}
 			irc.Info(fmt.Sprintf("Announcing zone: %.2f", zones[i].Offset))
 		}
