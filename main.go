@@ -3,7 +3,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"regexp"
 
@@ -34,10 +33,11 @@ CMD Options:
 
 [optional]
 -password	irc password
--server		irc server (default: chat.freenode.net:6697)
+-server		irc server (default: irc.libera.chat:6697)
 -prefix		command prefix (default: !)
 -ssl		use ssl for irc (default: true)
 -nominatim	nominatim server (default: http://nominatim.openstreetmap.org)
+-limit		rate limit bot replies (default: true)
 -debug		debug irc traffic
 
 `
@@ -53,10 +53,11 @@ func main() {
 	ssl := flag.Bool("ssl", true, "use ssl for irc")
 	nominatim := flag.String("nominatim", "http://nominatim.openstreetmap.org", "nominatim server")
 	debug := flag.Bool("debug", false, "debug irc traffic")
+	limit := flag.Bool("limit", true, "rate limit bot replies")
 
 	green := color.New(color.FgGreen)
 	flag.Usage = func() {
-		green.Fprint(os.Stderr, fmt.Sprintf(usage))
+		green.Fprint(os.Stderr, usage)
 	}
 	flag.Parse()
 
@@ -69,7 +70,7 @@ func main() {
 		flag.Usage()
 		return
 	}
-	channelReg := regexp.MustCompile("^([#&][^\\x07\\x2C\\s]{0,200})$")
+	channelReg := regexp.MustCompile(`^([#&][^\x07\x2C\s]{0,200})$`)
 	for _, ch := range channels {
 		if !channelReg.MatchString(ch) {
 			red.Fprintf(os.Stderr, "error: invalid channel name: %s\n", ch)
@@ -103,7 +104,7 @@ func main() {
 		flag.Usage()
 		return
 	}
-	serverReg := regexp.MustCompile("^\\S+:\\d+$")
+	serverReg := regexp.MustCompile(`^\S+:\d+$`)
 	if !serverReg.MatchString(*server) {
 		red.Fprintln(os.Stderr, "error: invalid irc server address")
 		flag.Usage()
@@ -114,7 +115,7 @@ func main() {
 		flag.Usage()
 		return
 	}
-	prefixReg := regexp.MustCompile("^\\W+$")
+	prefixReg := regexp.MustCompile(`^\W+$`)
 	if !prefixReg.MatchString(*prefix) {
 		red.Fprintln(os.Stderr, "error: prefix must be non-alphanumeric")
 		flag.Usage()
@@ -140,6 +141,7 @@ func main() {
 		Prefix:    *prefix,
 		Email:     *email,
 		Nominatim: *nominatim,
+		Limit:     *limit,
 	})
 	if *debug {
 		bot.LogLvl(log.LvlDebug)

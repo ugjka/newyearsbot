@@ -20,6 +20,7 @@ type Settings struct {
 	Prefix    string
 	Email     string
 	Nominatim string
+	Limit     bool
 	irc       *kitty.Bot
 	extra
 }
@@ -39,6 +40,7 @@ func New(s *Settings) *Settings {
 			irc.Channels = s.Channels
 			irc.Password = s.Password
 			irc.SSL = s.SSL
+			irc.LimitReplies = s.Limit
 		})
 	return s
 }

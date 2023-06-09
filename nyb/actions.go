@@ -13,14 +13,6 @@ import (
 
 const helpMsg = "COMMANDS: '%shny <location>', '%stime <location>', '%snext', '%sprevious', '%sremaining', '%shelp', '%ssource'"
 
-func (bot *Settings) throttle() bool {
-	if time.Since(bot.now) < time.Second {
-		return false
-	}
-	bot.now = time.Now()
-	return true
-}
-
 func (bot *Settings) addTriggers() {
 	irc := bot.irc
 
@@ -41,9 +33,7 @@ func (bot *Settings) addTriggers() {
 				strings.HasPrefix(normalize(m.Content), bot.Prefix+"source")
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
-			if bot.throttle() {
-				b.Reply(m, "https://github.com/ugjka/newyearsbot")
-			}
+			b.Reply(m, "https://github.com/ugjka/newyearsbot")
 		},
 	})
 
@@ -56,9 +46,7 @@ func (bot *Settings) addTriggers() {
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying help...")
-			if bot.throttle() {
-				b.Reply(m, fmt.Sprintf(helpMsg, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix))
-			}
+			b.Reply(m, fmt.Sprintf(helpMsg, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix))
 		},
 	})
 
@@ -72,16 +60,13 @@ func (bot *Settings) addTriggers() {
 			b.Info("Querying next...")
 			dur := time.Minute * time.Duration(bot.next.Offset*60)
 			if timeNow().UTC().Add(dur).After(target) {
-				if bot.throttle() {
-					b.Reply(m, fmt.Sprintf("No more next, %d is here AoE", target.Year()))
-				}
+				b.Reply(m, fmt.Sprintf("No more next, %d is here AoE", target.Year()))
 				return
 			}
 			hdur := humanDur(target.Sub(timeNow().UTC().Add(dur)))
-			if bot.throttle() {
-				b.Reply(m, fmt.Sprintf("Next New Year in %s in %s",
-					hdur, bot.next))
-			}
+
+			b.Reply(m, fmt.Sprintf("Next New Year in %s in %s",
+				hdur, bot.next))
 		},
 	})
 
@@ -98,10 +83,8 @@ func (bot *Settings) addTriggers() {
 			if bot.previous.Offset == -12 {
 				hdur = humanDur(timeNow().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
 			}
-			if bot.throttle() {
-				b.Reply(m, fmt.Sprintf("Previous New Year %s ago in %s",
-					hdur, bot.previous))
-			}
+			b.Reply(m, fmt.Sprintf("Previous New Year %s ago in %s",
+				hdur, bot.previous))
 		},
 	})
 
@@ -118,9 +101,7 @@ func (bot *Settings) addTriggers() {
 				plural = ""
 			}
 			pct := ((float64(len(bot.zones)) - float64(bot.remaining)) / float64(len(bot.zones)) * 100)
-			if bot.throttle() {
-				b.Reply(m, fmt.Sprintf("%d timezone%s remaining. %.2f%% are in the new year", bot.remaining, plural, pct))
-			}
+			b.Reply(m, fmt.Sprintf("%d timezone%s remaining. %.2f%% are in the new year", bot.remaining, plural, pct))
 		},
 	})
 
@@ -135,21 +116,15 @@ func (bot *Settings) addTriggers() {
 			result, err := bot.time(normalize(m.Content)[len(bot.Prefix)+len("time")+1:])
 			if err == errNoZone || err == errNoPlace {
 				b.Warn("Query error: " + err.Error())
-				if bot.throttle() {
-					b.Reply(m, err.Error())
-				}
+				b.Reply(m, err.Error())
 				return
 			}
 			if err != nil {
 				b.Warn("Query error: " + err.Error())
-				if bot.throttle() {
-					b.Reply(m, "Some error occurred!")
-				}
+				b.Reply(m, "Some error occurred!")
 				return
 			}
-			if bot.throttle() {
-				b.Reply(m, result)
-			}
+			b.Reply(m, result)
 		},
 	})
 
@@ -162,9 +137,7 @@ func (bot *Settings) addTriggers() {
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying time...")
 			result := "Time is " + time.Now().UTC().Format("Mon Jan 2 15:04:05 -0700 MST 2006")
-			if bot.throttle() {
-				b.Reply(m, result)
-			}
+			b.Reply(m, result)
 		},
 	})
 
@@ -178,21 +151,16 @@ func (bot *Settings) addTriggers() {
 			result, err := bot.newYear(normalize(m.Content)[len(bot.Prefix)+len("hny")+1:])
 			if err == errNoZone || err == errNoPlace {
 				b.Warn("Query error: " + err.Error())
-				if bot.throttle() {
-					b.Reply(m, err.Error())
-				}
+				b.Reply(m, err.Error())
 				return
 			}
 			if err != nil {
 				b.Warn("Query error: " + err.Error())
-				if bot.throttle() {
-					b.Reply(m, "Some error occurred!")
-				}
+				b.Reply(m, "Some error occurred!")
 				return
 			}
-			if bot.throttle() {
-				b.Reply(m, result)
-			}
+
+			b.Reply(m, result)
 		},
 	})
 }
