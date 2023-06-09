@@ -8,7 +8,7 @@ require (
 	github.com/ugjka/kittybot v0.0.56
 	golang.org/x/term v0.8.0 // indirect
 	gopkg.in/inconshreveable/log15.v2 v2.16.0
-	gopkg.in/ugjka/go-tz.v2 v2.0.14
+	gopkg.in/ugjka/go-tz.v2 v2.0.15
 	mvdan.cc/xurls/v2 v2.5.0
 )
 
