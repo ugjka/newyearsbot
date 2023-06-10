@@ -27,8 +27,8 @@ Posts New Years for each timezone when they happen
 - `!previous` previous new year
 - `!remaining` number of remaining timezones
 - `!hny <location>` get new year status for location
-- `!time <location>` get current time in location
-- `!time` UTC time
+- `!time <location>` get the current time in a location
+- `!time` UTC
 - `!help` show help
 
 The command prefix `!` can be changed using the -prefix flag
@@ -45,7 +45,7 @@ Arch linux PKGBUILD in archlinux folder
 
 ### Using make
 
-You need make, go, go-tools
+You need to have make, go, go-tools
 
 Build with `make`
 
