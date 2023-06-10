@@ -19,8 +19,8 @@ github.com/mattn/go-isatty v0.0.19/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D
 github.com/rogpeppe/go-internal v1.10.0/go.mod h1:UQnix2H7Ngw/k4C5ijL5+65zddjncjaFoBhdsK/akog=
 github.com/ugjka/ircmsg v0.0.3 h1:/yyB8HJm/y+UgA5aUJzVg6K4MqLa4PiEE8dIoQSHlL4=
 github.com/ugjka/ircmsg v0.0.3/go.mod h1:aAhyU2onRMc8CvDO4QDK/0VMKQBh4riIt2GnwupgTlE=
-github.com/ugjka/kittybot v0.0.56 h1:U3x70UUmxNqgI5+kPZFvFsSfqkQkVIOMG+AQVLtErw8=
-github.com/ugjka/kittybot v0.0.56/go.mod h1:o1SHY98L/IKkZy3/4+hBN7j9DrHR2Q9N5sMQX4REZEw=
+github.com/ugjka/kittybot v0.0.57 h1:IFIaE3h+/n0smKmDs4bI3kTl2gAoX8hx2EsTK8BdawQ=
+github.com/ugjka/kittybot v0.0.57/go.mod h1:o1SHY98L/IKkZy3/4+hBN7j9DrHR2Q9N5sMQX4REZEw=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
