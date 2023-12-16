@@ -35,9 +35,9 @@ CMD Options:
 -password	irc password
 -server		irc server (default: irc.libera.chat:6697)
 -prefix		command prefix (default: !)
--ssl		use ssl for irc (default: true)
+-nossl		disable ssl for irc
 -nominatim	nominatim server (default: http://nominatim.openstreetmap.org)
--limit		rate limit bot replies (default: true)
+-nolimit	disable rate limit bot replies
 -debug		debug irc traffic
 
 `
@@ -50,10 +50,10 @@ func main() {
 	server := flag.String("server", "irc.libera.chat:6697", "irc server")
 	password := flag.String("password", "", "irc password")
 	prefix := flag.String("prefix", "!", "command prefix")
-	ssl := flag.Bool("ssl", true, "use ssl for irc")
+	nossl := flag.Bool("nossl", false, "disable ssl for irc")
 	nominatim := flag.String("nominatim", "http://nominatim.openstreetmap.org", "nominatim server")
 	debug := flag.Bool("debug", false, "debug irc traffic")
-	limit := flag.Bool("limit", true, "rate limit bot replies")
+	nolimit := flag.Bool("nolimit", false, "disable limit bot replies.")
 
 	green := color.New(color.FgGreen)
 	flag.Usage = func() {
@@ -136,12 +136,12 @@ func main() {
 		Nick:      *nick,
 		Channels:  channels,
 		Server:    *server,
-		SSL:       *ssl,
+		SSL:       !*nossl,
 		Password:  *password,
 		Prefix:    *prefix,
 		Email:     *email,
 		Nominatim: *nominatim,
-		Limit:     *limit,
+		Limit:     !*nolimit,
 	})
 	if *debug {
 		bot.LogLvl(log.LvlDebug)
