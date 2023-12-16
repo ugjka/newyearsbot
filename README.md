@@ -1,6 +1,6 @@
 # NewYearsBot
 
-## Preparing for 2024
+## Happy 2024
 ## I'm doing it again for the greater good
 
 New Year's Eve IRC party bot
@@ -37,9 +37,11 @@ The command prefix `!` can be changed using the -prefix flag
 
 ## Installation
 
-### 2021 versions
+### 2024 versions
 
 Arch linux PKGBUILD in archlinux folder
+
+Prebuilt Linux binaries are available on the releases [page](https://github.com/ugjka/newyearsbot/releases)
 
 ### Using make
 
