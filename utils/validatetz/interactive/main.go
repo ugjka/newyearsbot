@@ -11,15 +11,15 @@ import (
 	"os"
 	"time"
 
-	"github.com/rhinosf1/newyearsbot/nyb"
-	"gopkg.in/rhinosf1/go-tz.v2/tz"
+	"github.com/ugjka/newyearsbot/nyb"
+	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
 var email *string
 var nominatim *string
 var ext *string
 
-//Set target year
+// Set target year
 var target = func() time.Time {
 	tmp := time.Now().UTC()
 	if tmp.Month() == time.January && tmp.Day() < 2 {

@@ -1,6 +1,6 @@
 package nyb
 
-//Zones contains time zone information in JSON format
+// Zones contains time zone information in JSON format
 var Zones = []byte(`[
   {
     "countries": [
@@ -158,7 +158,6 @@ var Zones = []byte(`[
       {
         "name": "Mexico",
         "cities": [
-          "Chihuahua",
           "Ciudad Juárez"
         ]
       },
@@ -454,7 +453,6 @@ var Zones = []byte(`[
         "cities": [
           "Grand Falls-Windsor",
           "Paradise (Newfoundland and Labrador)",
-          "St Johns",
           "Stephenville"
         ]
       }
@@ -506,12 +504,6 @@ var Zones = []byte(`[
         "cities": []
       },
       {
-        "name": "Greenland",
-        "cities": [
-          "Nuuk"
-        ]
-      },
-      {
         "name": "Paraguay",
         "cities": []
       },
@@ -536,6 +528,12 @@ var Zones = []byte(`[
         "name": "Brazil",
         "cities": [
           "Fernando de Noronha, Pernambuco"
+        ]
+      },
+      {
+        "name": "Greenland",
+        "cities": [
+          "Nuuk"
         ]
       },
       {
@@ -866,10 +864,6 @@ var Zones = []byte(`[
         "cities": []
       },
       {
-        "name": "Jordan",
-        "cities": []
-      },
-      {
         "name": "Latvia",
         "cities": []
       },
@@ -938,15 +932,17 @@ var Zones = []byte(`[
         ]
       },
       {
+        "name": "South Sudan",
+        "cities": [
+          "Juba"
+        ]
+      },
+      {
         "name": "Sudan",
         "cities": []
       },
       {
         "name": "Swaziland",
-        "cities": []
-      },
-      {
-        "name": "Syria",
         "cities": []
       },
       {
@@ -1009,6 +1005,10 @@ var Zones = []byte(`[
         ]
       },
       {
+        "name": "Jordan",
+        "cities": []
+      },
+      {
         "name": "Kenya",
         "cities": [
           "Nairobi"
@@ -1053,11 +1053,8 @@ var Zones = []byte(`[
         ]
       },
       {
-        "name": "South Sudan",
-        "cities": [
-          "Juba",
-          "Malakal"
-        ]
+        "name": "Syria",
+        "cities": []
       },
       {
         "name": "Tanzania",
@@ -1224,7 +1221,6 @@ var Zones = []byte(`[
       {
         "name": "Turkmenistan",
         "cities": [
-          "Ashkabad",
           "Turkmenabat"
         ]
       },
@@ -1301,10 +1297,6 @@ var Zones = []byte(`[
         ]
       },
       {
-        "name": "British Indian Ocean Territory",
-        "cities": []
-      },
-      {
         "name": "Kazakhstan",
         "cities": [
           "Almaty",
@@ -1330,15 +1322,15 @@ var Zones = []byte(`[
   {
     "countries": [
       {
+        "name": "Cocos (Keeling) Islands",
+        "cities": []
+      },
+      {
         "name": "Myanmar",
         "cities": [
           "Naypyidaw",
           "Yangon"
         ]
-      },
-      {
-        "name": "Cocos (Keeling) Islands",
-        "cities": []
       }
     ],
     "offset": 6.5
@@ -1516,7 +1508,6 @@ var Zones = []byte(`[
       {
         "name": "Indonesia",
         "cities": [
-          "Ambon City",
           "Jayapura"
         ]
       },
@@ -1664,6 +1655,12 @@ var Zones = []byte(`[
   {
     "countries": [
       {
+        "name": "Fiji",
+        "cities": [
+          "Suva"
+        ]
+      },
+      {
         "name": "France",
         "cities": [
           "Wallis and Futuna"
@@ -1713,15 +1710,9 @@ var Zones = []byte(`[
   {
     "countries": [
       {
-        "name": "Fiji",
-        "cities": [
-          "Suva"
-        ]
-      },
-      {
         "name": "Kiribati",
         "cities": [
-          "Kanton Island"
+          "Kanton"
         ]
       },
       {
@@ -1762,15 +1753,8 @@ var Zones = []byte(`[
         "cities": [
           "Tabwakea Village"
         ]
-      },
-      {
-        "name": "Samoa",
-        "cities": [
-          "Apia"
-        ]
       }
     ],
     "offset": 14
   }
-]
-`)
+]`)

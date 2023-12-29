@@ -2,7 +2,7 @@
 
 _pkgname=newyearsbot
 pkgname="$_pkgname-git"
-pkgver=20201026.4fc3dfc
+pkgver=20221231.8f6cb5c
 pkgrel=1
 pkgdesc='New Year Eve Irc Party Bot'
 arch=('x86_64')

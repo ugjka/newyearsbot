@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	kitty "github.com/rhinosf1/kittybot"
-	"gopkg.in/rhinosf1/go-tz.v2/tz"
+	kitty "github.com/ugjka/kittybot"
+	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
 const helpMsg = "COMMANDS: '%shny <location>', '%stime <location>', '%snext', '%sprevious', '%sremaining', '%shelp', '%ssource'"
@@ -33,7 +33,7 @@ func (bot *Settings) addTriggers() {
 				strings.HasPrefix(normalize(m.Content), bot.Prefix+"source")
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
-			b.Reply(m, "https://github.com/rhinosf1/newyearsbot")
+			b.Reply(m, "https://github.com/ugjka/newyearsbot")
 		},
 	})
 
@@ -64,8 +64,12 @@ func (bot *Settings) addTriggers() {
 				return
 			}
 			hdur := humanDur(target.Sub(timeNow().UTC().Add(dur)))
-			b.Reply(m, fmt.Sprintf("Next New Year in %s in %s",
-				hdur, bot.next))
+			const next = "Next New Year in "
+			max := b.ReplyMaxSize(m)
+			max -= len(next)
+			max -= len(hdur)
+			max -= 4
+			b.Reply(m, next+hdur+" in "+bot.next.Split(max))
 		},
 	})
 
@@ -82,8 +86,12 @@ func (bot *Settings) addTriggers() {
 			if bot.previous.Offset == -12 {
 				hdur = humanDur(timeNow().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
 			}
-			b.Reply(m, fmt.Sprintf("Previous New Year %s ago in %s",
-				hdur, bot.previous))
+			const prev = "Previous New Year "
+			max := b.ReplyMaxSize(m)
+			max -= len(prev)
+			max -= len(hdur)
+			max -= 8
+			b.Reply(m, prev+hdur+" ago in "+bot.previous.Split(max))
 		},
 	})
 
@@ -158,6 +166,7 @@ func (bot *Settings) addTriggers() {
 				b.Reply(m, "Some error occurred!")
 				return
 			}
+
 			b.Reply(m, result)
 		},
 	})
@@ -165,7 +174,7 @@ func (bot *Settings) addTriggers() {
 
 var (
 	errNoZone  = errors.New("couldn't get timezone for that location")
-	errNoPlace = errors.New("Couldn't find that place")
+	errNoPlace = errors.New("couldn't find that place")
 )
 
 func (bot *Settings) time(location string) (string, error) {

@@ -6,11 +6,11 @@ import (
 	"sort"
 	"time"
 
-	kitty "github.com/rhinosf1/kittybot"
+	kitty "github.com/ugjka/kittybot"
 	log "gopkg.in/inconshreveable/log15.v2"
 )
 
-//Settings for the bot
+// Settings for the bot
 type Settings struct {
 	Nick      string
 	Channels  []string
@@ -20,6 +20,7 @@ type Settings struct {
 	Prefix    string
 	Email     string
 	Nominatim string
+	Limit     bool
 	irc       *kitty.Bot
 	extra
 }
@@ -29,15 +30,17 @@ type extra struct {
 	previous  TZ
 	next      TZ
 	remaining int
+	now       time.Time
 }
 
-//New creates a new bot
+// New creates a new bot
 func New(s *Settings) *Settings {
 	s.irc = kitty.NewBot(s.Server, s.Nick,
 		func(irc *kitty.Bot) {
 			irc.Channels = s.Channels
 			irc.Password = s.Password
 			irc.SSL = s.SSL
+			irc.LimitReplies = s.Limit
 		})
 	return s
 }
@@ -48,8 +51,9 @@ func (bot *Settings) LogLvl(Lvl log.Lvl) {
 	bot.irc.Logger.SetHandler(logHandler)
 }
 
-//Start starts the bot
+// Start starts the bot
 func (bot *Settings) Start() {
+	bot.now = time.Now().Add(-time.Second)
 	irc := bot.irc
 	irc.Info("Starting the bot...")
 
@@ -57,6 +61,8 @@ func (bot *Settings) Start() {
 	go bot.ircControl()
 
 	<-irc.Joined
+	// Neet to wait a bit for prefix
+	time.Sleep(time.Second * 5)
 	irc.Info("Got start...")
 
 	if err := bot.decodeZones(Zones); err != nil {
@@ -110,24 +116,27 @@ func (bot *Settings) loopTimeZones() {
 			time.Sleep(time.Second * 2)
 			irc.Info(fmt.Sprintf("Zone pending: %.2f", zones[i].Offset))
 			hdur := humanDur(target.Sub(timeNow().UTC().Add(dur)))
-			const nextYearAnnounceMsg = "Next New Year in %s in %s"
-			msg := fmt.Sprintf(nextYearAnnounceMsg, hdur, zones[i])
+			const next = "Next New Year in "
 			help := fmt.Sprintf(helpMsg, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix)
 			for _, ch := range irc.Channels {
-				irc.Msg(ch, msg)
+				max := irc.MsgMaxSize(ch)
+				max -= len(next)
+				max -= len(hdur)
+				max -= 4
+				irc.Msg(ch, next+hdur+" in "+zones[i].Split(max))
 				irc.Msg(ch, help)
 			}
 			//Wait till Target in Timezone
 			timer := NewTimer(target.Sub(timeNow().UTC().Add(dur)))
-			select {
-			case <-timer.C:
-				timer.Stop()
-				msg = "Happy New Year in " + zones[i].String()
-				for _, ch := range irc.Channels {
-					irc.Msg(ch, msg)
-				}
-				irc.Info(fmt.Sprintf("Announcing zone: %.2f", zones[i].Offset))
+			<-timer.C
+			timer.Stop()
+			const happy = "Happy New Year in "
+			for _, ch := range irc.Channels {
+				max := irc.MsgMaxSize(ch)
+				max -= len(happy)
+				irc.Msg(ch, happy+zones[i].Split(max))
 			}
+			irc.Info(fmt.Sprintf("Announcing zone: %.2f", zones[i].Offset))
 		}
 	}
 }

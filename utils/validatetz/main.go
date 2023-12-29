@@ -1,5 +1,5 @@
-//This utility validates Time Zone dataset against osm database and tz shapefile,
-//double check the results, sometimes false positives
+// This utility validates Time Zone dataset against osm database and tz shapefile,
+// double check the results, sometimes false positives
 package main
 
 import (
@@ -12,11 +12,11 @@ import (
 	"sort"
 	"time"
 
-	"github.com/rhinosf1/newyearsbot/nyb"
-	"gopkg.in/rhinosf1/go-tz.v2/tz"
+	"github.com/ugjka/newyearsbot/nyb"
+	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
-//Set target year
+// Set target year
 var target = func() time.Time {
 	tmp := time.Now().UTC()
 	if tmp.Month() == time.January && tmp.Day() < 2 {
@@ -72,7 +72,7 @@ func main() {
 	}
 }
 
-//Get Timezone Offset
+// Get Timezone Offset
 func timeZone(location string) (float64, error) {
 	time.Sleep(time.Second * 2)
 	data, err := nyb.NominatimFetcher(email, nominatim, &location)

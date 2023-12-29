@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-//TZ holds time zone data
+// TZ holds time zone data
 type TZ struct {
 	Countries []struct {
 		Name   string   `json:"name"`
@@ -24,12 +24,12 @@ type TZ struct {
 
 func (t TZ) String() (x string) {
 	for i, country := range t.Countries {
-		x += fmt.Sprintf("%s", country.Name)
+		x += country.Name
 		for i, city := range country.Cities {
 			if i == 0 {
 				x += " ("
 			}
-			x += fmt.Sprintf("%s", city)
+			x += city
 			if i < len(country.Cities)-1 {
 				x += ", "
 			}
@@ -44,7 +44,36 @@ func (t TZ) String() (x string) {
 	return
 }
 
-//TZS is a slice of timezones
+func (t TZ) Split(max int) (x string) {
+	var prev int
+	var total int = max
+	for i, country := range t.Countries {
+		prev = len(x)
+		x += country.Name
+		for i, city := range country.Cities {
+			if i == 0 {
+				x += " ("
+			}
+			x += city
+			if i < len(country.Cities)-1 {
+				x += ", "
+			}
+			if i == len(country.Cities)-1 {
+				x += ")"
+			}
+		}
+		if len(x) > total {
+			x = x[:prev-1] + "\n" + x[prev:]
+			total += max
+		}
+		if i < len(t.Countries)-1 {
+			x += ", "
+		}
+	}
+	return
+}
+
+// TZS is a slice of timezones
 type TZS []TZ
 
 func (t TZS) Len() int {
@@ -59,14 +88,14 @@ func (t TZS) Less(i, j int) bool {
 	return t[i].Offset < t[j].Offset
 }
 
-//Channels is a flag that parses a list of IRC channels
+// Channels is a flag that parses a list of IRC channels
 type Channels []string
 
 func (i *Channels) String() string {
 	return fmt.Sprint(*i)
 }
 
-//Set satisfies the flag Interface
+// Set satisfies the flag Interface
 func (i *Channels) Set(value string) error {
 	if len(*i) > 0 {
 		return errors.New("channel flag already set")
@@ -77,7 +106,7 @@ func (i *Channels) Set(value string) error {
 	return nil
 }
 
-//Timer struct
+// Timer struct
 type Timer struct {
 	C      chan bool
 	Target time.Time
@@ -85,8 +114,8 @@ type Timer struct {
 	ticker *time.Ticker
 }
 
-//NewTimer returns a ticker based timer.
-//We need this to take into account time taken in suspend, hibernation or if system time is changed.
+// NewTimer returns a ticker based timer.
+// We need this to take into account time taken in suspend, hibernation or if system time is changed.
 func NewTimer(dur time.Duration) *Timer {
 	t := &Timer{}
 	t.C = make(chan bool)
@@ -110,7 +139,7 @@ func NewTimer(dur time.Duration) *Timer {
 	return t
 }
 
-//Stop stops the timer
+// Stop stops the timer
 func (t *Timer) Stop() {
 	select {
 	case <-t.stop:
@@ -120,17 +149,17 @@ func (t *Timer) Stop() {
 	}
 }
 
-//NominatimResult ...
+// NominatimResult ...
 type NominatimResult struct {
 	Lat         float64
 	Lon         float64
 	DisplayName string `json:"Display_name"`
 }
 
-//NominatimResults ...
+// NominatimResults ...
 type NominatimResults []NominatimResult
 
-//UnmarshalJSON ...
+// UnmarshalJSON ...
 func (n *NominatimResult) UnmarshalJSON(data []byte) (err error) {
 	v := struct {
 		Lat         string
@@ -153,7 +182,7 @@ func (n *NominatimResult) UnmarshalJSON(data []byte) (err error) {
 	return
 }
 
-//cache and client for NominatimFetcher
+// cache and client for NominatimFetcher
 var nominatim = struct {
 	cache map[string][]byte
 	sync.RWMutex
@@ -162,7 +191,7 @@ var nominatim = struct {
 	cache: make(map[string][]byte),
 }
 
-//NominatimFetcher makes Nominatim API request
+// NominatimFetcher makes Nominatim API request
 func NominatimFetcher(email, server, location *string) (data []byte, err error) {
 	maps := url.Values{}
 	maps.Add("q", *location)

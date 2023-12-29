@@ -1,7 +1,7 @@
 # NewYearsBot
 
-## Preparing for 2023
-[![Go Report Card](https://goreportcard.com/badge/github.com/rhinosf1/newyearsbot/nyb)](https://goreportcard.com/report/github.com/rhinosf1/newyearsbot/nyb)
+## Happy 2024
+## I'm doing it again for the greater good
 
 New Year's Eve IRC party bot
 
@@ -25,8 +25,8 @@ Posts New Years for each timezone when they happen
 - `!previous` previous new year
 - `!remaining` number of remaining timezones
 - `!hny <location>` get new year status for location
-- `!time <location>` get current time in location
-- `!time` UTC time
+- `!time <location>` get the current time in a location
+- `!time` UTC
 - `!help` show help
 
 The command prefix `!` can be changed using the -prefix flag
@@ -37,13 +37,15 @@ The command prefix `!` can be changed using the -prefix flag
 
 ## Installation
 
-### 2021 versions
+### 2024 versions
 
 Arch linux PKGBUILD in archlinux folder
 
+Prebuilt Linux binaries are available on the releases [page](https://github.com/ugjka/newyearsbot/releases)
+
 ### Using make
 
-You need make, go, go-tools
+You need to have make, go, go-tools
 
 Build with `make`
 
@@ -52,3 +54,7 @@ Install with `make install`
 Uninstall with `make uninstall`
 
 Clean up with `make clean`
+
+### Specifying channel key
+
+-channels "#channelname:channelkey, #channelname2:channelkey2"

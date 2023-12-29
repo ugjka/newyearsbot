@@ -1,20 +1,19 @@
-//New Year's Eve IRC party bot
+// New Year's Eve IRC party bot
 package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"regexp"
 
 	"github.com/badoux/checkmail"
 	"github.com/fatih/color"
-	"github.com/rhinosf1/newyearsbot/nyb"
+	"github.com/ugjka/newyearsbot/nyb"
 	log "gopkg.in/inconshreveable/log15.v2"
 	"mvdan.cc/xurls/v2"
 )
 
-//Custom flag for IRC channels
+// Custom flag for IRC channels
 var channels nyb.Channels
 
 func init() {
@@ -28,15 +27,17 @@ Announces new years as they happen in each timezone
 CMD Options:
 [mandatory]
 -channels	comma separated list of channels eg. "#test, #test2"
+		channel key can be specifed after ":" e.g #channelname:channelkey
 -nick		irc nick
 -email		nominatim email
 
 [optional]
 -password	irc password
--server		irc server (default: chat.freenode.net:6697)
+-server		irc server (default: irc.libera.chat:6697)
 -prefix		command prefix (default: !)
--ssl		use ssl for irc (default: true)
+-nossl		disable ssl for irc
 -nominatim	nominatim server (default: http://nominatim.openstreetmap.org)
+-nolimit	disable rate limit bot replies
 -debug		debug irc traffic
 
 `
@@ -46,16 +47,17 @@ func main() {
 	//Flags
 	nick := flag.String("nick", "NewYearBot", "irc nick")
 	email := flag.String("email", "", "nominatim email")
-	server := flag.String("server", "irc.snoonet.org:6697", "irc server")
+	server := flag.String("server", "irc.libera.chat:6697", "irc server")
 	password := flag.String("password", "", "irc password")
 	prefix := flag.String("prefix", "!", "command prefix")
-	ssl := flag.Bool("ssl", true, "use ssl for irc")
+	nossl := flag.Bool("nossl", false, "disable ssl for irc")
 	nominatim := flag.String("nominatim", "http://nominatim.openstreetmap.org", "nominatim server")
 	debug := flag.Bool("debug", false, "debug irc traffic")
+	nolimit := flag.Bool("nolimit", false, "disable limit bot replies.")
 
 	green := color.New(color.FgGreen)
 	flag.Usage = func() {
-		green.Fprint(os.Stderr, fmt.Sprintf(usage))
+		green.Fprint(os.Stderr, usage)
 	}
 	flag.Parse()
 
@@ -68,7 +70,7 @@ func main() {
 		flag.Usage()
 		return
 	}
-	channelReg := regexp.MustCompile("^([#&][^\\x07\\x2C\\s]{0,200})$")
+	channelReg := regexp.MustCompile(`^([#&][^\x07\x2C\s]{0,200})$`)
 	for _, ch := range channels {
 		if !channelReg.MatchString(ch) {
 			red.Fprintf(os.Stderr, "error: invalid channel name: %s\n", ch)
@@ -102,7 +104,7 @@ func main() {
 		flag.Usage()
 		return
 	}
-	serverReg := regexp.MustCompile("^\\S+:\\d+$")
+	serverReg := regexp.MustCompile(`^\S+:\d+$`)
 	if !serverReg.MatchString(*server) {
 		red.Fprintln(os.Stderr, "error: invalid irc server address")
 		flag.Usage()
@@ -113,7 +115,7 @@ func main() {
 		flag.Usage()
 		return
 	}
-	prefixReg := regexp.MustCompile("^\\W+$")
+	prefixReg := regexp.MustCompile(`^\W+$`)
 	if !prefixReg.MatchString(*prefix) {
 		red.Fprintln(os.Stderr, "error: prefix must be non-alphanumeric")
 		flag.Usage()
@@ -134,11 +136,12 @@ func main() {
 		Nick:      *nick,
 		Channels:  channels,
 		Server:    *server,
-		SSL:       *ssl,
+		SSL:       !*nossl,
 		Password:  *password,
 		Prefix:    *prefix,
 		Email:     *email,
 		Nominatim: *nominatim,
+		Limit:     !*nolimit,
 	})
 	if *debug {
 		bot.LogLvl(log.LvlDebug)
