@@ -47,7 +47,7 @@ func main() {
 	//Flags
 	nick := flag.String("nick", "NewYearBot", "irc nick")
 	email := flag.String("email", "", "nominatim email")
-	server := flag.String("server", "irc.libera.chat:6697", "irc server")
+	server := flag.String("server", "irc.snoonet.org:6697", "irc server")
 	password := flag.String("password", "", "irc password")
 	prefix := flag.String("prefix", "!", "command prefix")
 	nossl := flag.Bool("nossl", false, "disable ssl for irc")
