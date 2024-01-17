@@ -53,7 +53,7 @@ func (bot *Settings) LogLvl(Lvl log.Lvl) {
 
 // Start starts the bot
 func (bot *Settings) Start() {
-	bot.now = time.Now().Add(-time.Second)
+	bot.now = now().Add(-time.Second)
 	irc := bot.irc
 	irc.Info("Starting the bot...")
 
@@ -112,10 +112,10 @@ func (bot *Settings) loopTimeZones() {
 			bot.previous = zones[i-1]
 		}
 		bot.remaining = len(zones) - i
-		if timeNow().UTC().Add(dur).Before(target) {
+		if now().UTC().Add(dur).Before(target) {
 			time.Sleep(time.Second * 2)
 			irc.Info(fmt.Sprintf("Zone pending: %.2f", zones[i].Offset))
-			hdur := humanDur(target.Sub(timeNow().UTC().Add(dur)))
+			hdur := humanDur(target.Sub(now().UTC().Add(dur)))
 			const next = "Next New Year in "
 			help := fmt.Sprintf(helpMsg, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix)
 			for _, ch := range irc.Channels {
@@ -127,7 +127,7 @@ func (bot *Settings) loopTimeZones() {
 				irc.Msg(ch, help)
 			}
 			//Wait till Target in Timezone
-			timer := NewTimer(target.Sub(timeNow().UTC().Add(dur)))
+			timer := NewTimer(target.Sub(now().UTC().Add(dur)))
 			<-timer.C
 			timer.Stop()
 			const happy = "Happy New Year in "

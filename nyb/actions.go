@@ -59,11 +59,11 @@ func (bot *Settings) addTriggers() {
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying next...")
 			dur := time.Minute * time.Duration(bot.next.Offset*60)
-			if timeNow().UTC().Add(dur).After(target) {
+			if now().UTC().Add(dur).After(target) {
 				b.Reply(m, fmt.Sprintf("No more next, %d is here AoE", target.Year()))
 				return
 			}
-			hdur := humanDur(target.Sub(timeNow().UTC().Add(dur)))
+			hdur := humanDur(target.Sub(now().UTC().Add(dur)))
 			const next = "Next New Year in "
 			max := b.ReplyMaxSize(m)
 			max -= len(next)
@@ -82,9 +82,9 @@ func (bot *Settings) addTriggers() {
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying previous...")
 			dur := time.Minute * time.Duration(bot.previous.Offset*60)
-			hdur := humanDur(timeNow().UTC().Add(dur).Sub(target))
+			hdur := humanDur(now().UTC().Add(dur).Sub(target))
 			if bot.previous.Offset == -12 {
-				hdur = humanDur(timeNow().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
+				hdur = humanDur(now().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
 			}
 			const prev = "Previous New Year "
 			max := b.ReplyMaxSize(m)
@@ -143,7 +143,7 @@ func (bot *Settings) addTriggers() {
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying time...")
-			result := "Time is " + time.Now().UTC().Format("Mon Jan 2 15:04:05 -0700 MST 2006")
+			result := "Time is " + now().UTC().Format("Mon Jan 2 15:04:05 -0700 MST 2006")
 			b.Reply(m, result)
 		},
 	})
@@ -205,7 +205,7 @@ func (bot *Settings) time(location string) (string, error) {
 		return "", errNoZone
 	}
 	address := res[0].DisplayName
-	msg := fmt.Sprintf("Time in %s is %s", address, time.Now().In(zone).Format("Mon Jan 2 15:04:05 -0700 MST 2006"))
+	msg := fmt.Sprintf("Time in %s is %s", address, now().In(zone).Format("Mon Jan 2 15:04:05 -0700 MST 2006"))
 	return msg, nil
 }
 
@@ -238,12 +238,12 @@ func (bot *Settings) newYear(location string) (string, error) {
 	}
 	offset := zoneOffset(target, zone)
 	address := res[0].DisplayName
-	if timeNow().UTC().Add(offset).Before(target) {
-		hdur := humanDur(target.Sub(timeNow().UTC().Add(offset)))
+	if now().UTC().Add(offset).Before(target) {
+		hdur := humanDur(target.Sub(now().UTC().Add(offset)))
 		const newYearFutureMsg = "New Year in %s will happen in %s"
 		return fmt.Sprintf(newYearFutureMsg, address, hdur), nil
 	}
-	hdur := humanDur(timeNow().UTC().Add(offset).Sub(target))
+	hdur := humanDur(now().UTC().Add(offset).Sub(target))
 	const newYearPastMsg = "New Year in %s happened %s ago"
 	return fmt.Sprintf(newYearPastMsg, address, hdur), nil
 }
