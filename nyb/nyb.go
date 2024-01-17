@@ -31,6 +31,7 @@ type extra struct {
 	next      TZ
 	remaining int
 	now       time.Time
+	first     bool
 }
 
 // New creates a new bot
@@ -116,15 +117,27 @@ func (bot *Settings) loopTimeZones() {
 			time.Sleep(time.Second * 2)
 			irc.Info(fmt.Sprintf("Zone pending: %.2f", zones[i].Offset))
 			hdur := humanDur(target.Sub(now().UTC().Add(dur)))
-			const next = "Next New Year in "
+			next := "Next New Year in "
+			if i == 0 && !(now().Month() == time.January && now().Day() < 2) {
+				next = "First New Year in "
+			}
+			if i == len(zones)-1 {
+				next = "Final New Year in "
+			}
 			help := fmt.Sprintf(helpMsg, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix)
 			for _, ch := range irc.Channels {
 				max := irc.MsgMaxSize(ch)
 				max -= len(next)
 				max -= len(hdur)
 				max -= 4
-				irc.Msg(ch, next+hdur+" in "+zones[i].Split(max))
-				irc.Msg(ch, help)
+				if !bot.first {
+					irc.Msg(ch, next+hdur+" in "+zones[i].Split(max))
+					irc.Msg(ch, help)
+					bot.first = true
+				} else {
+					irc.Msg(ch, next+hdur+". "+
+						fmt.Sprintf("See %snext or %shelp.", bot.Prefix, bot.Prefix))
+				}
 			}
 			//Wait till Target in Timezone
 			timer := NewTimer(target.Sub(now().UTC().Add(dur)))
