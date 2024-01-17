@@ -1,6 +1,6 @@
 # NewYearsBot
 
-## Happy 2024
+## Preparing for 2025, updates landing in December as usual
 ## I'm doing it again for the greater good
 
 New Year's Eve IRC party bot
