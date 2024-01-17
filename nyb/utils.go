@@ -20,11 +20,9 @@ var timeNow = func() time.Time {
 
 func humanDur(d time.Duration) string {
 	hdur := durafmt.Parse(d)
-	arr := strings.Split(hdur.String(), " ")
-	if len(arr) > 2 {
-		return strings.Join(arr[:4], " ")
-	}
-	return strings.Join(arr[:2], " ")
+	hdur = hdur.LimitToUnit("weeks")
+	hdur = hdur.LimitFirstN(2)
+	return hdur.String()
 }
 
 func normalize(s string) string {
