@@ -4,7 +4,7 @@ import "time"
 
 // Set the target year
 var target = func() time.Time {
-	tmp := time.Now().UTC()
+	tmp := now().UTC()
 	if tmp.Month() == time.January && tmp.Day() < 2 {
 		return time.Date(tmp.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
 	}
@@ -12,3 +12,10 @@ var target = func() time.Time {
 	//return time.Date(tmp.Year(), time.June, 9, 12, 0, 0, 0, time.UTC)
 	return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 }()
+
+// Set now
+var now = func() time.Time {
+	return time.Now()
+	// debug fake time
+	//return time.Date(2023, 1, 1, 14, 0, 0, 0, time.Now().Location())
+}

@@ -14,10 +14,6 @@ func zoneOffset(target time.Time, zone *time.Location) time.Duration {
 	return time.Second * time.Duration(offset)
 }
 
-var timeNow = func() time.Time {
-	return time.Now()
-}
-
 func humanDur(d time.Duration) string {
 	hdur := durafmt.Parse(d)
 	hdur = hdur.LimitToUnit("weeks")
