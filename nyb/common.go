@@ -284,7 +284,7 @@ func NominatimFetcherLong(email, server, country, city, query string) (res Nomin
 	maps.Add("email", email)
 	url := server + "/search?" + maps.Encode()
 	nominatim.RLock()
-	if v, ok := nominatim.cache[query]; ok {
+	if v, ok := nominatim.cache[url]; ok {
 		nominatim.RUnlock()
 		return v, nil
 	}
@@ -311,7 +311,7 @@ func NominatimFetcherLong(email, server, country, city, query string) (res Nomin
 		return
 	}
 	nominatim.Lock()
-	nominatim.cache[query] = res
+	nominatim.cache[url] = res
 	nominatim.Unlock()
 	return
 }
