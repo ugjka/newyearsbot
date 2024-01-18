@@ -75,12 +75,8 @@ func main() {
 // Get Timezone Offset
 func timeZone(location string) (float64, error) {
 	time.Sleep(time.Second * 2)
-	data, err := nyb.NominatimFetcher(email, nominatim, &location)
+	mapj, err := nyb.NominatimFetcher(*email, *nominatim, location)
 	if err != nil {
-		return 0, err
-	}
-	var mapj nyb.NominatimResults
-	if err = json.Unmarshal(data, &mapj); err != nil {
 		return 0, err
 	}
 	if len(mapj) == 0 {

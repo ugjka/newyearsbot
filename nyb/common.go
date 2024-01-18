@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -13,13 +13,17 @@ import (
 	"time"
 )
 
+var userAgent = fmt.Sprintf("NYE IRC party bot, v%d: https://github.com/ugjka/newyearsbot", now().Year()+1)
+
 // TZ holds time zone data
 type TZ struct {
-	Countries []struct {
-		Name   string   `json:"name"`
-		Cities []string `json:"cities"`
-	} `json:"countries"`
-	Offset float64 `json:"offset"`
+	Countries []Country `json:"countries"`
+	Offset    float64   `json:"offset"`
+}
+
+type Country struct {
+	Name   string   `json:"name"`
+	Cities []string `json:"cities"`
 }
 
 func (t TZ) String() (x string) {
@@ -86,6 +90,54 @@ func (t TZS) Swap(i, j int) {
 
 func (t TZS) Less(i, j int) bool {
 	return t[i].Offset < t[j].Offset
+}
+
+func (t TZS) Exists(offset float64, country, city string) bool {
+	for _, tz := range t {
+		if tz.Offset == offset {
+			for _, c := range tz.Countries {
+				if c.Name == country {
+					if city == "" {
+						return true
+					}
+					for _, cit := range c.Cities {
+						if cit == city {
+							return true
+						}
+					}
+				}
+			}
+		}
+	}
+	return false
+}
+
+func (t TZS) Insert(offset float64, country, city string) TZS {
+	for i, tz := range t {
+		if tz.Offset == offset {
+			for j, c := range tz.Countries {
+				if c.Name == country {
+					t[i].Countries[j].Cities = append(t[i].Countries[j].Cities, city)
+					return t
+				}
+			}
+			t[i].Countries = append(t[i].Countries, Country{
+				Name:   country,
+				Cities: []string{city},
+			})
+			return t
+		}
+	}
+	t = append(t, TZ{
+		Offset: offset,
+		Countries: []Country{
+			{
+				Name:   country,
+				Cities: []string{city},
+			},
+		},
+	})
+	return t
 }
 
 // Channels is a flag that parses a list of IRC channels
@@ -184,32 +236,33 @@ func (n *NominatimResult) UnmarshalJSON(data []byte) (err error) {
 
 // cache and client for NominatimFetcher
 var nominatim = struct {
-	cache map[string][]byte
+	cache map[string]NominatimResults
 	sync.RWMutex
 	http.Client
 }{
-	cache: make(map[string][]byte),
+	cache: make(map[string]NominatimResults),
 }
 
 // NominatimFetcher makes Nominatim API request
-func NominatimFetcher(email, server, location *string) (data []byte, err error) {
+func NominatimFetcher(email, server, query string) (res NominatimResults, err error) {
 	maps := url.Values{}
-	maps.Add("q", *location)
+	maps.Add("q", query)
 	maps.Add("format", "json")
 	maps.Add("accept-language", "en")
 	maps.Add("limit", "1")
-	maps.Add("email", *email)
-	url := *server + "/search?" + maps.Encode()
+	maps.Add("email", email)
+	url := server + "/search?" + maps.Encode()
 	nominatim.RLock()
-	if v, ok := nominatim.cache[url]; ok {
+	if v, ok := nominatim.cache[query]; ok {
 		nominatim.RUnlock()
 		return v, nil
 	}
 	nominatim.RUnlock()
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, err
+		return
 	}
+	req.Header.Set("User-Agent", userAgent)
 	resp, err := nominatim.Do(req)
 	if err != nil {
 		return
@@ -218,12 +271,16 @@ func NominatimFetcher(email, server, location *string) (data []byte, err error) 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("status: %d", resp.StatusCode)
 	}
-	data, err = ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(data, &res)
 	if err != nil {
 		return
 	}
 	nominatim.Lock()
-	nominatim.cache[url] = data
+	nominatim.cache[query] = res
 	nominatim.Unlock()
 	return
 }

@@ -4,7 +4,6 @@ package main
 
 import (
 	"bufio"
-	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -56,15 +55,11 @@ func main() {
 }
 
 func locationInfo(location string) (string, error) {
-	data, err := nyb.NominatimFetcher(email, nominatim, &location)
+	mapj, err := nyb.NominatimFetcher(*email, *nominatim, location)
 	if err != nil {
 		return "", err
 	}
 
-	var mapj nyb.NominatimResults
-	if err = json.Unmarshal(data, &mapj); err != nil {
-		return "", err
-	}
 	if len(mapj) == 0 {
 		return "", errors.New("status not OK")
 	}

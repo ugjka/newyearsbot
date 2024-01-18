@@ -1,7 +1,6 @@
 package nyb
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -179,14 +178,9 @@ var (
 
 func (bot *Settings) time(location string) (string, error) {
 	bot.irc.Info("Querying location: " + location)
-	data, err := NominatimFetcher(&bot.Email, &bot.Nominatim, &location)
+	res, err := NominatimFetcher(bot.Email, bot.Nominatim, location)
 	if err != nil {
 		bot.irc.Warn("Nominatim error: " + err.Error())
-		return "", err
-	}
-	var res NominatimResults
-	if err = json.Unmarshal(data, &res); err != nil {
-		bot.irc.Warn("Nominatim JSON error: " + err.Error())
 		return "", err
 	}
 	if len(res) == 0 {
@@ -211,14 +205,9 @@ func (bot *Settings) time(location string) (string, error) {
 
 func (bot *Settings) newYear(location string) (string, error) {
 	bot.irc.Info("Querying location: " + location)
-	data, err := NominatimFetcher(&bot.Email, &bot.Nominatim, &location)
+	res, err := NominatimFetcher(bot.Email, bot.Nominatim, location)
 	if err != nil {
 		bot.irc.Warn("Nominatim error: " + err.Error())
-		return "", err
-	}
-	var res NominatimResults
-	if err = json.Unmarshal(data, &res); err != nil {
-		bot.irc.Warn("Nominatim JSON error: " + err.Error())
 		return "", err
 	}
 	if len(res) == 0 {
