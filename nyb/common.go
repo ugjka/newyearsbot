@@ -243,10 +243,22 @@ var nominatim = struct {
 	cache: make(map[string]NominatimResults),
 }
 
-// NominatimFetcher makes Nominatim API request
 func NominatimFetcher(email, server, query string) (res NominatimResults, err error) {
+	return NominatimFetcherLong(email, server, "", "", query)
+}
+
+// NominatimFetcher makes Nominatim API request
+func NominatimFetcherLong(email, server, country, city, query string) (res NominatimResults, err error) {
 	maps := url.Values{}
-	maps.Add("q", query)
+	if country != "" {
+		maps.Add("country", country)
+	}
+	if city != "" {
+		maps.Add("city", city)
+	}
+	if query != "" {
+		maps.Add("q", query)
+	}
 	maps.Add("format", "json")
 	maps.Add("accept-language", "en")
 	maps.Add("limit", "1")
