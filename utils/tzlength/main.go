@@ -23,7 +23,7 @@ func main() {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', tabwriter.AlignRight|tabwriter.Debug)
 
 	for _, k := range zones {
-		tmp := len([]byte(k.String()))
+		tmp := len(k.String())
 		if tmp > 0 {
 			fmt.Fprintf(w, "%v\t%d\t%d\t\n", k.Offset, tmp, tmp-396)
 		}
