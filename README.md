@@ -58,3 +58,9 @@ Clean up with `make clean`
 ### Specifying channel key
 
 -channels "#channelname:channelkey, #channelname2:channelkey2"
+
+### Yaml config file
+
+See example config: [settings.yaml](settings.yaml)
+
+Useful if you wanna run multiple bot instances across different IRC hosts
