@@ -77,7 +77,7 @@ func (bot *Settings) addTriggers() {
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
 			return m.Command == "PRIVMSG" &&
-				strings.HasPrefix(normalize(m.Content), bot.Prefix+"previous")
+				strings.HasPrefix(normalize(m.Content), bot.Prefix+"prev")
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying previous...")
