@@ -3,7 +3,7 @@
 - nick: "hnyparty88" # mandatory field
   channels: ["#chan34564:channelkey"]  # channel with channel password after the ":"
   server: irc.libera.chat:6697 # default if omitted
-  nossl: false
+  nossl: false # true to disable SSL for irc
   password: "" # irc password
   prefix: '!' # default if omitted
   email: "example@example.com" # mandatory field
