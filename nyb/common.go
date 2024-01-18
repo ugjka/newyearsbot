@@ -121,7 +121,7 @@ func (t TZS) Insert(offset float64, country, city string) TZS {
 					return t
 				}
 			}
-			if country == city {
+			if country == city || city == "" {
 				t[i].Countries = append(t[i].Countries, Country{
 					Name:   country,
 					Cities: []string{},
@@ -135,7 +135,7 @@ func (t TZS) Insert(offset float64, country, city string) TZS {
 			return t
 		}
 	}
-	if country == city {
+	if country == city || city == "" {
 		t = append(t, TZ{
 			Offset: offset,
 			Countries: []Country{
