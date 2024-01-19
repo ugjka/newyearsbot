@@ -4,7 +4,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -47,7 +46,7 @@ func main() {
 		fmt.Println("Zone:", zone.Offset)
 		for _, country := range zone.Countries {
 			if len(country.Cities) == 0 {
-				remoteOffset, err := timeZone(country.Name)
+				remoteOffset, err := timeZone(country.Name, "")
 				if err != nil {
 					log.Println(country.Name, err)
 				} else {
@@ -58,7 +57,7 @@ func main() {
 				}
 			}
 			for _, city := range country.Cities {
-				remoteOffset, err := timeZone(city + ", " + country.Name)
+				remoteOffset, err := timeZone(country.Name, city)
 				if err != nil {
 					log.Println(city+", "+country.Name, err)
 				} else {
@@ -73,15 +72,24 @@ func main() {
 }
 
 // Get Timezone Offset
-func timeZone(location string) (float64, error) {
-	time.Sleep(time.Second * 2)
-	mapj, err := nyb.NominatimFetcher(*email, *nominatim, location)
-	if err != nil {
-		return 0, err
+func timeZone(country, city string) (float64, error) {
+	var mapj nyb.NominatimResults
+	var err error
+	if country == "CAR" || country == "DRC" || country == "Congo" {
+		mapj, err = nyb.NominatimFetcherLong(*email, *nominatim, country, "", "")
+		if err != nil {
+			return 0, err
+		}
+	} else {
+		mapj, err = nyb.NominatimFetcher(*email, *nominatim, country+", "+city)
+		if err != nil {
+			return 0, err
+		}
 	}
 	if len(mapj) == 0 {
-		return 0, errors.New("could not find location")
+		return 0, fmt.Errorf("no results")
 	}
+
 	point := tz.Point{
 		Lat: mapj[0].Lat,
 		Lon: mapj[0].Lon,
