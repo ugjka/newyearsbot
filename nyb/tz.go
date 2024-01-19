@@ -1625,8 +1625,10 @@ var Zones = []byte(`[
       {
         "name": "Australia",
         "cities": [
+          "Cocklebiddy",
           "Eucla",
-          "Madura"
+          "Madura",
+          "Mundrabilla"
         ]
       }
     ],
@@ -1755,6 +1757,8 @@ var Zones = []byte(`[
         "name": "Australia",
         "cities": [
           "Adelaide",
+          "Aṉangu Pitjantjatjara Yankunytjatjara",
+          "Broken Hill",
           "South Australia"
         ]
       }
@@ -1769,6 +1773,8 @@ var Zones = []byte(`[
           "Australian Capital Territory",
           "Canberra",
           "Hobart",
+          "Lord Howe Island",
+          "Macquarie Island",
           "Melbourne",
           "New South Wales",
           "Sydney",
@@ -1878,7 +1884,8 @@ var Zones = []byte(`[
       {
         "name": "Kiribati",
         "cities": [
-          "Kanton"
+          "Kanton",
+          "Phoenix Islands"
         ]
       },
       {
