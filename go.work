@@ -1,4 +1,7 @@
 go 1.21.6
 
-use ./utils/tzbuilder
+use (
+    utils/tzbuilder
+    utils/ircprinttest
+)
 use .
