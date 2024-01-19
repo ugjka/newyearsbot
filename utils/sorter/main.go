@@ -29,7 +29,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	os.WriteFile("tz.go.new", []byte(fmt.Sprintf(template, data)), 0644)
+	os.WriteFile("tz.go", []byte(fmt.Sprintf(template, data)), 0644)
 }
 
 var template = `package nyb
