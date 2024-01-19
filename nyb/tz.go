@@ -47,10 +47,22 @@ var Zones = []byte(`[
         ]
       },
       {
-        "name": "French Polynesia",
+        "name": "Windward Islands",
         "cities": [
-          "Papeete",
-          "Vaitape"
+          "Tahiti",
+          "Moorea",
+          "Mehetia",
+          "Tetiaroa",
+          "Maiao"
+        ]
+      },
+      {
+        "name": "Leeward Islands",
+        "cities": [
+          "Raiatea", 
+          "Bora Bora", 
+          "Huahine", 
+          "Tahaa"
         ]
       },
       {
@@ -69,12 +81,14 @@ var Zones = []byte(`[
   {
     "countries": [
       {
-        "name": "French Polynesia",
+        "name": "Marquesas Islands",
         "cities": [
-          "Atuona",
-          "Eiao",
-          "Fatu Huku",
-          "Taiohae"
+          "Nuku Hiva", 
+          "Ua Pou",
+          "Ua Huka",
+          "Hiva Oa", 
+          "Fatu Hiva",
+          "Tahuata"
         ]
       }
     ],
@@ -83,10 +97,12 @@ var Zones = []byte(`[
   {
     "countries": [
       {
-        "name": "French Polynesia",
+        "name": "Gambier Islands",
         "cities": [
-          "Gambier Islands",
-          "Rikitea"
+          "Mangareva",
+          "Akamaru", 
+          "Aukena", 
+          "Taravai"
         ]
       },
       {
@@ -1336,7 +1352,10 @@ var Zones = []byte(`[
     "countries": [
       {
         "name": "Cocos (Keeling) Islands",
-        "cities": []
+        "cities": [
+          "West Island",
+          "Home Island"
+        ]
       },
       {
         "name": "Myanmar",
@@ -1738,7 +1757,9 @@ var Zones = []byte(`[
       },
       {
         "name": "Tokelau",
-        "cities": []
+        "cities": [
+          "Atafu"
+        ]
       },
       {
         "name": "Tonga",
@@ -1765,7 +1786,7 @@ var Zones = []byte(`[
       {
         "name": "Kiribati",
         "cities": [
-          "Tabwakea Village"
+          "Line Islands"
         ]
       }
     ],
