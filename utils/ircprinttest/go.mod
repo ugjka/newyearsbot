@@ -1,10 +1,13 @@
-module tzbuilder
+module ircprinttest
 
 go 1.21.6
 
+replace github.com/ugjka/newyearsbot => ../../
+
 require (
-	github.com/ugjka/newyearsbot v0.0.0-20240118090934-3e1275203e09
-	gopkg.in/ugjka/go-tz.v2 v2.0.15
+	github.com/ugjka/kittybot v0.0.59
+	github.com/ugjka/newyearsbot v0.0.0-20240119160913-9263ae5408e9
+	gopkg.in/inconshreveable/log15.v2 v2.16.0
 )
 
 require (
@@ -14,10 +17,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/ugjka/ircmsg v0.0.3 // indirect
-	github.com/ugjka/kittybot v0.0.59 // indirect
 	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/term v0.16.0 // indirect
-	gopkg.in/inconshreveable/log15.v2 v2.16.0 // indirect
+	gopkg.in/ugjka/go-tz.v2 v2.0.15 // indirect
 )
-
-replace github.com/ugjka/newyearsbot => ../../../newyearsbot
