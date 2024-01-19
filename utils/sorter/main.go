@@ -4,6 +4,8 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"log"
 	"os"
 	"sort"
 
@@ -23,10 +25,17 @@ func main() {
 			sort.Sort(v[i].Countries[j].Cities)
 		}
 	}
-	enc := json.NewEncoder(os.Stdout)
-	enc.SetIndent("", "  ")
-	enc.Encode(v)
+	data, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		log.Fatal(err)
+	}
+	os.WriteFile("tz.go.new", []byte(fmt.Sprintf(template, data)), 0644)
 }
+
+var template = `package nyb
+
+// Zones contains time zone information in JSON format
+var Zones = []byte(` + "`%s`)\n"
 
 // Cities ...
 type Cities []string
