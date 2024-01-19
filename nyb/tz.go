@@ -365,10 +365,6 @@ var Zones = []byte(`[
         "cities": []
       },
       {
-        "name": "Bonaire",
-        "cities": []
-      },
-      {
         "name": "Brazil",
         "cities": [
           "Amazonas"
@@ -381,11 +377,15 @@ var Zones = []byte(`[
       {
         "name": "Canada",
         "cities": [
-          "Nova Scotia"
+          "Halifax"
         ]
       },
       {
-        "name": "Curaçao",
+        "name": "Caribbean Netherlands",
+        "cities": []
+      },
+      {
+        "name": "Curacao",
         "cities": []
       },
       {
@@ -419,23 +419,11 @@ var Zones = []byte(`[
         "cities": []
       },
       {
-        "name": "Montserrat",
-        "cities": []
-      },
-      {
         "name": "Puerto Rico",
         "cities": []
       },
       {
-        "name": "Saba",
-        "cities": []
-      },
-      {
         "name": "Saint Lucia",
-        "cities": []
-      },
-      {
-        "name": "Sint Eustatius",
         "cities": []
       },
       {
