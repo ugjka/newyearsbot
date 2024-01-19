@@ -123,7 +123,6 @@ var Zones = []byte(`[
       {
         "name": "Canada",
         "cities": [
-          "British Columbia",
           "Surrey",
           "Vancouver"
         ]
@@ -159,11 +158,8 @@ var Zones = []byte(`[
         "name": "Canada",
         "cities": [
           "Alberta",
-          "Calgary",
-          "Edmonton",
           "Inuvik",
           "Northwest Territories",
-          "Whitehorse",
           "Yukon"
         ]
       },
@@ -273,7 +269,6 @@ var Zones = []byte(`[
         "name": "Canada",
         "cities": [
           "Montreal",
-          "Quebec",
           "Toronto"
         ]
       },
@@ -386,7 +381,7 @@ var Zones = []byte(`[
       {
         "name": "Canada",
         "cities": [
-          "Halifax"
+          "Nova Scotia"
         ]
       },
       {
@@ -478,9 +473,7 @@ var Zones = []byte(`[
       {
         "name": "Argentina",
         "cities": [
-          "Buenos Aires",
-          "Córdoba",
-          "Rosario"
+          "Buenos Aires"
         ]
       },
       {
@@ -494,8 +487,6 @@ var Zones = []byte(`[
       {
         "name": "Chile",
         "cities": [
-          "Puente Alto",
-          "Punta Arenas",
           "Santiago"
         ]
       },
@@ -1017,15 +1008,11 @@ var Zones = []byte(`[
       },
       {
         "name": "Belarus",
-        "cities": [
-          "Minsk"
-        ]
+        "cities": []
       },
       {
         "name": "Comoros",
-        "cities": [
-          "Moroni"
-        ]
+        "cities": []
       },
       {
         "name": "Djibouti",
@@ -1041,9 +1028,7 @@ var Zones = []byte(`[
       },
       {
         "name": "Iraq",
-        "cities": [
-          "Baghdad"
-        ]
+        "cities": []
       },
       {
         "name": "Jordan",
@@ -1051,15 +1036,11 @@ var Zones = []byte(`[
       },
       {
         "name": "Kenya",
-        "cities": [
-          "Nairobi"
-        ]
+        "cities": []
       },
       {
         "name": "Kuwait",
-        "cities": [
-          "Al Ahmadi"
-        ]
+        "cities": []
       },
       {
         "name": "Madagascar",
@@ -1067,9 +1048,7 @@ var Zones = []byte(`[
       },
       {
         "name": "Qatar",
-        "cities": [
-          "Doha"
-        ]
+        "cities": []
       },
       {
         "name": "Russia",
@@ -1080,33 +1059,23 @@ var Zones = []byte(`[
       },
       {
         "name": "Saudi Arabia",
-        "cities": [
-          "Riyadh"
-        ]
+        "cities": []
       },
       {
         "name": "Somalia",
-        "cities": [
-          "Mogadishu"
-        ]
+        "cities": []
       },
       {
         "name": "Syria",
-        "cities": [
-          "Damascus"
-        ]
+        "cities": []
       },
       {
         "name": "Tanzania",
-        "cities": [
-          "Dodoma"
-        ]
+        "cities": []
       },
       {
         "name": "Turkey",
-        "cities": [
-          "Istanbul"
-        ]
+        "cities": []
       },
       {
         "name": "Uganda",
@@ -1146,22 +1115,19 @@ var Zones = []byte(`[
       {
         "name": "Azerbaijan",
         "cities": [
-          "Baku",
           "Ganja"
         ]
       },
       {
         "name": "Georgia",
         "cities": [
-          "Kutaisi",
           "Tbilisi"
         ]
       },
       {
         "name": "Mauritius",
         "cities": [
-          "Port Louis",
-          "Vacoas"
+          "Port Louis"
         ]
       },
       {
@@ -1193,7 +1159,6 @@ var Zones = []byte(`[
       {
         "name": "United Arab Emirates",
         "cities": [
-          "Abu Dhabi",
           "Dubai"
         ]
       }
