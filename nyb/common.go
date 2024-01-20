@@ -48,11 +48,13 @@ func (t TZ) String() (x string) {
 	return
 }
 
-func (t TZ) Split(max int) (x string) {
+func (t TZ) Split(max int) (arr []string) {
+	var x string
 	var prev int
 	var total int = max
 	for i, country := range t.Countries {
 		prev = len(x)
+		//x += fmt.Sprintf("\x02%s\x0f", country.Name)
 		x += country.Name
 		for i, city := range country.Cities {
 			if i == 0 {
@@ -74,7 +76,7 @@ func (t TZ) Split(max int) (x string) {
 			x += ", "
 		}
 	}
-	return
+	return strings.Split(x, "\n")
 }
 
 // TZS is a slice of timezones
@@ -191,7 +193,7 @@ func NewTimer(dur time.Duration) *Timer {
 	t := &Timer{}
 	t.C = make(chan bool)
 	t.stop = make(chan bool)
-	t.Target = time.Now().UTC().Add(dur)
+	t.Target = now().UTC().Add(dur)
 	t.ticker = time.NewTicker(time.Millisecond * 100)
 	go func(t *Timer) {
 		defer t.ticker.Stop()
@@ -200,7 +202,7 @@ func NewTimer(dur time.Duration) *Timer {
 			case <-t.stop:
 				return
 			default:
-				if time.Now().UTC().After(t.Target) {
+				if now().UTC().After(t.Target) {
 					close(t.C)
 					return
 				}

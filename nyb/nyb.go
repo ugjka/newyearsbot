@@ -31,6 +31,7 @@ type extra struct {
 	next      TZ
 	remaining int
 	first     bool
+	target    time.Time
 }
 
 // New creates a new bot
@@ -53,6 +54,7 @@ func (bot *Settings) LogLvl(Lvl log.Lvl) {
 
 // Start starts the bot
 func (bot *Settings) Start() {
+	bot.target = target
 	irc := bot.irc
 	irc.Info("Starting the bot...")
 
@@ -72,11 +74,11 @@ func (bot *Settings) Start() {
 		bot.loopTimeZones()
 		const zonesFinishedMsg = "That's it, Year %d is here Anywhere on Earth"
 		for _, ch := range irc.Channels {
-			irc.Msg(ch, fmt.Sprintf(zonesFinishedMsg, target.Year()))
+			irc.Msg(ch, fmt.Sprintf(zonesFinishedMsg, bot.target.Year()))
 		}
 		irc.Info("All zones finished...")
-		target = target.AddDate(1, 0, 0)
-		irc.Info(fmt.Sprintf("Wrapping the target date around to %d", target.Year()))
+		bot.target = bot.target.AddDate(1, 0, 0)
+		irc.Info(fmt.Sprintf("Wrapping the target date around to %d", bot.target.Year()))
 	}
 }
 
@@ -111,10 +113,10 @@ func (bot *Settings) loopTimeZones() {
 			bot.previous = zones[i-1]
 		}
 		bot.remaining = len(zones) - i
-		if now().UTC().Add(dur).Before(target) {
+		if now().UTC().Add(dur).Before(bot.target) {
 			time.Sleep(time.Second * 2)
 			irc.Info(fmt.Sprintf("Zone pending: %.2f", zones[i].Offset))
-			hdur := humanDur(target.Sub(now().UTC().Add(dur)))
+			hdur := humanDur(bot.target.Sub(now().UTC().Add(dur)))
 			next := "Next New Year in "
 			if i == 0 && !(now().Month() == time.January && now().Day() < 2) {
 				next = "First New Year in "
@@ -129,7 +131,9 @@ func (bot *Settings) loopTimeZones() {
 				max -= len(hdur)
 				max -= 4
 				if !bot.first {
-					irc.Msg(ch, next+hdur+" in "+zones[i].Split(max))
+					for _, v := range zones[i].Split(max) {
+						irc.Msg(ch, next+hdur+" in "+v)
+					}
 					irc.Msg(ch, help)
 					bot.first = true
 				} else {
@@ -138,14 +142,16 @@ func (bot *Settings) loopTimeZones() {
 				}
 			}
 			//Wait till Target in Timezone
-			timer := NewTimer(target.Sub(now().UTC().Add(dur)))
+			timer := NewTimer(bot.target.Sub(now().UTC().Add(dur)))
 			<-timer.C
 			timer.Stop()
 			const happy = "Happy New Year in "
 			for _, ch := range irc.Channels {
 				max := irc.MsgMaxSize(ch)
 				max -= len(happy)
-				irc.Msg(ch, happy+zones[i].Split(max))
+				for _, v := range zones[i].Split(max) {
+					irc.Msg(ch, happy+v)
+				}
 			}
 			irc.Info(fmt.Sprintf("Announcing zone: %.2f", zones[i].Offset))
 		}

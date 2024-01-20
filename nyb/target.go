@@ -9,7 +9,7 @@ var target = func() time.Time {
 		return time.Date(tmp.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
 	}
 	//Debug target
-	//return time.Date(tmp.Year(), time.June, 9, 12, 0, 0, 0, time.UTC)
+	//return time.Date(tmp.Year(), time.January, 20, 1, 0, 0, 0, time.UTC)
 	return time.Date(tmp.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 }()
 
@@ -17,5 +17,5 @@ var target = func() time.Time {
 var now = func() time.Time {
 	return time.Now()
 	// debug fake time
-	//return time.Date(2023, 1, 1, 14, 0, 0, 0, time.Now().Location())
+	//return time.Date(2024, 1, 1, 14, 0, 0, 0, time.Now().Location())
 }

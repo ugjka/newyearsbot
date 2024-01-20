@@ -58,17 +58,19 @@ func (bot *Settings) addTriggers() {
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying next...")
 			dur := time.Minute * time.Duration(bot.next.Offset*60)
-			if now().UTC().Add(dur).After(target) {
-				b.Reply(m, fmt.Sprintf("No more next, %d is here AoE", target.Year()))
+			if now().UTC().Add(dur).After(bot.target) {
+				b.Reply(m, fmt.Sprintf("No more next, %d is here AoE", bot.target.Year()))
 				return
 			}
-			hdur := humanDur(target.Sub(now().UTC().Add(dur)))
+			hdur := humanDur(bot.target.Sub(now().UTC().Add(dur)))
 			const next = "Next New Year in "
 			max := b.ReplyMaxSize(m)
 			max -= len(next)
 			max -= len(hdur)
 			max -= 4
-			b.Reply(m, next+hdur+" in "+bot.next.Split(max))
+			for _, v := range bot.next.Split(max) {
+				b.Reply(m, next+hdur+" in "+v)
+			}
 		},
 	})
 
@@ -81,16 +83,18 @@ func (bot *Settings) addTriggers() {
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying previous...")
 			dur := time.Minute * time.Duration(bot.previous.Offset*60)
-			hdur := humanDur(now().UTC().Add(dur).Sub(target))
+			hdur := humanDur(now().UTC().Add(dur).Sub(bot.target))
 			if bot.previous.Offset == -12 {
-				hdur = humanDur(now().UTC().Add(dur).Sub(target.AddDate(-1, 0, 0)))
+				hdur = humanDur(now().UTC().Add(dur).Sub(bot.target.AddDate(-1, 0, 0)))
 			}
 			const prev = "Previous New Year "
 			max := b.ReplyMaxSize(m)
 			max -= len(prev)
 			max -= len(hdur)
 			max -= 8
-			b.Reply(m, prev+hdur+" ago in "+bot.previous.Split(max))
+			for _, v := range bot.previous.Split(max) {
+				b.Reply(m, prev+hdur+" ago in "+v)
+			}
 		},
 	})
 
@@ -225,14 +229,14 @@ func (bot *Settings) newYear(location string) (string, error) {
 	if err != nil {
 		return "", errNoZone
 	}
-	offset := zoneOffset(target, zone)
+	offset := zoneOffset(bot.target, zone)
 	address := res[0].DisplayName
-	if now().UTC().Add(offset).Before(target) {
-		hdur := humanDur(target.Sub(now().UTC().Add(offset)))
+	if now().UTC().Add(offset).Before(bot.target) {
+		hdur := humanDur(bot.target.Sub(now().UTC().Add(offset)))
 		const newYearFutureMsg = "New Year in %s will happen in %s"
 		return fmt.Sprintf(newYearFutureMsg, address, hdur), nil
 	}
-	hdur := humanDur(now().UTC().Add(offset).Sub(target))
+	hdur := humanDur(now().UTC().Add(offset).Sub(bot.target))
 	const newYearPastMsg = "New Year in %s happened %s ago"
 	return fmt.Sprintf(newYearPastMsg, address, hdur), nil
 }
