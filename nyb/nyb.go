@@ -30,7 +30,6 @@ type extra struct {
 	previous  TZ
 	next      TZ
 	remaining int
-	now       time.Time
 	first     bool
 }
 
@@ -54,7 +53,6 @@ func (bot *Settings) LogLvl(Lvl log.Lvl) {
 
 // Start starts the bot
 func (bot *Settings) Start() {
-	bot.now = now().Add(-time.Second)
 	irc := bot.irc
 	irc.Info("Starting the bot...")
 
