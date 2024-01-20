@@ -68,9 +68,7 @@ func (bot *Settings) addTriggers() {
 			max -= len(next)
 			max -= len(hdur)
 			max -= 4
-			for _, v := range bot.next.Split(max) {
-				b.Reply(m, next+hdur+" in "+v)
-			}
+			b.Reply(m, next+hdur+" in "+bot.next.Split(max))
 		},
 	})
 
@@ -92,9 +90,7 @@ func (bot *Settings) addTriggers() {
 			max -= len(prev)
 			max -= len(hdur)
 			max -= 8
-			for _, v := range bot.previous.Split(max) {
-				b.Reply(m, prev+hdur+" ago in "+v)
-			}
+			b.Reply(m, prev+hdur+" ago in "+bot.previous.Split(max))
 		},
 	})
 

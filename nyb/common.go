@@ -48,8 +48,7 @@ func (t TZ) String() (x string) {
 	return
 }
 
-func (t TZ) Split(max int) (arr []string) {
-	var x string
+func (t TZ) Split(max int) (x string) {
 	var prev int
 	var total int = max
 	for i, country := range t.Countries {
@@ -76,7 +75,7 @@ func (t TZ) Split(max int) (arr []string) {
 			x += ", "
 		}
 	}
-	return strings.Split(x, "\n")
+	return x
 }
 
 // TZS is a slice of timezones

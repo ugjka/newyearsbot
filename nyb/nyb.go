@@ -131,9 +131,7 @@ func (bot *Settings) loopTimeZones() {
 				max -= len(hdur)
 				max -= 4
 				if !bot.first {
-					for _, v := range zones[i].Split(max) {
-						irc.Msg(ch, next+hdur+" in "+v)
-					}
+					irc.Msg(ch, next+hdur+" in "+zones[i].Split(max))
 					irc.Msg(ch, help)
 					bot.first = true
 				} else {
@@ -149,9 +147,7 @@ func (bot *Settings) loopTimeZones() {
 			for _, ch := range irc.Channels {
 				max := irc.MsgMaxSize(ch)
 				max -= len(happy)
-				for _, v := range zones[i].Split(max) {
-					irc.Msg(ch, happy+v)
-				}
+				irc.Msg(ch, happy+zones[i].Split(max))
 			}
 			irc.Info(fmt.Sprintf("Announcing zone: %.2f", zones[i].Offset))
 		}
