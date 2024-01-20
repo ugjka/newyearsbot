@@ -32,9 +32,7 @@ func main() {
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			for _, z := range zones {
 				const pre = "\x1f\x0301,14Next New Year in 3 seconds 323 milliseconds\x0f in "
-				for _, v := range z.Split(b.MsgMaxSize(m.To) - len(pre)) {
-					b.Reply(m, pre+v)
-				}
+				b.Reply(m, pre+z.Split(b.MsgMaxSize(m.To)-len(pre)))
 				time.Sleep(time.Second)
 				b.Reply(m, "**************************")
 				time.Sleep(time.Second * 3)
