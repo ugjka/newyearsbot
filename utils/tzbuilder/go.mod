@@ -20,4 +20,4 @@ require (
 	gopkg.in/inconshreveable/log15.v2 v2.16.0 // indirect
 )
 
-replace github.com/ugjka/newyearsbot => ../../../newyearsbot
+replace github.com/ugjka/newyearsbot => ../../
