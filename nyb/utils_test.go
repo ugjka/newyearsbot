@@ -18,6 +18,8 @@ func TestNormalize(t *testing.T) {
 		{"a  a", "a a"},
 		{" a  a ", "a a"},
 		{"A", "a"},
+		// https://en.wikipedia.org/wiki/Non-breaking_space
+		{"a\u00a0 a", "a a"},
 	}
 	for i, tc := range tt {
 		t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {

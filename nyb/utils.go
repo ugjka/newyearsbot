@@ -22,18 +22,7 @@ func humanDur(d time.Duration) string {
 }
 
 func normalize(s string) string {
-	s = strings.TrimSpace(s)
 	s = strings.ToLower(s)
-	split := strings.Split(s, " ")
-	s = ""
-	for i, w := range split {
-		if w == "" {
-			continue
-		}
-		s += w
-		if i != len(split)-1 {
-			s += " "
-		}
-	}
+	s = strings.Join(strings.Fields(s), " ")
 	return s
 }
