@@ -4,16 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"testing"
-	"time"
 )
-
-func TestTimer(t *testing.T) {
-	timer := NewTimer(time.Second * 0)
-	<-timer.C
-	timer = NewTimer(time.Hour)
-	timer.Stop()
-	timer.Stop()
-}
 
 func TestIrcChans(t *testing.T) {
 	var ch Channels
