@@ -21,6 +21,7 @@ type Settings struct {
 	Email     string
 	Nominatim string
 	Limit     bool
+	Colors    bool
 	irc       *kitty.Bot
 	extra
 }
@@ -72,7 +73,9 @@ func (bot *Settings) Start() {
 	}
 	for {
 		bot.loopTimeZones()
-		const zonesFinishedMsg = "That's it, Year %d is here Anywhere on Earth"
+		var zonesFinishedMsg = bot.col("That's it") + ", Year " +
+			bot.col("%d") + " is here " +
+			bot.col("Anywhere on Earth")
 		for _, ch := range irc.Channels {
 			irc.Msg(ch, fmt.Sprintf(zonesFinishedMsg, bot.target.Year()))
 		}
@@ -117,12 +120,13 @@ func (bot *Settings) loopTimeZones() {
 			time.Sleep(time.Second * 2)
 			irc.Info(fmt.Sprintf("Zone pending: %.2f", zones[i].Offset))
 			hdur := humanDur(bot.target.Sub(now().UTC().Add(dur)))
-			next := "Next New Year in "
+			hdur = bot.col(hdur)
+			next := bot.col("Next New Year") + " in "
 			if i == 0 && !(now().Month() == time.January && now().Day() < 2) {
-				next = "First New Year in "
+				next = bot.col("First New Year") + " in "
 			}
 			if i == len(zones)-1 {
-				next = "Final New Year in "
+				next = bot.col("Final New Year") + " in "
 			}
 			help := fmt.Sprintf(helpMsg, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix)
 			for _, ch := range irc.Channels {
@@ -131,7 +135,7 @@ func (bot *Settings) loopTimeZones() {
 				max -= len(hdur)
 				max -= 4
 				if !bot.first {
-					irc.Msg(ch, next+hdur+" in "+zones[i].Split(max))
+					irc.Msg(ch, next+hdur+" in "+zones[i].Format(max, bot.Colors))
 					irc.Msg(ch, help)
 					bot.first = true
 				} else {
@@ -143,13 +147,21 @@ func (bot *Settings) loopTimeZones() {
 			timer := NewTimer(bot.target.Sub(now().UTC().Add(dur)))
 			<-timer.C
 			timer.Stop()
-			const happy = "Happy New Year in "
+			var happy = bot.col("Happy New Year") + " in "
 			for _, ch := range irc.Channels {
 				max := irc.MsgMaxSize(ch)
 				max -= len(happy)
-				irc.Msg(ch, happy+zones[i].Split(max))
+				irc.Msg(ch, happy+zones[i].Format(max, bot.Colors))
 			}
 			irc.Info(fmt.Sprintf("Announcing zone: %.2f", zones[i].Offset))
 		}
 	}
+}
+
+// https://modern.ircdocs.horse/formatting.html
+func (bot *Settings) col(s string) string {
+	if bot.Colors {
+		s = "\x02\x0302" + s + "\x0f"
+	}
+	return s
 }

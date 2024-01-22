@@ -10,7 +10,7 @@ import (
 	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
-const helpMsg = "COMMANDS: '%shny <location>', '%stime <location>', '%snext', '%sprevious', '%sremaining', '%shelp', '%ssource'"
+const helpMsg = "Commands: '%shny <location>', '%stime <location>', '%snext', '%sprevious', '%sremaining', '%shelp', '%ssource'"
 
 func (bot *Settings) addTriggers() {
 	irc := bot.irc
@@ -63,12 +63,13 @@ func (bot *Settings) addTriggers() {
 				return
 			}
 			hdur := humanDur(bot.target.Sub(now().UTC().Add(dur)))
-			const next = "Next New Year in "
+			hdur = bot.col(hdur)
+			var next = bot.col("Next New Year") + " in "
 			max := b.ReplyMaxSize(m)
 			max -= len(next)
 			max -= len(hdur)
 			max -= 4
-			b.Reply(m, next+hdur+" in "+bot.next.Split(max))
+			b.Reply(m, next+hdur+" in "+bot.next.Format(max, bot.Colors))
 		},
 	})
 
@@ -85,12 +86,13 @@ func (bot *Settings) addTriggers() {
 			if bot.previous.Offset == -12 {
 				hdur = humanDur(now().UTC().Add(dur).Sub(bot.target.AddDate(-1, 0, 0)))
 			}
-			const prev = "Previous New Year "
+			hdur = bot.col(hdur)
+			var prev = bot.col("Previous New Year") + " was "
 			max := b.ReplyMaxSize(m)
 			max -= len(prev)
 			max -= len(hdur)
 			max -= 8
-			b.Reply(m, prev+hdur+" ago in "+bot.previous.Split(max))
+			b.Reply(m, prev+hdur+" ago in "+bot.previous.Format(max, bot.Colors))
 		},
 	})
 
@@ -114,6 +116,7 @@ func (bot *Settings) addTriggers() {
 	//Trigger for time in location
 	irc.AddTrigger(kitty.Trigger{
 		Condition: func(b *kitty.Bot, m *kitty.Message) bool {
+
 			return m.Command == "PRIVMSG" &&
 				strings.HasPrefix(normalize(m.Content), bot.Prefix+"time ")
 		},

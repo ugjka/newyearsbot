@@ -48,13 +48,17 @@ func (t TZ) String() (x string) {
 	return
 }
 
-func (t TZ) Split(max int) (x string) {
+func (t TZ) Format(max int, color bool) (x string) {
 	var prev int
 	var total int = max
 	for i, country := range t.Countries {
 		prev = len(x)
-		//x += fmt.Sprintf("\x02%s\x0f", country.Name)
-		x += country.Name
+		if color {
+			x += fmt.Sprintf("\x02%s\x0f", country.Name)
+		} else {
+			x += country.Name
+		}
+		//x += country.Name
 		for i, city := range country.Cities {
 			if i == 0 {
 				x += " ("

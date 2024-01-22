@@ -33,6 +33,7 @@ CMD Options:
 -nossl		disable ssl for irc
 -nominatim	nominatim server (default: http://nominatim.openstreetmap.org)
 -nolimit	disable flood kick protection
+-colors		enable irc colors
 -debug		debug irc traffic
 -yaml		yaml config file
 
@@ -55,6 +56,7 @@ func main() {
 	nossl := flag.Bool("nossl", false, "disable ssl for irc")
 	nominatim := flag.String("nominatim", SET_NOMINATIM_SERVER, "nominatim server")
 	nolimit := flag.Bool("nolimit", false, "disable limit bot replies.")
+	colors := flag.Bool("colors", false, "enable irc colors")
 	debug := flag.Bool("debug", false, "debug irc traffic")
 	configYAML := flag.String("yaml", "", "use yaml settings file")
 
@@ -75,6 +77,7 @@ func main() {
 			Email:     *email,
 			Nominatim: *nominatim,
 			NoLimit:   *nolimit,
+			Colors:    *colors,
 			Debug:     *debug,
 		},
 	}
@@ -128,6 +131,7 @@ func main() {
 					Email:     c.Email,
 					Nominatim: c.Nominatim,
 					Limit:     !c.NoLimit,
+					Colors:    c.Colors,
 				},
 			),
 		)
@@ -154,6 +158,7 @@ type config []struct {
 	Email     string
 	Nominatim string
 	NoLimit   bool
+	Colors    bool
 	Debug     bool
 }
 

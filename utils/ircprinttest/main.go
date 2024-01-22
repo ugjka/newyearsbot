@@ -14,7 +14,7 @@ func main() {
 	bot := kitty.NewBot(
 		"testnet.ergo.chat:6697",
 		//"irc.libera.chat:6697",
-		"happynew2025",
+		"happyhappy2025v2",
 		func(b *kitty.Bot) {
 			b.Channels = []string{"##ugjka2"}
 			b.SSL = true
@@ -31,8 +31,8 @@ func main() {
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			for _, z := range zones {
-				const pre = "\x1f\x0301,14Next New Year in 3 seconds 323 milliseconds\x0f in "
-				b.Reply(m, pre+z.Split(b.MsgMaxSize(m.To)-len(pre)))
+				const pre = "\x02\x0302Next New Year\x0f in \x02\x030213 seconds 323 milliseconds\x0f in "
+				b.Reply(m, pre+z.Format(b.MsgMaxSize(m.To)-len(pre), true))
 				time.Sleep(time.Second)
 				b.Reply(m, "**************************")
 				time.Sleep(time.Second * 3)
