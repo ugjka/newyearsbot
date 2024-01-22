@@ -17,5 +17,5 @@ var target = func() time.Time {
 var now = func() time.Time {
 	return time.Now()
 	// debug fake time
-	//return time.Date(2024, 1, 1, 14, 0, 0, 0, time.Now().Location())
+	//return time.Date(2024, 1, 1, 0, 0, 1, 100000011, time.Now().Location())
 }
