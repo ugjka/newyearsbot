@@ -9,6 +9,7 @@
   email: "example@example.com" # mandatory field
   nominatim: http://nominatim.openstreetmap.org # default if omitted 
   nolimit: false # true will disable protection against flood kick attack
+  colors: false # decorate irc messages
   debug: false
 # irc server 2 (and so on)
 - nick: "partybot00"
@@ -19,4 +20,5 @@
   prefix: '.'
   email: "example@example.com"
   nolimit: false
+  colors: true
   debug: true # prints all irc comms to console
