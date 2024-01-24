@@ -23,6 +23,4 @@ require (
 
 //replace github.com/ugjka/kittybot => ../kittybot
 
-go 1.21
-
-toolchain go1.21.6
+go 1.18

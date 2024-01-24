@@ -1,6 +1,6 @@
 module tzbuilder
 
-go 1.21.6
+go 1.18
 
 require (
 	github.com/ugjka/newyearsbot v0.0.0-20240118090934-3e1275203e09
