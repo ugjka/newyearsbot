@@ -5,7 +5,7 @@ go 1.18
 replace github.com/ugjka/newyearsbot => ../../
 
 require (
-	github.com/ugjka/kittybot v0.0.60
+	github.com/ugjka/kittybot v0.0.62
 	github.com/ugjka/newyearsbot v0.0.0-20240119163439-1ab38db4b53e
 	gopkg.in/inconshreveable/log15.v2 v2.16.0
 )
