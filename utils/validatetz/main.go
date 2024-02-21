@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/ugjka/newyearsbot/nyb"
-	"gopkg.in/ugjka/go-tz.v2/tz"
+	"gopkg.in/ugjka/go-tz.v2"
 )
 
 // Set target year

@@ -3,8 +3,8 @@ module tzbuilder
 go 1.18
 
 require (
-	github.com/ugjka/newyearsbot v0.0.0-20240118090934-3e1275203e09
-	gopkg.in/ugjka/go-tz.v2 v2.0.15
+	github.com/ugjka/newyearsbot v0.0.0-20240220183636-60f85109bc95
+	gopkg.in/ugjka/go-tz.v2 v2.2.0
 )
 
 require (
@@ -15,8 +15,8 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/ugjka/ircmsg v0.0.3 // indirect
 	github.com/ugjka/kittybot v0.0.62 // indirect
-	golang.org/x/sys v0.16.0 // indirect
-	golang.org/x/term v0.16.0 // indirect
+	golang.org/x/sys v0.17.0 // indirect
+	golang.org/x/term v0.17.0 // indirect
 	gopkg.in/inconshreveable/log15.v2 v2.16.0 // indirect
 )
 

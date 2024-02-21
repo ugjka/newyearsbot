@@ -27,8 +27,8 @@ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/inconshreveable/log15.v2 v2.16.0 h1:LWHLVX8KbBMkQFSqfno4901Z4Wg8L3B7Cu0n4K/Q7MA=
 gopkg.in/inconshreveable/log15.v2 v2.16.0/go.mod h1:aPpfJ7XW+gOuirDoZ8gHhLh3kZ1B08FtV2bbmy7Jv3s=
-gopkg.in/ugjka/go-tz.v2 v2.1.0 h1:/1GPEHrxUR8bRCewOapyjqUkjZDo7u5eqtgsSCrqrdU=
-gopkg.in/ugjka/go-tz.v2 v2.1.0/go.mod h1:QYMkUqU4QLJaVmA4RMWL3cP+uDebG/WFZnyO/iP0MU8=
+gopkg.in/ugjka/go-tz.v2 v2.2.0 h1:vJDqpQZJhuLA5mzD2PJCUaKTKa1anSr8fjFiaFXCAww=
+gopkg.in/ugjka/go-tz.v2 v2.2.0/go.mod h1:QYMkUqU4QLJaVmA4RMWL3cP+uDebG/WFZnyO/iP0MU8=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 mvdan.cc/xurls/v2 v2.5.0 h1:lyBNOm8Wo71UknhUs4QTFUNNMyxy2JEIaKKo0RWOh+8=

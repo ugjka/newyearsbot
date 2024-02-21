@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/ugjka/newyearsbot/nyb"
-	"gopkg.in/ugjka/go-tz.v2/tz"
+	"gopkg.in/ugjka/go-tz.v2"
 )
 
 // scraping https://www.timeanddate.com/time/map/
