@@ -13,6 +13,8 @@ github.com/mattn/go-colorable v0.1.13/go.mod h1:7S9/ev0klgBDR4GtXTXX8a3vIGJpMovk
 github.com/mattn/go-isatty v0.0.16/go.mod h1:kYGgaQfpe5nmfYZH+SKPsOc2e4SrIfOl2e/yFXSvRLM=
 github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWEY=
 github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D7dTCTo3Y=
+github.com/ugjka/go-tz/v2 v2.2.2 h1:I5i4QRf0y2K37ZKJVwccW6q7wXbOMrHdPUe5ILYk9qs=
+github.com/ugjka/go-tz/v2 v2.2.2/go.mod h1:Jh35OKbERtwjZLWDZ2KgjD+bm5hb9Lx8nVD9Mv9NVzs=
 github.com/ugjka/ircmsg v0.0.3 h1:/yyB8HJm/y+UgA5aUJzVg6K4MqLa4PiEE8dIoQSHlL4=
 github.com/ugjka/ircmsg v0.0.3/go.mod h1:aAhyU2onRMc8CvDO4QDK/0VMKQBh4riIt2GnwupgTlE=
 github.com/ugjka/kittybot v0.0.62 h1:gjeoHIud97WKbeQAMxOgBB3ceU8VILjO7aT0vk27ROc=
@@ -27,8 +29,6 @@ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/inconshreveable/log15.v2 v2.16.0 h1:LWHLVX8KbBMkQFSqfno4901Z4Wg8L3B7Cu0n4K/Q7MA=
 gopkg.in/inconshreveable/log15.v2 v2.16.0/go.mod h1:aPpfJ7XW+gOuirDoZ8gHhLh3kZ1B08FtV2bbmy7Jv3s=
-gopkg.in/ugjka/go-tz.v2 v2.2.0 h1:vJDqpQZJhuLA5mzD2PJCUaKTKa1anSr8fjFiaFXCAww=
-gopkg.in/ugjka/go-tz.v2 v2.2.0/go.mod h1:QYMkUqU4QLJaVmA4RMWL3cP+uDebG/WFZnyO/iP0MU8=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 mvdan.cc/xurls/v2 v2.5.0 h1:lyBNOm8Wo71UknhUs4QTFUNNMyxy2JEIaKKo0RWOh+8=

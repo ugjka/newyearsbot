@@ -9,6 +9,8 @@ github.com/mattn/go-colorable v0.1.13/go.mod h1:7S9/ev0klgBDR4GtXTXX8a3vIGJpMovk
 github.com/mattn/go-isatty v0.0.16/go.mod h1:kYGgaQfpe5nmfYZH+SKPsOc2e4SrIfOl2e/yFXSvRLM=
 github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWEY=
 github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D7dTCTo3Y=
+github.com/ugjka/go-tz/v2 v2.2.2 h1:I5i4QRf0y2K37ZKJVwccW6q7wXbOMrHdPUe5ILYk9qs=
+github.com/ugjka/go-tz/v2 v2.2.2/go.mod h1:Jh35OKbERtwjZLWDZ2KgjD+bm5hb9Lx8nVD9Mv9NVzs=
 github.com/ugjka/ircmsg v0.0.3 h1:/yyB8HJm/y+UgA5aUJzVg6K4MqLa4PiEE8dIoQSHlL4=
 github.com/ugjka/ircmsg v0.0.3/go.mod h1:aAhyU2onRMc8CvDO4QDK/0VMKQBh4riIt2GnwupgTlE=
 github.com/ugjka/kittybot v0.0.62 h1:gjeoHIud97WKbeQAMxOgBB3ceU8VILjO7aT0vk27ROc=

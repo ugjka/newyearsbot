@@ -12,8 +12,8 @@ import (
 	"text/tabwriter"
 	"time"
 
+	"github.com/ugjka/go-tz/v2"
 	"github.com/ugjka/newyearsbot/nyb"
-	"gopkg.in/ugjka/go-tz.v2"
 )
 
 // scraping https://www.timeanddate.com/time/map/

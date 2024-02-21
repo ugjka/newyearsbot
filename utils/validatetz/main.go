@@ -11,8 +11,8 @@ import (
 	"sort"
 	"time"
 
+	"github.com/ugjka/go-tz/v2"
 	"github.com/ugjka/newyearsbot/nyb"
-	"gopkg.in/ugjka/go-tz.v2"
 )
 
 // Set target year

@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ugjka/go-tz/v2"
 	kitty "github.com/ugjka/kittybot"
-	"gopkg.in/ugjka/go-tz.v2"
 )
 
 const helpMsg = "Commands: '%shny <location>', '%stime <location>', '%snext', '%sprevious', '%sremaining', '%shelp', '%ssource'"
