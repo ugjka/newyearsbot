@@ -2,11 +2,11 @@ module validatetz
 
 go 1.18
 
-replace github.com/ugjka/latlong => /home/ugjka/gomod/latlong
+replace github.com/ugjka/newyearsbot => ../../
 
 require (
 	github.com/ugjka/go-tz/v2 v2.2.2
-	github.com/ugjka/newyearsbot v0.0.0-20240220183636-60f85109bc95
+	github.com/ugjka/newyearsbot v0.0.0-20240221160447-918280f4b5b6
 )
 
 require (
@@ -20,5 +20,4 @@ require (
 	golang.org/x/sys v0.17.0 // indirect
 	golang.org/x/term v0.17.0 // indirect
 	gopkg.in/inconshreveable/log15.v2 v2.16.0 // indirect
-	gopkg.in/ugjka/go-tz.v2 v2.1.0 // indirect
 )
