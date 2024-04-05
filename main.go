@@ -38,7 +38,7 @@ CMD Options:
 -yaml		yaml config file
 
 `
-const SET_NOMINATIM_SERVER = "http://nominatim.openstreetmap.org"
+const SET_NOMINATIM_SERVER = "https://nominatim.openstreetmap.org"
 const SET_LIBERA_SERVER = "irc.libera.chat:6697"
 const SET_PREFIX = "!"
 

@@ -30,7 +30,7 @@ var target = func() time.Time {
 func main() {
 	ext = flag.String("ext", "", "external geojson")
 	email = flag.String("email", "", "nominatim email")
-	nominatim = flag.String("nominatim", "http://nominatim.openstreetmap.org", "nominatim server")
+	nominatim = flag.String("nominatim", "https://nominatim.openstreetmap.org", "nominatim server")
 	flag.Parse()
 	if *email == "" {
 		fmt.Fprintf(os.Stderr, "%s", "provide email with -email flag\n")

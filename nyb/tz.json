@@ -1176,6 +1176,7 @@
         "name": "Kazakhstan",
         "cities": [
           "Aqtöbe",
+          "Astana",
           "Oral"
         ]
       },
@@ -1271,12 +1272,6 @@
         "name": "British Indian Ocean Territory",
         "cities": [
           "Diego Garcia"
-        ]
-      },
-      {
-        "name": "Kazakhstan",
-        "cities": [
-          "Astana"
         ]
       },
       {

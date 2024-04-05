@@ -29,7 +29,7 @@ var nominatim *string
 
 func main() {
 	email = flag.String("email", "", "nominatim email")
-	nominatim = flag.String("nominatim", "http://nominatim.openstreetmap.org", "nominatim server")
+	nominatim = flag.String("nominatim", "https://nominatim.openstreetmap.org", "nominatim server")
 	flag.Parse()
 	if *email == "" {
 		fmt.Fprintf(os.Stderr, "%s", "provide email with -email flag\n")
@@ -75,13 +75,16 @@ func main() {
 func timeZone(country, city string) (float64, error) {
 	var mapj nyb.NominatimResults
 	var err error
-	if country == "CAR" || country == "DRC" || country == "Congo" {
+	if country == "CAR" || country == "Congo" {
 		mapj, err = nyb.NominatimFetcherLong(*email, *nominatim, country, "", "")
 		if err != nil {
 			return 0, err
 		}
 	} else {
 		mapj, err = nyb.NominatimFetcher(*email, *nominatim, country+", "+city)
+		if mapj != nil && len(mapj) == 0 {
+			mapj, err = nyb.NominatimFetcher(*email, *nominatim, city+", "+country)
+		}
 		if err != nil {
 			return 0, err
 		}

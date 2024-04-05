@@ -7,7 +7,7 @@
   password: "" # irc password
   prefix: '!' # default if omitted
   email: "example@example.com" # mandatory field
-  nominatim: http://nominatim.openstreetmap.org # default if omitted 
+  nominatim: https://nominatim.openstreetmap.org # default if omitted 
   nolimit: false # true will disable protection against flood kick attack
   colors: false # decorate irc messages
   debug: false
