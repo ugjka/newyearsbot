@@ -5,8 +5,8 @@ go 1.18
 replace github.com/ugjka/newyearsbot => ../../
 
 require (
-	github.com/ugjka/go-tz/v2 v2.2.3
-	github.com/ugjka/newyearsbot v0.0.0-20240221182142-04726f37e1e5
+	github.com/ugjka/go-tz/v2 v2.2.4
+	github.com/ugjka/newyearsbot v0.0.0-20240405055626-58f2574b9537
 )
 
 require (
@@ -17,7 +17,7 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/ugjka/ircmsg v0.0.3 // indirect
 	github.com/ugjka/kittybot v0.0.62 // indirect
-	golang.org/x/sys v0.19.0 // indirect
-	golang.org/x/term v0.19.0 // indirect
+	golang.org/x/sys v0.25.0 // indirect
+	golang.org/x/term v0.24.0 // indirect
 	gopkg.in/inconshreveable/log15.v2 v2.16.0 // indirect
 )
