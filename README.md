@@ -1,7 +1,6 @@
 # NewYearsBot
 
-## Preparing for 2025, updates landing in December as usual
-## I'm doing it again for the greater good
+## 2025 here we come
 
 New Year's Eve IRC party bot
 
@@ -27,7 +26,7 @@ The command prefix `!` can be changed using the -prefix flag
 
 ## Installation
 
-### 2024 versions
+### 2025 versions
 
 Arch linux PKGBUILD in archlinux folder
 
