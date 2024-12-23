@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -13,13 +13,17 @@ import (
 	"time"
 )
 
+var userAgent = fmt.Sprintf("NYE IRC party bot, v%d: https://github.com/ugjka/newyearsbot", now().Year()+1)
+
 // TZ holds time zone data
 type TZ struct {
-	Countries []struct {
-		Name   string   `json:"name"`
-		Cities []string `json:"cities"`
-	} `json:"countries"`
-	Offset float64 `json:"offset"`
+	Countries []Country `json:"countries"`
+	Offset    float64   `json:"offset"`
+}
+
+type Country struct {
+	Name   string   `json:"name"`
+	Cities []string `json:"cities"`
 }
 
 func (t TZ) String() (x string) {
@@ -44,12 +48,17 @@ func (t TZ) String() (x string) {
 	return
 }
 
-func (t TZ) Split(max int) (x string) {
+func (t TZ) Format(max int, color bool) (x string) {
 	var prev int
 	var total int = max
 	for i, country := range t.Countries {
 		prev = len(x)
-		x += country.Name
+		if color {
+			x += fmt.Sprintf("\x02%s\x0f", country.Name)
+		} else {
+			x += country.Name
+		}
+		//x += country.Name
 		for i, city := range country.Cities {
 			if i == 0 {
 				x += " ("
@@ -70,7 +79,7 @@ func (t TZ) Split(max int) (x string) {
 			x += ", "
 		}
 	}
-	return
+	return x
 }
 
 // TZS is a slice of timezones
@@ -86,6 +95,73 @@ func (t TZS) Swap(i, j int) {
 
 func (t TZS) Less(i, j int) bool {
 	return t[i].Offset < t[j].Offset
+}
+
+func (t TZS) Exists(offset float64, country, city string) bool {
+	for _, tz := range t {
+		if tz.Offset == offset {
+			for _, c := range tz.Countries {
+				if c.Name == country {
+					if city == "" {
+						return true
+					}
+					for _, cit := range c.Cities {
+						if cit == city {
+							return true
+						}
+					}
+				}
+			}
+		}
+	}
+	return false
+}
+
+func (t TZS) Insert(offset float64, country, city string) TZS {
+	for i, tz := range t {
+		if tz.Offset == offset {
+			for j, c := range tz.Countries {
+				if c.Name == country {
+					t[i].Countries[j].Cities = append(t[i].Countries[j].Cities, city)
+					return t
+				}
+			}
+			if country == city || city == "" {
+				t[i].Countries = append(t[i].Countries, Country{
+					Name:   country,
+					Cities: []string{},
+				})
+				return t
+			}
+			t[i].Countries = append(t[i].Countries, Country{
+				Name:   country,
+				Cities: []string{city},
+			})
+			return t
+		}
+	}
+	if country == city || city == "" {
+		t = append(t, TZ{
+			Offset: offset,
+			Countries: []Country{
+				{
+					Name:   country,
+					Cities: []string{},
+				},
+			},
+		})
+		return t
+	}
+	t = append(t, TZ{
+		Offset: offset,
+		Countries: []Country{
+			{
+				Name:   country,
+				Cities: []string{city},
+			},
+		},
+	})
+	return t
 }
 
 // Channels is a flag that parses a list of IRC channels
@@ -120,7 +196,7 @@ func NewTimer(dur time.Duration) *Timer {
 	t := &Timer{}
 	t.C = make(chan bool)
 	t.stop = make(chan bool)
-	t.Target = time.Now().UTC().Add(dur)
+	t.Target = now().UTC().Add(dur)
 	t.ticker = time.NewTicker(time.Millisecond * 100)
 	go func(t *Timer) {
 		defer t.ticker.Stop()
@@ -129,7 +205,7 @@ func NewTimer(dur time.Duration) *Timer {
 			case <-t.stop:
 				return
 			default:
-				if time.Now().UTC().After(t.Target) {
+				if now().UTC().After(t.Target) {
 					close(t.C)
 					return
 				}
@@ -184,22 +260,34 @@ func (n *NominatimResult) UnmarshalJSON(data []byte) (err error) {
 
 // cache and client for NominatimFetcher
 var nominatim = struct {
-	cache map[string][]byte
+	cache map[string]NominatimResults
 	sync.RWMutex
 	http.Client
 }{
-	cache: make(map[string][]byte),
+	cache: make(map[string]NominatimResults),
+}
+
+func NominatimFetcher(email, server, query string) (res NominatimResults, err error) {
+	return NominatimFetcherLong(email, server, "", "", query)
 }
 
 // NominatimFetcher makes Nominatim API request
-func NominatimFetcher(email, server, location *string) (data []byte, err error) {
+func NominatimFetcherLong(email, server, country, city, query string) (res NominatimResults, err error) {
 	maps := url.Values{}
-	maps.Add("q", *location)
+	if country != "" {
+		maps.Add("country", country)
+	}
+	if city != "" {
+		maps.Add("city", city)
+	}
+	if query != "" {
+		maps.Add("q", query)
+	}
 	maps.Add("format", "json")
 	maps.Add("accept-language", "en")
 	maps.Add("limit", "1")
-	maps.Add("email", *email)
-	url := *server + "/search?" + maps.Encode()
+	maps.Add("email", email)
+	url := server + "/search?" + maps.Encode()
 	nominatim.RLock()
 	if v, ok := nominatim.cache[url]; ok {
 		nominatim.RUnlock()
@@ -208,8 +296,9 @@ func NominatimFetcher(email, server, location *string) (data []byte, err error) 
 	nominatim.RUnlock()
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, err
+		return
 	}
+	req.Header.Set("User-Agent", userAgent)
 	resp, err := nominatim.Do(req)
 	if err != nil {
 		return
@@ -218,12 +307,16 @@ func NominatimFetcher(email, server, location *string) (data []byte, err error) 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("status: %d", resp.StatusCode)
 	}
-	data, err = ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(data, &res)
 	if err != nil {
 		return
 	}
 	nominatim.Lock()
-	nominatim.cache[url] = data
+	nominatim.cache[url] = res
 	nominatim.Unlock()
 	return
 }

@@ -1,0 +1,24 @@
+# use of $./newyearsbot -yaml "settings.yaml"
+# irc server 1
+- nick: "hnyparty88" # mandatory field
+  channels: ["#chan34564:channelkey"]  # channel with channel password after the ":"
+  server: irc.libera.chat:6697 # default if omitted
+  nossl: false # true to disable SSL for irc
+  password: "" # irc password
+  prefix: '!' # default if omitted
+  email: "example@example.com" # mandatory field
+  nominatim: https://nominatim.openstreetmap.org # default if omitted 
+  nolimit: false # true will disable protection against flood kick attack
+  colors: false # decorate irc messages
+  debug: false
+# irc server 2 (and so on)
+- nick: "partybot00"
+  channels: ["#blash444", "#testchan444"] # array of channels, mandatory field
+  server: testnet.ergo.chat:6697
+  nossl: false
+  password: ""
+  prefix: '.'
+  email: "example@example.com"
+  nolimit: false
+  colors: true
+  debug: true # prints all irc comms to console

@@ -21,6 +21,7 @@ type Settings struct {
 	Email     string
 	Nominatim string
 	Limit     bool
+	Colors    bool
 	irc       *kitty.Bot
 	extra
 }
@@ -30,7 +31,8 @@ type extra struct {
 	previous  TZ
 	next      TZ
 	remaining int
-	now       time.Time
+	first     bool
+	target    time.Time
 }
 
 // New creates a new bot
@@ -47,13 +49,13 @@ func New(s *Settings) *Settings {
 
 // LogLvl sets the log level
 func (bot *Settings) LogLvl(Lvl log.Lvl) {
-	logHandler := log.LvlFilterHandler(Lvl, log.StdoutHandler)
+	logHandler := log.LvlFilterHandler(Lvl, log.StderrHandler)
 	bot.irc.Logger.SetHandler(logHandler)
 }
 
 // Start starts the bot
 func (bot *Settings) Start() {
-	bot.now = time.Now().Add(-time.Second)
+	bot.target = target
 	irc := bot.irc
 	irc.Info("Starting the bot...")
 
@@ -71,13 +73,15 @@ func (bot *Settings) Start() {
 	}
 	for {
 		bot.loopTimeZones()
-		const zonesFinishedMsg = "That's it, Year %d is here Anywhere on Earth"
+		var zonesFinishedMsg = bot.col("That's it") + ", Year " +
+			bot.col("%d") + " is here " +
+			bot.col("Anywhere on Earth")
 		for _, ch := range irc.Channels {
-			irc.Msg(ch, fmt.Sprintf(zonesFinishedMsg, target.Year()))
+			irc.Msg(ch, fmt.Sprintf(zonesFinishedMsg, bot.target.Year()))
 		}
 		irc.Info("All zones finished...")
-		target = target.AddDate(1, 0, 0)
-		irc.Info(fmt.Sprintf("Wrapping the target date around to %d", target.Year()))
+		bot.target = bot.target.AddDate(1, 0, 0)
+		irc.Info(fmt.Sprintf("Wrapping the target date around to %d", bot.target.Year()))
 	}
 }
 
@@ -112,31 +116,52 @@ func (bot *Settings) loopTimeZones() {
 			bot.previous = zones[i-1]
 		}
 		bot.remaining = len(zones) - i
-		if timeNow().UTC().Add(dur).Before(target) {
+		if now().UTC().Add(dur).Before(bot.target) {
 			time.Sleep(time.Second * 2)
 			irc.Info(fmt.Sprintf("Zone pending: %.2f", zones[i].Offset))
-			hdur := humanDur(target.Sub(timeNow().UTC().Add(dur)))
-			const next = "Next New Year in "
+			hdur := humanDur(bot.target.Sub(now().UTC().Add(dur)))
+			hdur = bot.col(hdur)
+			next := bot.col("Next New Year") + " in "
+			if i == 0 && !(now().Month() == time.January && now().Day() < 2) {
+				next = bot.col("First New Year") + " in "
+			}
+			if i == len(zones)-1 {
+				next = bot.col("Final New Year") + " in "
+			}
 			help := fmt.Sprintf(helpMsg, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix, bot.Prefix)
 			for _, ch := range irc.Channels {
 				max := irc.MsgMaxSize(ch)
 				max -= len(next)
 				max -= len(hdur)
 				max -= 4
-				irc.Msg(ch, next+hdur+" in "+zones[i].Split(max))
-				irc.Msg(ch, help)
+				if !bot.first {
+					irc.Msg(ch, next+hdur+" in "+zones[i].Format(max, bot.Colors))
+					irc.Msg(ch, help)
+					bot.first = true
+				} else {
+					irc.Msg(ch, next+hdur+". "+
+						fmt.Sprintf("See %snext or %shelp.", bot.Prefix, bot.Prefix))
+				}
 			}
 			//Wait till Target in Timezone
-			timer := NewTimer(target.Sub(timeNow().UTC().Add(dur)))
+			timer := NewTimer(bot.target.Sub(now().UTC().Add(dur)))
 			<-timer.C
 			timer.Stop()
-			const happy = "Happy New Year in "
+			var happy = bot.col("Happy New Year") + " in "
 			for _, ch := range irc.Channels {
 				max := irc.MsgMaxSize(ch)
 				max -= len(happy)
-				irc.Msg(ch, happy+zones[i].Split(max))
+				irc.Msg(ch, happy+zones[i].Format(max, bot.Colors))
 			}
 			irc.Info(fmt.Sprintf("Announcing zone: %.2f", zones[i].Offset))
 		}
 	}
+}
+
+// https://modern.ircdocs.horse/formatting.html
+func (bot *Settings) col(s string) string {
+	if bot.Colors {
+		s = "\x02\x0302" + s + "\x0f"
+	}
+	return s
 }

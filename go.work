@@ -1,0 +1,9 @@
+go 1.18
+
+use (
+	utils/ircprinttest
+	utils/tzbuilder
+	utils/validatetz
+)
+
+use .

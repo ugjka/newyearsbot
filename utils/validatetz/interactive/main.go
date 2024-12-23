@@ -4,15 +4,14 @@ package main
 
 import (
 	"bufio"
-	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
 	"os"
 	"time"
 
+	"github.com/ugjka/go-tz/v2"
 	"github.com/ugjka/newyearsbot/nyb"
-	"gopkg.in/ugjka/go-tz.v2/tz"
 )
 
 var email *string
@@ -31,7 +30,7 @@ var target = func() time.Time {
 func main() {
 	ext = flag.String("ext", "", "external geojson")
 	email = flag.String("email", "", "nominatim email")
-	nominatim = flag.String("nominatim", "http://nominatim.openstreetmap.org", "nominatim server")
+	nominatim = flag.String("nominatim", "https://nominatim.openstreetmap.org", "nominatim server")
 	flag.Parse()
 	if *email == "" {
 		fmt.Fprintf(os.Stderr, "%s", "provide email with -email flag\n")
@@ -56,15 +55,11 @@ func main() {
 }
 
 func locationInfo(location string) (string, error) {
-	data, err := nyb.NominatimFetcher(email, nominatim, &location)
+	mapj, err := nyb.NominatimFetcher(*email, *nominatim, location)
 	if err != nil {
 		return "", err
 	}
 
-	var mapj nyb.NominatimResults
-	if err = json.Unmarshal(data, &mapj); err != nil {
-		return "", err
-	}
 	if len(mapj) == 0 {
 		return "", errors.New("status not OK")
 	}

@@ -4,6 +4,7 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"os"
 	"sort"
 
@@ -23,9 +24,11 @@ func main() {
 			sort.Sort(v[i].Countries[j].Cities)
 		}
 	}
-	enc := json.NewEncoder(os.Stdout)
-	enc.SetIndent("", "  ")
-	enc.Encode(v)
+	data, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		log.Fatal(err)
+	}
+	os.WriteFile("tz.json", data, 0644)
 }
 
 // Cities ...

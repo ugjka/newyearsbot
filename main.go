@@ -3,6 +3,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"regexp"
 
@@ -10,15 +11,9 @@ import (
 	"github.com/fatih/color"
 	"github.com/ugjka/newyearsbot/nyb"
 	log "gopkg.in/inconshreveable/log15.v2"
+	"gopkg.in/yaml.v3"
 	"mvdan.cc/xurls/v2"
 )
-
-// Custom flag for IRC channels
-var channels nyb.Channels
-
-func init() {
-	flag.Var(&channels, "channels", "comma separated list of channels")
-}
 
 const usage = `
 New Year's Eve IRC party bot
@@ -37,23 +32,33 @@ CMD Options:
 -prefix		command prefix (default: !)
 -nossl		disable ssl for irc
 -nominatim	nominatim server (default: http://nominatim.openstreetmap.org)
--nolimit	disable rate limit bot replies
+-nolimit	disable flood kick protection
+-colors		enable irc colors
 -debug		debug irc traffic
+-yaml		yaml config file
 
 `
+const SET_NOMINATIM_SERVER = "https://nominatim.openstreetmap.org"
+const SET_LIBERA_SERVER = "irc.libera.chat:6697"
+const SET_PREFIX = "!"
 
 func main() {
+	var channels nyb.Channels
 
-	//Flags
-	nick := flag.String("nick", "NewYearBot", "irc nick")
+	// Mandatory
+	flag.Var(&channels, "channels", "comma separated list of channels")
+	nick := flag.String("nick", "", "irc nick")
 	email := flag.String("email", "", "nominatim email")
 	server := flag.String("server", "irc.snoonet.org:6697", "irc server")
+	// Optional
 	password := flag.String("password", "", "irc password")
-	prefix := flag.String("prefix", "!", "command prefix")
+	prefix := flag.String("prefix", SET_PREFIX, "command prefix")
 	nossl := flag.Bool("nossl", false, "disable ssl for irc")
-	nominatim := flag.String("nominatim", "http://nominatim.openstreetmap.org", "nominatim server")
-	debug := flag.Bool("debug", false, "debug irc traffic")
+	nominatim := flag.String("nominatim", SET_NOMINATIM_SERVER, "nominatim server")
 	nolimit := flag.Bool("nolimit", false, "disable limit bot replies.")
+	colors := flag.Bool("colors", false, "enable irc colors")
+	debug := flag.Bool("debug", false, "debug irc traffic")
+	configYAML := flag.String("yaml", "", "use yaml settings file")
 
 	green := color.New(color.FgGreen)
 	flag.Usage = func() {
@@ -61,92 +66,152 @@ func main() {
 	}
 	flag.Parse()
 
-	//Colorize errors
+	c := config{
+		{
+			Nick:      *nick,
+			Channels:  channels,
+			Server:    *server,
+			NoSSL:     *nossl,
+			Password:  *password,
+			Prefix:    *prefix,
+			Email:     *email,
+			Nominatim: *nominatim,
+			NoLimit:   *nolimit,
+			Colors:    *colors,
+			Debug:     *debug,
+		},
+	}
+
 	red := color.New(color.FgHiRed)
 
-	//Check mandatory inputs
-	if len(channels) == 0 {
-		red.Fprintln(os.Stderr, "error: no channels defined")
-		flag.Usage()
-		return
-	}
-	channelReg := regexp.MustCompile(`^([#&][^\x07\x2C\s]{0,200})$`)
-	for _, ch := range channels {
-		if !channelReg.MatchString(ch) {
-			red.Fprintf(os.Stderr, "error: invalid channel name: %s\n", ch)
-			flag.Usage()
-			return
+	if *configYAML != "" {
+		data, err := os.ReadFile(*configYAML)
+		if err != nil {
+			red.Fprintln(os.Stderr, "yaml file: ", err)
+			os.Exit(1)
+		}
+		c = config{}
+		err = yaml.Unmarshal(data, &c)
+		if err != nil {
+			red.Fprintln(os.Stderr, "yaml file: ", err)
+			os.Exit(1)
+		}
+		for i := range c {
+			if c[i].Nominatim == "" {
+				c[i].Nominatim = SET_NOMINATIM_SERVER
+			}
+			if c[i].Server == "" {
+				c[i].Server = SET_LIBERA_SERVER
+			}
+			if c[i].Prefix == "" {
+				c[i].Prefix = SET_PREFIX
+			}
 		}
 	}
-	if *nick == "" {
-		red.Fprintln(os.Stderr, "error: no nick defined")
-		flag.Usage()
-		return
+
+	err := check(c)
+	if err != nil {
+		red.Fprintln(os.Stderr, err)
+		if *configYAML == "" {
+			flag.Usage()
+		}
+		os.Exit(1)
 	}
-	if len(*nick) > 16 {
-		red.Fprintln(os.Stderr, "error: nick too long")
-		flag.Usage()
-		return
-	}
-	if *email == "" {
-		red.Fprintln(os.Stderr, "error: no email provided")
-		flag.Usage()
-		return
-	}
-	if err := checkmail.ValidateFormat(*email); err != nil {
-		red.Fprintln(os.Stderr, "error: invalid email address")
-		flag.Usage()
-		return
-	}
-	//Check optional inputs
-	if *server == "" {
-		red.Fprintln(os.Stderr, "error: no irc server defined")
-		flag.Usage()
-		return
-	}
-	serverReg := regexp.MustCompile(`^\S+:\d+$`)
-	if !serverReg.MatchString(*server) {
-		red.Fprintln(os.Stderr, "error: invalid irc server address")
-		flag.Usage()
-		return
-	}
-	if *prefix == "" {
-		red.Fprintln(os.Stderr, "error: no command prefix defined")
-		flag.Usage()
-		return
-	}
-	prefixReg := regexp.MustCompile(`^\W+$`)
-	if !prefixReg.MatchString(*prefix) {
-		red.Fprintln(os.Stderr, "error: prefix must be non-alphanumeric")
-		flag.Usage()
-		return
-	}
-	if *nominatim == "" {
-		red.Fprintln(os.Stderr, "error: no nominatim server provided")
-		flag.Usage()
-		return
-	}
-	if !xurls.Strict().MatchString(*nominatim) {
-		red.Fprintln(os.Stderr, "error: invalid nominatim server url")
-		flag.Usage()
-		return
+	var bots []*nyb.Settings
+	for _, c := range c {
+		bots = append(bots,
+			nyb.New(
+				&nyb.Settings{
+					Nick:      c.Nick,
+					Channels:  c.Channels,
+					Server:    c.Server,
+					SSL:       !c.NoSSL,
+					Password:  c.Password,
+					Prefix:    c.Prefix,
+					Email:     c.Email,
+					Nominatim: c.Nominatim,
+					Limit:     !c.NoLimit,
+					Colors:    c.Colors,
+				},
+			),
+		)
 	}
 
-	bot := nyb.New(&nyb.Settings{
-		Nick:      *nick,
-		Channels:  channels,
-		Server:    *server,
-		SSL:       !*nossl,
-		Password:  *password,
-		Prefix:    *prefix,
-		Email:     *email,
-		Nominatim: *nominatim,
-		Limit:     !*nolimit,
-	})
-	if *debug {
-		bot.LogLvl(log.LvlDebug)
-	} else {
-		bot.LogLvl(log.LvlInfo)
+	for i, bot := range bots {
+		if c[i].Debug {
+			bot.LogLvl(log.LvlDebug)
+		} else {
+			bot.LogLvl(log.LvlInfo)
+		}
+		go bot.Start()
 	}
-	bot.Start()
+	select {}
+}
+
+type config []struct {
+	Nick      string
+	Channels  []string
+	Server    string
+	NoSSL     bool
+	Password  string
+	Prefix    string
+	Email     string
+	Nominatim string
+	NoLimit   bool
+	Colors    bool
+	Debug     bool
+}
+
+func check(c config) error {
+	if len(c) == 0 {
+		return fmt.Errorf("empty or misconfigured yaml")
+	}
+
+	for _, c := range c {
+
+		// Check mandatory inputs
+		if len(c.Channels) == 0 {
+			return fmt.Errorf("error: no channels defined")
+		}
+		channelReg := regexp.MustCompile(`^([#&][^\x07\x2C\s]{0,200})$`)
+		for _, ch := range c.Channels {
+			if !channelReg.MatchString(ch) {
+				return fmt.Errorf("error: invalid channel name: %s", ch)
+			}
+		}
+		if c.Nick == "" {
+			return fmt.Errorf("error: no nick defined")
+		}
+		if len(c.Nick) > 16 {
+			return fmt.Errorf("error: nick too long")
+		}
+		if c.Email == "" {
+			return fmt.Errorf("error: no email provided")
+		}
+		if err := checkmail.ValidateFormat(c.Email); err != nil {
+			return fmt.Errorf("error: invalid email address")
+		}
+		// Check optional inputs
+		if c.Server == "" {
+			return fmt.Errorf("error: no irc server defined")
+		}
+		serverReg := regexp.MustCompile(`^\S+:\d+$`)
+		if !serverReg.MatchString(c.Server) {
+			return fmt.Errorf("error: invalid irc server address")
+		}
+		if c.Prefix == "" {
+			return fmt.Errorf("error: no command prefix defined")
+		}
+		prefixReg := regexp.MustCompile(`^\W+$`)
+		if !prefixReg.MatchString(c.Prefix) {
+			return fmt.Errorf("error: prefix must be non-alphanumeric")
+		}
+		if c.Nominatim == "" {
+			return fmt.Errorf("error: no nominatim server provided")
+		}
+		if !xurls.Strict().MatchString(c.Nominatim) {
+			return fmt.Errorf("error: invalid nominatim server url")
+		}
+	}
+	return nil
 }

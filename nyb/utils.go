@@ -14,32 +14,15 @@ func zoneOffset(target time.Time, zone *time.Location) time.Duration {
 	return time.Second * time.Duration(offset)
 }
 
-var timeNow = func() time.Time {
-	return time.Now()
-}
-
 func humanDur(d time.Duration) string {
 	hdur := durafmt.Parse(d)
-	arr := strings.Split(hdur.String(), " ")
-	if len(arr) > 2 {
-		return strings.Join(arr[:4], " ")
-	}
-	return strings.Join(arr[:2], " ")
+	hdur = hdur.LimitToUnit("weeks")
+	hdur = hdur.LimitFirstN(2)
+	return hdur.String()
 }
 
 func normalize(s string) string {
-	s = strings.TrimSpace(s)
 	s = strings.ToLower(s)
-	split := strings.Split(s, " ")
-	s = ""
-	for i, w := range split {
-		if w == "" {
-			continue
-		}
-		s += w
-		if i != len(split)-1 {
-			s += " "
-		}
-	}
+	s = strings.Join(strings.Fields(s), " ")
 	return s
 }

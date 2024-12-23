@@ -21,6 +21,6 @@ func main() {
 
 	for _, k := range zones {
 		fmt.Println("**********************")
-		fmt.Println(k.Split(200))
+		fmt.Println(k.Format(200, true))
 	}
 }
