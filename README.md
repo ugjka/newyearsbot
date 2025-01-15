@@ -1,6 +1,6 @@
 # NewYearsBot
 
-## 2025 here we come
+## 2026 here we come
 
 New Year's Eve IRC party bot
 
