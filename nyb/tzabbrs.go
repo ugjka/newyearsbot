@@ -87,10 +87,6 @@ func parseZoneInfo(data []byte, target time.Time) (abbrs map[string]int) {
 	for i := 1; i <= 12; i++ {
 		abbrs[milneg[i-1]] = -i * 3600
 		abbrs[milpos[i-1]] = i * 3600
-		abbrs[fmt.Sprintf("UTC+%d", i)] = i * 3600
-		abbrs[fmt.Sprintf("UTC-%d", i)] = -i * 3600
-		abbrs[fmt.Sprintf("GMT+%d", i)] = i * 3600
-		abbrs[fmt.Sprintf("GMT-%d", i)] = -i * 3600
 	}
 	tzCSV = nil
 	return abbrs
