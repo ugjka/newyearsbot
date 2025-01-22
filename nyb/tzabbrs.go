@@ -91,3 +91,51 @@ func parseZoneInfo(data []byte, target time.Time) (abbrs map[string]int) {
 	tzCSV = nil
 	return abbrs
 }
+
+func parseUTC(in string) (offset int, err error) {
+	formats := []string{
+		"UTC+%d:%d",
+		"UTC-%d:%d",
+		"GMT+%d:%d",
+		"GMT-%d:%d",
+	}
+	for i := range formats {
+		var hours int
+		var minutes int
+		_, err := fmt.Sscanf(in, formats[i], &hours, &minutes)
+		if err == nil {
+			if minutes > 59 {
+				return 0, fmt.Errorf("minutes over 59")
+			}
+			if i%2 == 0 {
+				offset += hours * 3600
+				offset += minutes * 60
+				return offset, nil
+			} else {
+				offset -= hours * 3600
+				offset -= minutes * 60
+				return offset, nil
+			}
+		}
+	}
+	formatsShort := []string{
+		"UTC+%d",
+		"UTC-%d",
+		"GMT+%d",
+		"GMT-%d",
+	}
+	for i := range formatsShort {
+		var hours int
+		_, err := fmt.Sscanf(in, formatsShort[i], &hours)
+		if err == nil {
+			if i%2 == 0 {
+				offset += hours * 3600
+				return offset, nil
+			} else {
+				offset -= hours * 3600
+				return offset, nil
+			}
+		}
+	}
+	return 0, fmt.Errorf("zone not found")
+}

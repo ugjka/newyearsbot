@@ -191,13 +191,16 @@ var (
 	errNoPlace = errors.New("couldn't find that place")
 )
 
-func timeInZone(tzid string) (string, error) {
+func timeInZone(tzid string) (msg string, err error) {
 	tzid = strings.ToUpper(tzid)
 	offset, ok := tzAbbrs[tzid]
 	if !ok {
-		return "", fmt.Errorf("zone not found")
+		offset, err = parseUTC(tzid)
+		if err != nil {
+			return "", fmt.Errorf("zone not found")
+		}
 	}
-	msg := fmt.Sprintf("Time in %s is %s", tzid, now().In(time.FixedZone(tzid, offset)).Format("Mon Jan 2 15:04:05 -0700 MST 2006"))
+	msg = fmt.Sprintf("Time in %s is %s", tzid, now().In(time.FixedZone(tzid, offset)).Format("Mon Jan 2 15:04:05 -0700 MST 2006"))
 	return msg, nil
 }
 
@@ -263,11 +266,14 @@ func (bot *Settings) newYear(location string) (string, error) {
 	return fmt.Sprintf(newYearPastMsg, address, hdur), nil
 }
 
-func (bot *Settings) newYearInTZ(tzid string) (string, error) {
+func (bot *Settings) newYearInTZ(tzid string) (msg string, err error) {
 	tzid = strings.ToUpper(tzid)
 	offset, ok := tzAbbrs[tzid]
 	if !ok {
-		return "", fmt.Errorf("zone not found")
+		offset, err = parseUTC(tzid)
+		if err != nil {
+			return "", fmt.Errorf("zone not found")
+		}
 	}
 	offsetdur := time.Second * time.Duration(offset)
 	if now().UTC().Add(offsetdur).Before(bot.target) {
