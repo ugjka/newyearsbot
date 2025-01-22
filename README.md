@@ -26,7 +26,7 @@ The command prefix `!` can be changed using the -prefix flag
 
 ## Installation
 
-### 2025 versions
+### 2026 versions coming soon
 
 Arch linux PKGBUILD in archlinux folder
 
