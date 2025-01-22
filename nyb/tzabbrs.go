@@ -81,7 +81,12 @@ func parseZoneInfo(data []byte, target time.Time) (abbrs map[string]int) {
 		}
 	}
 	abbrs["UTC"] = 0
+	abbrs["Z"] = 0
+	milneg := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M"}
+	milpos := []string{"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y"}
 	for i := 1; i <= 12; i++ {
+		abbrs[milneg[i-1]] = -i * 3600
+		abbrs[milpos[i-1]] = i * 3600
 		abbrs[fmt.Sprintf("UTC+%d", i)] = i * 3600
 		abbrs[fmt.Sprintf("UTC-%d", i)] = -i * 3600
 		abbrs[fmt.Sprintf("GMT+%d", i)] = i * 3600
