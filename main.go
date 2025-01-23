@@ -12,7 +12,6 @@ import (
 	"github.com/ugjka/newyearsbot/nyb"
 	log "gopkg.in/inconshreveable/log15.v2"
 	"gopkg.in/yaml.v3"
-	"mvdan.cc/xurls/v2"
 )
 
 const usage = `
@@ -208,9 +207,6 @@ func check(c config) error {
 		}
 		if c.Nominatim == "" {
 			return fmt.Errorf("error: no nominatim server provided")
-		}
-		if !xurls.Strict().MatchString(c.Nominatim) {
-			return fmt.Errorf("error: invalid nominatim server url")
 		}
 	}
 	return nil
