@@ -124,7 +124,7 @@ func (bot *Settings) addTriggers() {
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying time...")
 			arg := normalize(m.Content)[len(bot.Prefix)+len("time")+1:]
-			if msg, err := timeInZone(arg); err == nil {
+			if msg, err := timeInTZ(arg); err == nil {
 				b.Reply(m, msg)
 				return
 			}
@@ -191,16 +191,18 @@ var (
 	errNoPlace = errors.New("couldn't find that place")
 )
 
-func timeInZone(tzid string) (msg string, err error) {
-	tzid = strings.ToUpper(tzid)
-	offset, ok := tzAbbrs[tzid]
-	if !ok {
-		offset, err = parseUTC(tzid)
+func timeInTZ(tzAbbr string) (msg string, err error) {
+	tzAbbr = strings.ToUpper(tzAbbr)
+	var offset int
+	var ok bool
+	if offset, ok = tzAbbrs[tzAbbr]; !ok {
+		offset, err = parseUTC(tzAbbr)
 		if err != nil {
 			return "", fmt.Errorf("zone not found")
 		}
 	}
-	msg = fmt.Sprintf("Time in %s is %s", tzid, now().In(time.FixedZone(tzid, offset)).Format("Mon Jan 2 15:04:05 -0700 MST 2006"))
+
+	msg = fmt.Sprintf("Time in %s is %s", tzAbbr, now().In(time.FixedZone(tzAbbr, offset)).Format("Mon Jan 2 15:04:05 -0700 MST 2006"))
 	return msg, nil
 }
 
@@ -266,22 +268,25 @@ func (bot *Settings) newYear(location string) (string, error) {
 	return fmt.Sprintf(newYearPastMsg, address, hdur), nil
 }
 
-func (bot *Settings) newYearInTZ(tzid string) (msg string, err error) {
-	tzid = strings.ToUpper(tzid)
-	offset, ok := tzAbbrs[tzid]
-	if !ok {
-		offset, err = parseUTC(tzid)
+func (bot *Settings) newYearInTZ(tzAbbr string) (msg string, err error) {
+	tzAbbr = strings.ToUpper(tzAbbr)
+	var offset int
+	var ok bool
+	if offset, ok = tzAbbrs[tzAbbr]; !ok {
+		offset, err = parseUTC(tzAbbr)
 		if err != nil {
 			return "", fmt.Errorf("zone not found")
 		}
 	}
+
 	offsetdur := time.Second * time.Duration(offset)
 	if now().UTC().Add(offsetdur).Before(bot.target) {
 		hdur := humanDur(bot.target.Sub(now().UTC().Add(offsetdur)))
 		const newYearFutureMsg = "New Year in %s will happen in %s"
-		return fmt.Sprintf(newYearFutureMsg, tzid, hdur), nil
+		return fmt.Sprintf(newYearFutureMsg, tzAbbr, hdur), nil
 	}
+
 	hdur := humanDur(now().UTC().Add(offsetdur).Sub(bot.target))
 	const newYearPastMsg = "New Year in %s happened %s ago"
-	return fmt.Sprintf(newYearPastMsg, tzid, hdur), nil
+	return fmt.Sprintf(newYearPastMsg, tzAbbr, hdur), nil
 }
