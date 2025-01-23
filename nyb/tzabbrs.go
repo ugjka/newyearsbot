@@ -110,12 +110,14 @@ func parseUTC(in string) (offset int, err error) {
 			if i%2 == 0 {
 				offset += hours * 3600
 				offset += minutes * 60
-				return offset, nil
 			} else {
 				offset -= hours * 3600
 				offset -= minutes * 60
-				return offset, nil
 			}
+			if i > 1 {
+				offset = -offset
+			}
+			return offset, nil
 		}
 	}
 	formatsShort := []string{
@@ -130,11 +132,13 @@ func parseUTC(in string) (offset int, err error) {
 		if err == nil {
 			if i%2 == 0 {
 				offset += hours * 3600
-				return offset, nil
 			} else {
 				offset -= hours * 3600
-				return offset, nil
 			}
+			if i > 1 {
+				offset = -offset
+			}
+			return offset, nil
 		}
 	}
 	return 0, fmt.Errorf("zone not found")
