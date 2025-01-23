@@ -4,3 +4,4 @@ newyearsbot.exe
 *.zip
 my.yaml
 build.sh
+*.profraw

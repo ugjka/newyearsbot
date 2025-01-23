@@ -22,3 +22,9 @@
   nolimit: false
   colors: true
   debug: true # prints all irc comms to console
+- nick: "hnyparty99" 
+  channels: ["#chan34564:channelkey"]  
+  email: "example@example.com" # mandatory field
+  bind: "2a01:4f9:c010:97e4::beef" #bind to specific host
+  nossl: true
+  server: "irc.ipv6.libera.chat:6665"

@@ -2,10 +2,13 @@
 package main
 
 import (
+	"crypto/tls"
 	"flag"
 	"fmt"
+	"net"
 	"os"
 	"regexp"
+	"time"
 
 	"github.com/badoux/checkmail"
 	"github.com/fatih/color"
@@ -57,6 +60,7 @@ func main() {
 	nolimit := flag.Bool("nolimit", false, "disable limit bot replies.")
 	colors := flag.Bool("colors", false, "enable irc colors")
 	debug := flag.Bool("debug", false, "debug irc traffic")
+	bind := flag.String("bind", "", "bind to host address")
 	configYAML := flag.String("yaml", "", "use yaml settings file")
 
 	green := color.New(color.FgGreen)
@@ -78,6 +82,7 @@ func main() {
 			NoLimit:   *nolimit,
 			Colors:    *colors,
 			Debug:     *debug,
+			Bind:      *bind,
 		},
 	}
 
@@ -118,6 +123,67 @@ func main() {
 	}
 	var bots []*nyb.Settings
 	for _, c := range c {
+		var err error
+		var customTLSDial nyb.TLSDialFunc
+		var customDial nyb.DialFunc
+		if c.NoSSL && c.Bind != "" {
+			customDial, err = func() (nyb.DialFunc, error) {
+				if c.Bind == "" {
+					return nil, nil
+				}
+				localAddr, err := net.ResolveIPAddr("ip", c.Bind)
+				if err != nil {
+					return nil, err
+				}
+
+				localTCPAddr := net.TCPAddr{
+					IP: localAddr.IP,
+				}
+				remoteAddr, err := net.ResolveTCPAddr("tcp", c.Server)
+				if err != nil {
+					return nil, err
+				}
+				dialer := func(network string, addr string) (net.Conn, error) {
+					return net.DialTCP(network, &localTCPAddr, remoteAddr)
+				}
+				return dialer, nil
+			}()
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "BINDHOST:", err)
+				os.Exit(1)
+			}
+		}
+		if !c.NoSSL && c.Bind != "" {
+			customTLSDial, err = func() (nyb.TLSDialFunc, error) {
+				if c.Bind == "" {
+					return nil, nil
+				}
+
+				localAddr, err := net.ResolveIPAddr("ip", c.Bind)
+				if err != nil {
+					return nil, err
+				}
+
+				localTCPAddr := net.TCPAddr{
+					IP: localAddr.IP,
+				}
+
+				dialer := &net.Dialer{
+					LocalAddr: &localTCPAddr,
+					Timeout:   30 * time.Second,
+					KeepAlive: 30 * time.Second,
+				}
+
+				tlsdialer := func(network string, addr string, tlsConf *tls.Config) (*tls.Conn, error) {
+					return tls.DialWithDialer(dialer, network, addr, &tls.Config{})
+				}
+				return tlsdialer, nil
+			}()
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "BINDHOST:", err)
+				os.Exit(1)
+			}
+		}
 		bots = append(bots,
 			nyb.New(
 				&nyb.Settings{
@@ -131,6 +197,8 @@ func main() {
 					Nominatim: c.Nominatim,
 					Limit:     !c.NoLimit,
 					Colors:    c.Colors,
+					Dial:      customDial,
+					TLSDial:   customTLSDial,
 				},
 			),
 		)
@@ -159,6 +227,7 @@ type config []struct {
 	NoLimit   bool
 	Colors    bool
 	Debug     bool
+	Bind      string
 }
 
 func check(c config) error {

@@ -1,14 +1,19 @@
 package nyb
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"net"
 	"sort"
 	"time"
 
 	kitty "github.com/ugjka/kittybot"
 	log "gopkg.in/inconshreveable/log15.v2"
 )
+
+type TLSDialFunc func(network string, addr string, tlsConf *tls.Config) (*tls.Conn, error)
+type DialFunc func(network string, addr string) (net.Conn, error)
 
 // Settings for the bot
 type Settings struct {
@@ -23,6 +28,8 @@ type Settings struct {
 	Limit     bool
 	Colors    bool
 	irc       *kitty.Bot
+	Dial      DialFunc
+	TLSDial   TLSDialFunc
 	extra
 }
 
@@ -43,6 +50,11 @@ func New(s *Settings) *Settings {
 			irc.Password = s.Password
 			irc.SSL = s.SSL
 			irc.LimitReplies = s.Limit
+			if s.SSL {
+				irc.DialTLS = s.TLSDial
+			} else {
+				irc.Dial = s.Dial
+			}
 		})
 	return s
 }
