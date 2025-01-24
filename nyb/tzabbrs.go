@@ -93,7 +93,7 @@ func parseZoneInfo(data []byte, target time.Time) (abbrs map[string]int) {
 }
 
 func parseUTC(in string) (offset int, err error) {
-	hundredyearssec := 60 * 60 * 24 * 365
+	hundredyearssec := (60*60*24*365 + 6*60*60) * 100
 	formats := []string{
 		"UTC+%d:%d",
 		"UTC-%d:%d",
