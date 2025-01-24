@@ -201,8 +201,19 @@ func timeInTZ(tzAbbr string) (msg string, err error) {
 			return "", fmt.Errorf("zone not found")
 		}
 	}
-
-	msg = fmt.Sprintf("Time in %s is %s", tzAbbr, now().In(time.FixedZone(tzAbbr, offset)).Format("Mon Jan 2 15:04:05 -0700 MST 2006"))
+	t := now()
+	// check overflow
+	offsetdur := time.Duration(offset) * time.Second
+	if offset > 0 {
+		if t.Add(offsetdur).Before(t) {
+			return "", fmt.Errorf("overflow")
+		}
+	} else {
+		if t.Add(offsetdur).After(t) {
+			return "", fmt.Errorf("underflow")
+		}
+	}
+	msg = fmt.Sprintf("Time in %s is %s", tzAbbr, t.In(time.FixedZone(tzAbbr, offset)).Format("Mon Jan 2 15:04:05 -0700 MST 2006"))
 	return msg, nil
 }
 
@@ -279,7 +290,18 @@ func (bot *Settings) newYearInTZ(tzAbbr string) (msg string, err error) {
 		}
 	}
 
-	offsetdur := time.Second * time.Duration(offset)
+	// check overflow
+	offsetdur := time.Duration(offset) * time.Second
+	if offset > 0 {
+		if target.Add(offsetdur).Before(target) {
+			return "", fmt.Errorf("overflow")
+		}
+	} else {
+		if target.Add(offsetdur).After(target) {
+			return "", fmt.Errorf("underflow")
+		}
+	}
+
 	if now().UTC().Add(offsetdur).Before(bot.target) {
 		hdur := humanDur(bot.target.Sub(now().UTC().Add(offsetdur)))
 		const newYearFutureMsg = "New Year in %s will happen in %s"
