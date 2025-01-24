@@ -93,6 +93,7 @@ func parseZoneInfo(data []byte, target time.Time) (abbrs map[string]int) {
 }
 
 func parseUTC(in string) (offset int, err error) {
+	hundredyearssec := 60 * 60 * 24 * 365
 	formats := []string{
 		"UTC+%d:%d",
 		"UTC-%d:%d",
@@ -107,12 +108,21 @@ func parseUTC(in string) (offset int, err error) {
 			if i%2 == 0 {
 				offset += hours * 3600
 				offset += minutes * 60
+				if offset < 0 {
+					return 0, fmt.Errorf("overflow")
+				}
 			} else {
 				offset -= hours * 3600
 				offset -= minutes * 60
+				if offset > 0 {
+					return 0, fmt.Errorf("underflow")
+				}
 			}
 			if i > 1 {
 				offset = -offset
+			}
+			if offset > hundredyearssec || offset < -hundredyearssec {
+				return 0, fmt.Errorf("too big")
 			}
 			return offset, nil
 		}
@@ -129,11 +139,20 @@ func parseUTC(in string) (offset int, err error) {
 		if err == nil {
 			if i%2 == 0 {
 				offset += hours * 3600
+				if offset < 0 {
+					return 0, fmt.Errorf("overflow")
+				}
 			} else {
 				offset -= hours * 3600
+				if offset > 0 {
+					return 0, fmt.Errorf("underflow")
+				}
 			}
 			if i > 1 {
 				offset = -offset
+			}
+			if offset > hundredyearssec || offset < -hundredyearssec {
+				return 0, fmt.Errorf("too big")
 			}
 			return offset, nil
 		}
