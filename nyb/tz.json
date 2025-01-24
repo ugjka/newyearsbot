@@ -546,7 +546,7 @@
         ]
       },
       {
-        "name": "Cape Verde",
+        "name": "Cabo Verde",
         "cities": [
           "Praia"
         ]
@@ -842,6 +842,10 @@
       {
         "name": "Vatican",
         "cities": []
+      },
+      {
+        "name": "Western Sahara",
+        "cities": []
       }
     ],
     "offset": 1
@@ -1023,6 +1027,10 @@
       },
       {
         "name": "Madagascar",
+        "cities": []
+      },
+      {
+        "name": "Mayotte",
         "cities": []
       },
       {
