@@ -104,9 +104,6 @@ func parseUTC(in string) (offset int, err error) {
 		var minutes int
 		_, err := fmt.Sscanf(in, formats[i], &hours, &minutes)
 		if err == nil {
-			if minutes > 59 {
-				return 0, fmt.Errorf("minutes over 59")
-			}
 			if i%2 == 0 {
 				offset += hours * 3600
 				offset += minutes * 60
