@@ -26,4 +26,4 @@
   channels: ["#testchan2"]  
   email: "example@example.com" # mandatory field
   bind: "2a01:4f9:c010:97e4::beef" #bind to specific host
-  server: "irc.ipv6.libera.chat:6665"
+  server: "irc.ipv6.libera.chat:6665" # set server to ipv6 when binding to ipv6 address
