@@ -191,32 +191,6 @@ var (
 	errNoPlace = errors.New("couldn't find that place")
 )
 
-func timeInTZ(tzAbbr string) (msg string, err error) {
-	tzAbbr = strings.ToUpper(tzAbbr)
-	var offset int
-	var ok bool
-	if offset, ok = tzAbbrs[tzAbbr]; !ok {
-		offset, err = parseUTC(tzAbbr)
-		if err != nil {
-			return "", fmt.Errorf("zone not found")
-		}
-	}
-	t := now()
-	// check overflow
-	offsetdur := time.Duration(offset) * time.Second
-	if offset > 0 {
-		if t.Add(offsetdur).Before(t) {
-			return "", fmt.Errorf("overflow")
-		}
-	} else {
-		if t.Add(offsetdur).After(t) {
-			return "", fmt.Errorf("underflow")
-		}
-	}
-	msg = fmt.Sprintf("Time in %s is %s", tzAbbr, t.In(time.FixedZone(tzAbbr, offset)).Format("Mon Jan 2 15:04:05 -0700 MST 2006"))
-	return msg, nil
-}
-
 func (bot *Settings) time(location string) (string, error) {
 	bot.irc.Info("Querying location: " + location)
 
@@ -290,8 +264,13 @@ func (bot *Settings) newYearInTZ(tzAbbr string) (msg string, err error) {
 		}
 	}
 
+	t := now()
 	// check overflow
 	offsetdur := time.Duration(offset) * time.Second
+
+	if offset > (1<<33-1) || offset < -(1<<33-1) {
+		return "", fmt.Errorf("int too big")
+	}
 	if offset > 0 {
 		if target.Add(offsetdur).Before(target) {
 			return "", fmt.Errorf("overflow")
@@ -302,13 +281,42 @@ func (bot *Settings) newYearInTZ(tzAbbr string) (msg string, err error) {
 		}
 	}
 
-	if now().UTC().Add(offsetdur).Before(bot.target) {
-		hdur := humanDur(bot.target.Sub(now().UTC().Add(offsetdur)))
+	if t.UTC().Add(offsetdur).Before(bot.target) {
+		hdur := humanDur(bot.target.Sub(t.UTC().Add(offsetdur)))
 		const newYearFutureMsg = "New Year in %s will happen in %s"
 		return fmt.Sprintf(newYearFutureMsg, tzAbbr, hdur), nil
 	}
 
-	hdur := humanDur(now().UTC().Add(offsetdur).Sub(bot.target))
+	hdur := humanDur(t.UTC().Add(offsetdur).Sub(bot.target))
 	const newYearPastMsg = "New Year in %s happened %s ago"
 	return fmt.Sprintf(newYearPastMsg, tzAbbr, hdur), nil
+}
+
+func timeInTZ(tzAbbr string) (msg string, err error) {
+	tzAbbr = strings.ToUpper(tzAbbr)
+	var offset int
+	var ok bool
+	if offset, ok = tzAbbrs[tzAbbr]; !ok {
+		offset, err = parseUTC(tzAbbr)
+		if err != nil {
+			return "", fmt.Errorf("zone not found")
+		}
+	}
+	t := now()
+	// check overflow
+	offsetdur := time.Duration(offset) * time.Second
+	if offset > (1<<33-1) || offset < -(1<<33-1) {
+		return "", fmt.Errorf("int too big")
+	}
+	if offset > 0 {
+		if t.Add(offsetdur).Before(t) {
+			return "", fmt.Errorf("overflow")
+		}
+	} else {
+		if t.Add(offsetdur).After(t) {
+			return "", fmt.Errorf("underflow")
+		}
+	}
+	msg = fmt.Sprintf("Time in %s is %s", tzAbbr, t.In(time.FixedZone(tzAbbr, offset)).Format("Mon Jan 2 15:04:05 -0700 MST 2006"))
+	return msg, nil
 }
