@@ -125,7 +125,7 @@ func parseUTC(in string) (int, error) {
 			if i > 1 {
 				offset = -offset
 			}
-			if offset > int64(time.Duration(math.MaxInt64)/time.Second) || offset < int64(time.Duration(math.MinInt64)/time.Second) {
+			if offset > math.MaxInt64/int64(time.Second) || offset < math.MinInt64/int64(time.Second) {
 				return 0, fmt.Errorf("too big")
 			}
 			return int(offset), nil
@@ -158,7 +158,7 @@ func parseUTC(in string) (int, error) {
 			if i > 1 {
 				offset = -offset
 			}
-			if offset > int64(time.Duration(math.MaxInt64)/time.Second) || offset < int64(time.Duration(math.MinInt64)/time.Second) {
+			if offset > math.MaxInt64/int64(time.Second) || offset < math.MinInt64/int64(time.Second) {
 				return 0, fmt.Errorf("too big")
 			}
 			return int(offset), nil
