@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"fmt"
 	"log"
+	"math"
 	"strings"
 	"time"
 )
@@ -92,8 +93,8 @@ func parseZoneInfo(data []byte, target time.Time) (abbrs map[string]int) {
 	return abbrs
 }
 
-func parseUTC(in string) (offset int, err error) {
-	hundredyearssec := (60*60*24*365 + 6*60*60) * 100
+func parseUTC(in string) (int, error) {
+	var offset int64
 	formats := []string{
 		"UTC+%d:%d",
 		"UTC-%d:%d",
@@ -101,8 +102,8 @@ func parseUTC(in string) (offset int, err error) {
 		"GMT-%d:%d",
 	}
 	for i := range formats {
-		var hours int
-		var minutes int
+		var hours int64
+		var minutes int64
 		_, err := fmt.Sscanf(in, formats[i], &hours, &minutes)
 		if err == nil {
 			if i%2 == 0 {
@@ -121,10 +122,10 @@ func parseUTC(in string) (offset int, err error) {
 			if i > 1 {
 				offset = -offset
 			}
-			if offset > hundredyearssec || offset < -hundredyearssec {
+			if offset > int64(time.Duration(math.MaxInt64)/time.Second) || offset < int64(time.Duration(math.MinInt64)/time.Second) {
 				return 0, fmt.Errorf("too big")
 			}
-			return offset, nil
+			return int(offset), nil
 		}
 	}
 	formatsShort := []string{
@@ -134,7 +135,7 @@ func parseUTC(in string) (offset int, err error) {
 		"GMT-%d",
 	}
 	for i := range formatsShort {
-		var hours int
+		var hours int64
 		_, err := fmt.Sscanf(in, formatsShort[i], &hours)
 		if err == nil {
 			if i%2 == 0 {
@@ -151,10 +152,10 @@ func parseUTC(in string) (offset int, err error) {
 			if i > 1 {
 				offset = -offset
 			}
-			if offset > hundredyearssec || offset < -hundredyearssec {
+			if offset > int64(time.Duration(math.MaxInt64)/time.Second) || offset < int64(time.Duration(math.MinInt64)/time.Second) {
 				return 0, fmt.Errorf("too big")
 			}
-			return offset, nil
+			return int(offset), nil
 		}
 	}
 	return 0, fmt.Errorf("zone not found")
