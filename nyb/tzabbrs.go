@@ -106,6 +106,9 @@ func parseUTC(in string) (int, error) {
 		var minutes int64
 		_, err := fmt.Sscanf(in, formats[i], &hours, &minutes)
 		if err == nil {
+			if hours < 0 || minutes < 0 {
+				return 0, fmt.Errorf("invalid format")
+			}
 			if i%2 == 0 {
 				offset += hours * 3600
 				offset += minutes * 60
@@ -138,6 +141,9 @@ func parseUTC(in string) (int, error) {
 		var hours int64
 		_, err := fmt.Sscanf(in, formatsShort[i], &hours)
 		if err == nil {
+			if hours < 0 {
+				return 0, fmt.Errorf("invalid format")
+			}
 			if i%2 == 0 {
 				offset += hours * 3600
 				if offset < 0 {
