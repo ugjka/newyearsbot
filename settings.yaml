@@ -4,7 +4,9 @@
   channels: ["#chan34564:channelkey"]  # channel with channel password after the ":"
   server: irc.libera.chat:6697 # default if omitted
   nossl: false # true to disable SSL for irc
-  password: "" # irc password
+  password: "" # irc server password
+  saslnick: "" # sasl username
+  saslpass: "" # sasl password
   prefix: '!' # default if omitted
   email: "example@example.com" # mandatory field
   nominatim: https://nominatim.openstreetmap.org # default if omitted 

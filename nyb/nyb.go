@@ -22,6 +22,8 @@ type Settings struct {
 	Server    string
 	SSL       bool
 	Password  string
+	SaslNick  string
+	SaslPass  string
 	Prefix    string
 	Email     string
 	Nominatim string
@@ -48,6 +50,11 @@ func New(s *Settings) *Settings {
 		func(irc *kitty.Bot) {
 			irc.Channels = s.Channels
 			irc.Password = s.Password
+			if s.SaslNick != "" && s.SaslPass != "" {
+				irc.SASL = true
+				irc.SASLNick = s.SaslNick
+				irc.SASLPassword = s.SaslPass
+			}
 			irc.SSL = s.SSL
 			irc.LimitReplies = s.Limit
 			if s.SSL {

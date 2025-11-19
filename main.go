@@ -29,7 +29,9 @@ CMD Options:
 -email		nominatim email
 
 [optional]
--password	irc password
+-password	irc server password
+-saslnick	sasl username
+-saslpass	sasl password
 -server		irc server (default: irc.libera.chat:6697)
 -prefix		command prefix (default: !)
 -nossl		disable ssl for irc
@@ -52,7 +54,9 @@ func main() {
 	nick := flag.String("nick", "", "irc nick")
 	email := flag.String("email", "", "nominatim email")
 	// Optional
-	password := flag.String("password", "", "irc password")
+	password := flag.String("password", "", "irc server password")
+	saslNick := flag.String("saslnick", "", "sasl username")
+	saslPass := flag.String("saslpass", "", "sasl password")
 	server := flag.String("server", SET_LIBERA_SERVER, "irc server")
 	prefix := flag.String("prefix", SET_PREFIX, "command prefix")
 	nossl := flag.Bool("nossl", false, "disable ssl for irc")
@@ -76,6 +80,8 @@ func main() {
 			Server:    *server,
 			NoSSL:     *nossl,
 			Password:  *password,
+			SaslNick:  *saslNick,
+			SaslPass:  *saslPass,
 			Prefix:    *prefix,
 			Email:     *email,
 			Nominatim: *nominatim,
@@ -192,6 +198,8 @@ func main() {
 					Server:    c.Server,
 					SSL:       !c.NoSSL,
 					Password:  c.Password,
+					SaslNick:  c.SaslNick,
+					SaslPass:  c.SaslPass,
 					Prefix:    c.Prefix,
 					Email:     c.Email,
 					Nominatim: c.Nominatim,
@@ -221,6 +229,8 @@ type config []struct {
 	Server    string
 	NoSSL     bool
 	Password  string
+	SaslNick  string
+	SaslPass  string
 	Prefix    string
 	Email     string
 	Nominatim string
