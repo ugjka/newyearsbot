@@ -38,6 +38,7 @@ CMD Options:
 -nominatim	nominatim server (default: http://nominatim.openstreetmap.org)
 -nolimit	disable flood kick protection
 -colors		enable irc colors
+-bind		bind to host address
 -debug		debug irc traffic
 -yaml		yaml config file
 
