@@ -35,6 +35,7 @@ CMD Options:
 -server		irc server (default: irc.libera.chat:6697)
 -prefix		command prefix (default: !)
 -nossl		disable ssl for irc
+-nocheck	disable ssl verification (e.g. self signed ssl)
 -nominatim	nominatim server (default: http://nominatim.openstreetmap.org)
 -nolimit	disable flood kick protection
 -colors		enable irc colors
@@ -61,6 +62,7 @@ func main() {
 	server := flag.String("server", SET_LIBERA_SERVER, "irc server")
 	prefix := flag.String("prefix", SET_PREFIX, "command prefix")
 	nossl := flag.Bool("nossl", false, "disable ssl for irc")
+	nocheck := flag.Bool("nocheck", false, "disable ssl verification (e.g. self signed ssl)")
 	nominatim := flag.String("nominatim", SET_NOMINATIM_SERVER, "nominatim server")
 	nolimit := flag.Bool("nolimit", false, "disable limit bot replies.")
 	colors := flag.Bool("colors", false, "enable irc colors")
@@ -80,6 +82,7 @@ func main() {
 			Channels:  channels,
 			Server:    *server,
 			NoSSL:     *nossl,
+			NoCheck:   *nocheck,
 			Password:  *password,
 			SaslNick:  *saslNick,
 			SaslPass:  *saslPass,
@@ -181,8 +184,13 @@ func main() {
 					KeepAlive: 30 * time.Second,
 				}
 
+				tlsSettings := &tls.Config{}
+				if c.NoCheck {
+					tlsSettings.InsecureSkipVerify = true
+				}
+
 				tlsdialer := func(network string, addr string, tlsConf *tls.Config) (*tls.Conn, error) {
-					return tls.DialWithDialer(dialer, network, addr, &tls.Config{})
+					return tls.DialWithDialer(dialer, network, addr, tlsSettings)
 				}
 				return tlsdialer, nil
 			}()
@@ -190,6 +198,22 @@ func main() {
 				fmt.Fprintln(os.Stderr, "BINDHOST:", err)
 				os.Exit(1)
 			}
+		}
+		if !c.NoSSL && c.NoCheck && c.Bind == "" {
+			customTLSDial = func() nyb.TLSDialFunc {
+
+				dialer := &net.Dialer{
+					Timeout:   30 * time.Second,
+					KeepAlive: 30 * time.Second,
+				}
+
+				skipverify := &tls.Config{InsecureSkipVerify: true}
+
+				tlsdialer := func(network string, addr string, tlsConf *tls.Config) (*tls.Conn, error) {
+					return tls.DialWithDialer(dialer, network, addr, skipverify)
+				}
+				return tlsdialer
+			}()
 		}
 		bots = append(bots,
 			nyb.New(
@@ -229,6 +253,7 @@ type config []struct {
 	Channels  []string
 	Server    string
 	NoSSL     bool
+	NoCheck   bool
 	Password  string
 	SaslNick  string
 	SaslPass  string

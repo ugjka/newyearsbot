@@ -4,6 +4,7 @@
   channels: ["#chan34564:channelkey"]  # channel with channel password after the ":"
   server: irc.libera.chat:6697 # default if omitted
   nossl: false # true to disable SSL for irc
+  nocheck: false # disble ssl verification for self signed certs
   password: "" # irc server password
   saslnick: "" # sasl username
   saslpass: "" # sasl password

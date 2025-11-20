@@ -66,6 +66,7 @@ CMD Options:
 -server         irc server (default: irc.libera.chat:6697)
 -prefix         command prefix (default: !)
 -nossl          disable ssl for irc
+-nocheck	    disable ssl verification (e.g. self signed ssl)
 -nominatim      nominatim server (default: http://nominatim.openstreetmap.org)
 -nolimit        disable flood kick protection
 -colors         enable irc colors
