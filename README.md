@@ -44,6 +44,36 @@ Uninstall with `make uninstall`
 
 Clean up with `make clean`
 
+## Usage
+
+```
+[ugjka@ugjka-pc newyearsbot]$ ./newyearsbot -h
+
+New Year's Eve IRC party bot
+Announces new years as they happen in each timezone
+
+CMD Options:
+[mandatory]
+-channels       comma separated list of channels eg. "#test, #test2"
+                channel key can be specifed after ":" e.g #channelname:channelkey
+-nick           irc nick
+-email          nominatim email
+
+[optional]
+-password       irc server password
+-saslnick       sasl username
+-saslpass       sasl password
+-server         irc server (default: irc.libera.chat:6697)
+-prefix         command prefix (default: !)
+-nossl          disable ssl for irc
+-nominatim      nominatim server (default: http://nominatim.openstreetmap.org)
+-nolimit        disable flood kick protection
+-colors         enable irc colors
+-bind           bind to host address
+-debug          debug irc traffic
+-yaml           yaml config file
+```
+
 ### Specifying channel key
 
 -channels "#channelname:channelkey, #channelname2:channelkey2"
