@@ -14,10 +14,14 @@ github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWE
 github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D7dTCTo3Y=
 github.com/ugjka/go-tz/v2 v2.2.5 h1:MARoJqwRAUzl2RkJcxpaoQtWA2v600BUJ+KdOKEds2Q=
 github.com/ugjka/go-tz/v2 v2.2.5/go.mod h1:Jh35OKbERtwjZLWDZ2KgjD+bm5hb9Lx8nVD9Mv9NVzs=
+github.com/ugjka/go-tz/v2 v2.2.6 h1:xAjw0dwSoLZYVBv1lA+n165ibSnDtHguBQNbeAMDwNE=
+github.com/ugjka/go-tz/v2 v2.2.6/go.mod h1:Jh35OKbERtwjZLWDZ2KgjD+bm5hb9Lx8nVD9Mv9NVzs=
 github.com/ugjka/ircmsg v0.0.3 h1:/yyB8HJm/y+UgA5aUJzVg6K4MqLa4PiEE8dIoQSHlL4=
 github.com/ugjka/ircmsg v0.0.3/go.mod h1:aAhyU2onRMc8CvDO4QDK/0VMKQBh4riIt2GnwupgTlE=
 github.com/ugjka/kittybot v0.0.63 h1:+V3cSCsyRxiNukWNFxPAlFDVtOYC71AdkKtKnmuaB4Q=
 github.com/ugjka/kittybot v0.0.63/go.mod h1:RgKwmBVvHlEnrS/LJmoZR/e4jFiX+TDGj5AILfuKkHo=
+github.com/ugjka/kittybot v0.0.64 h1:xj+R4V08kwgqDiKkXNhoDbwls053k+HLc97TFWVhOy0=
+github.com/ugjka/kittybot v0.0.64/go.mod h1:RgKwmBVvHlEnrS/LJmoZR/e4jFiX+TDGj5AILfuKkHo=
 golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.29.0 h1:TPYlXGxvx1MGTn2GiZDhnjPA9wZzZeGKHHmKhHYvgaU=
 golang.org/x/sys v0.29.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=

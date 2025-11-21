@@ -4,8 +4,8 @@ require (
 	github.com/badoux/checkmail v1.2.4
 	github.com/fatih/color v1.18.0
 	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b
-	github.com/ugjka/go-tz/v2 v2.2.5
-	github.com/ugjka/kittybot v0.0.63
+	github.com/ugjka/go-tz/v2 v2.2.6
+	github.com/ugjka/kittybot v0.0.64
 	gopkg.in/inconshreveable/log15.v2 v2.16.0
 	gopkg.in/yaml.v3 v3.0.1
 )
