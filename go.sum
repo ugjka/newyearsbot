@@ -22,6 +22,8 @@ github.com/ugjka/kittybot v0.0.63 h1:+V3cSCsyRxiNukWNFxPAlFDVtOYC71AdkKtKnmuaB4Q
 github.com/ugjka/kittybot v0.0.63/go.mod h1:RgKwmBVvHlEnrS/LJmoZR/e4jFiX+TDGj5AILfuKkHo=
 github.com/ugjka/kittybot v0.0.64 h1:xj+R4V08kwgqDiKkXNhoDbwls053k+HLc97TFWVhOy0=
 github.com/ugjka/kittybot v0.0.64/go.mod h1:RgKwmBVvHlEnrS/LJmoZR/e4jFiX+TDGj5AILfuKkHo=
+github.com/ugjka/kittybot v0.0.65 h1:ypRsIKprnv6fCHvy5SvoEujIM+yiCjKP671vlXhQvzw=
+github.com/ugjka/kittybot v0.0.65/go.mod h1:RgKwmBVvHlEnrS/LJmoZR/e4jFiX+TDGj5AILfuKkHo=
 golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.29.0 h1:TPYlXGxvx1MGTn2GiZDhnjPA9wZzZeGKHHmKhHYvgaU=
 golang.org/x/sys v0.29.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=

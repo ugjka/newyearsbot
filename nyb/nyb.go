@@ -50,7 +50,7 @@ func New(s *Settings) *Settings {
 		func(irc *kitty.Bot) {
 			irc.Channels = s.Channels
 			irc.Password = s.Password
-			if s.SaslNick != "" && s.SaslPass != "" {
+			if s.SaslPass != "" {
 				irc.SASL = true
 				irc.SASLNick = s.SaslNick
 				irc.SASLPassword = s.SaslPass
