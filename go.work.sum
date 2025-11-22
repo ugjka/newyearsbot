@@ -5,8 +5,8 @@ github.com/machinebox/progress v0.2.0/go.mod h1:hl4FywxSjfmkmCrersGhmJH7KwuKl+Ue
 github.com/matryer/is v1.2.0/go.mod h1:2fLPjFQM9rhQ15aVEtbuwhJinnOqrmgXPNdZsdwlWXA=
 github.com/rogpeppe/go-internal v1.10.0/go.mod h1:UQnix2H7Ngw/k4C5ijL5+65zddjncjaFoBhdsK/akog=
 github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
-github.com/ugjka/kittybot v0.0.65 h1:ypRsIKprnv6fCHvy5SvoEujIM+yiCjKP671vlXhQvzw=
-github.com/ugjka/kittybot v0.0.65/go.mod h1:RgKwmBVvHlEnrS/LJmoZR/e4jFiX+TDGj5AILfuKkHo=
+github.com/ugjka/kittybot v0.0.66 h1:YEUEGv8ggLZPG0BPxVxjTQQ+b8igGW+HC6+9i0CXw5Y=
+github.com/ugjka/kittybot v0.0.66/go.mod h1:RgKwmBVvHlEnrS/LJmoZR/e4jFiX+TDGj5AILfuKkHo=
 golang.org/x/image v0.15.0/go.mod h1:HUYqC05R2ZcZ3ejNQsIHQDQiwWM4JBqmm6MKANTp4LE=
 golang.org/x/mod v0.10.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
 golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
