@@ -130,7 +130,7 @@ func (bot *Settings) addTriggers() {
 				return
 			}
 			if errors.Is(err, ErrTZParser) {
-				b.Warn("Query error: " + err.Error())
+				b.Warn("Query: " + err.Error())
 				b.Reply(m, err.Error())
 				return
 			}
@@ -171,8 +171,14 @@ func (bot *Settings) addTriggers() {
 		},
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			arg := normalize(m.Content)[len(bot.Prefix)+len("hny")+1:]
-			if msg, err := bot.newYearInTZ(arg); err == nil {
+			msg, err := bot.newYearInTZ(arg)
+			if err == nil {
 				b.Reply(m, msg)
+				return
+			}
+			if errors.Is(err, ErrTZParser) {
+				b.Warn("Query: " + err.Error())
+				b.Reply(m, err.Error())
 				return
 			}
 			result, err := bot.newYear(arg)

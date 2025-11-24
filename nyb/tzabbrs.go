@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"math"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -98,7 +99,8 @@ func parseZoneInfo(data []byte, target time.Time) (abbrs map[string]int) {
 	return abbrs
 }
 
-var ErrTZParser = errors.New("parsing error")
+var ErrTZParser = errors.New("parser error")
+var ErrTZOutOfRange = errors.New("value out of range")
 
 func parseUTC(in string) (int, error) {
 	var offset int64
@@ -113,8 +115,11 @@ func parseUTC(in string) (int, error) {
 		var minutes int64
 		_, err := fmt.Sscanf(in, formats[i], &hours, &minutes)
 		if err == nil {
-			if hours < 0 || minutes < 0 {
+			if hours < 0 || minutes < 0 || minutes > 59 {
 				return 0, fmt.Errorf("%w: invalid format", ErrTZParser)
+			}
+			if hours >= math.MaxInt64/int64(time.Second)/3600 {
+				return 0, fmt.Errorf("%w: %w", ErrTZParser, ErrTZOutOfRange)
 			}
 			if i%2 == 0 {
 				offset += hours * 3600
@@ -132,10 +137,10 @@ func parseUTC(in string) (int, error) {
 			if i > 1 {
 				offset = -offset
 			}
-			if offset > math.MaxInt64/int64(time.Second) || offset < math.MinInt64/int64(time.Second) {
-				return 0, fmt.Errorf("%w: too big", ErrTZParser)
-			}
 			return int(offset), nil
+		}
+		if errors.Is(err, strconv.ErrRange) {
+			return 0, fmt.Errorf("%w: %w", ErrTZParser, ErrTZOutOfRange)
 		}
 	}
 	formatsShort := []string{
@@ -151,6 +156,9 @@ func parseUTC(in string) (int, error) {
 			if hours < 0 {
 				return 0, fmt.Errorf("%w: invalid format", ErrTZParser)
 			}
+			if hours >= math.MaxInt64/int64(time.Second)/3600 {
+				return 0, fmt.Errorf("%w: %w", ErrTZParser, ErrTZOutOfRange)
+			}
 			if i%2 == 0 {
 				offset += hours * 3600
 				if offset < 0 {
@@ -165,10 +173,10 @@ func parseUTC(in string) (int, error) {
 			if i > 1 {
 				offset = -offset
 			}
-			if offset > math.MaxInt64/int64(time.Second) || offset < math.MinInt64/int64(time.Second) {
-				return 0, fmt.Errorf("%w: too big", ErrTZParser)
-			}
 			return int(offset), nil
+		}
+		if errors.Is(err, strconv.ErrRange) {
+			return 0, fmt.Errorf("%w: %w", ErrTZParser, ErrTZOutOfRange)
 		}
 	}
 	return 0, fmt.Errorf("zone not found")
