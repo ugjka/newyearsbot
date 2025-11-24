@@ -3,7 +3,9 @@ package nyb
 import (
 	"bytes"
 	_ "embed"
+	"errors"
 	"fmt"
+	"io"
 	"log"
 	"math"
 	"strings"
@@ -49,6 +51,9 @@ func parseZoneInfo(data []byte, target time.Time) (abbrs map[string]int) {
 			&offsetSec,
 			&dst,
 		)
+		if errors.Is(err, io.EOF) {
+			continue
+		}
 		if err != nil {
 			log.Fatal("zone abbr parse", err)
 		}
@@ -93,6 +98,8 @@ func parseZoneInfo(data []byte, target time.Time) (abbrs map[string]int) {
 	return abbrs
 }
 
+var ErrTZParser = errors.New("parsing error")
+
 func parseUTC(in string) (int, error) {
 	var offset int64
 	formats := []string{
@@ -107,26 +114,26 @@ func parseUTC(in string) (int, error) {
 		_, err := fmt.Sscanf(in, formats[i], &hours, &minutes)
 		if err == nil {
 			if hours < 0 || minutes < 0 {
-				return 0, fmt.Errorf("invalid format")
+				return 0, fmt.Errorf("%w: invalid format", ErrTZParser)
 			}
 			if i%2 == 0 {
 				offset += hours * 3600
 				offset += minutes * 60
 				if offset < 0 {
-					return 0, fmt.Errorf("overflow")
+					return 0, fmt.Errorf("%w: overflow", ErrTZParser)
 				}
 			} else {
 				offset -= hours * 3600
 				offset -= minutes * 60
 				if offset > 0 {
-					return 0, fmt.Errorf("underflow")
+					return 0, fmt.Errorf("%w: underflow", ErrTZParser)
 				}
 			}
 			if i > 1 {
 				offset = -offset
 			}
 			if offset > math.MaxInt64/int64(time.Second) || offset < math.MinInt64/int64(time.Second) {
-				return 0, fmt.Errorf("too big")
+				return 0, fmt.Errorf("%w: too big", ErrTZParser)
 			}
 			return int(offset), nil
 		}
@@ -142,24 +149,24 @@ func parseUTC(in string) (int, error) {
 		_, err := fmt.Sscanf(in, formatsShort[i], &hours)
 		if err == nil {
 			if hours < 0 {
-				return 0, fmt.Errorf("invalid format")
+				return 0, fmt.Errorf("%w: invalid format", ErrTZParser)
 			}
 			if i%2 == 0 {
 				offset += hours * 3600
 				if offset < 0 {
-					return 0, fmt.Errorf("overflow")
+					return 0, fmt.Errorf("%w: overflow", ErrTZParser)
 				}
 			} else {
 				offset -= hours * 3600
 				if offset > 0 {
-					return 0, fmt.Errorf("underflow")
+					return 0, fmt.Errorf("%w: underflow", ErrTZParser)
 				}
 			}
 			if i > 1 {
 				offset = -offset
 			}
 			if offset > math.MaxInt64/int64(time.Second) || offset < math.MinInt64/int64(time.Second) {
-				return 0, fmt.Errorf("too big")
+				return 0, fmt.Errorf("%w: too big", ErrTZParser)
 			}
 			return int(offset), nil
 		}

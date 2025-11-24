@@ -124,8 +124,14 @@ func (bot *Settings) addTriggers() {
 		Action: func(b *kitty.Bot, m *kitty.Message) {
 			b.Info("Querying time...")
 			arg := normalize(m.Content)[len(bot.Prefix)+len("time")+1:]
-			if msg, err := timeInTZ(arg); err == nil {
+			msg, err := timeInTZ(arg)
+			if err == nil {
 				b.Reply(m, msg)
+				return
+			}
+			if errors.Is(err, ErrTZParser) {
+				b.Warn("Query error: " + err.Error())
+				b.Reply(m, err.Error())
 				return
 			}
 
@@ -260,7 +266,7 @@ func (bot *Settings) newYearInTZ(tzAbbr string) (msg string, err error) {
 	if offset, ok = tzAbbrs[tzAbbr]; !ok {
 		offset, err = parseUTC(tzAbbr)
 		if err != nil {
-			return "", fmt.Errorf("zone not found")
+			return "", err
 		}
 	}
 
@@ -284,7 +290,7 @@ func timeInTZ(tzAbbr string) (msg string, err error) {
 	if offset, ok = tzAbbrs[tzAbbr]; !ok {
 		offset, err = parseUTC(tzAbbr)
 		if err != nil {
-			return "", fmt.Errorf("zone not found")
+			return "", err
 		}
 	}
 	t := now()
