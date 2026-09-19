@@ -5,7 +5,7 @@ go 1.18
 replace github.com/ugjka/newyearsbot => ../../
 
 require (
-	github.com/ugjka/go-tz/v2 v2.2.6
+	github.com/ugjka/go-tz/v2 v2.2.9
 	github.com/ugjka/newyearsbot v0.0.0-20240405055626-58f2574b9537
 )
 

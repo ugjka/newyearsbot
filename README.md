@@ -1,6 +1,10 @@
 # NewYearsBot
 
-## 2026 here we come
+## 2027 update
+
+The default Nominatim server seems to now set very tight request limits probably due to AI scraping or whatever so you get "Error 429 Too many requests" pretty fast. So unless you have spare 128GB RAM and 1TB nvme to run your own Nominatim server, this project is kind of half dead
+
+## Intro
 
 New Year's Eve IRC party bot
 
