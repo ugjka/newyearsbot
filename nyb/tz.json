@@ -62,7 +62,7 @@
         "name": "United States",
         "cities": [
           "Adak",
-          "Hawaii",
+          "Honolulu",
           "Johnston Atoll"
         ]
       },
@@ -109,7 +109,9 @@
       {
         "name": "United States",
         "cities": [
-          "Alaska"
+          "Anchorage",
+          "Fairbanks",
+          "Juneau"
         ]
       }
     ],
@@ -133,8 +135,9 @@
       {
         "name": "United States",
         "cities": [
-          "California",
+          "Coeur d'Alene",
           "Las Vegas",
+          "Los Angeles",
           "Portland",
           "Seattle"
         ]
@@ -148,8 +151,7 @@
         "name": "Canada",
         "cities": [
           "Surrey",
-          "Vancouver",
-          "Yukon"
+          "Whitehorse"
         ]
       },
       {
@@ -162,13 +164,16 @@
       {
         "name": "United States",
         "cities": [
-          "Arizona",
+          "Albuquerque",
+          "Billings",
           "Boise",
-          "Colorado",
-          "Montana",
-          "New Mexico",
-          "Utah",
-          "Wyoming"
+          "Cheyenne",
+          "Denver",
+          "El Paso",
+          "Phoenix",
+          "Rapid City",
+          "Salt Lake City",
+          "Scottsbluff"
         ]
       }
     ],
@@ -183,8 +188,13 @@
       {
         "name": "Canada",
         "cities": [
-          "Alberta",
-          "Inuvik"
+          "Calgary",
+          "Edmonton",
+          "Inuvik",
+          "Lethbridge",
+          "Red Deer",
+          "Saskatoon",
+          "Yellowknife"
         ]
       },
       {
@@ -222,22 +232,24 @@
       {
         "name": "United States",
         "cities": [
-          "Arkansas",
+          "Chicago",
+          "Des Moines",
+          "Evansville",
           "Fargo",
           "Houston",
           "Huntsville",
-          "Illinois",
-          "Iowa",
-          "Louisiana",
-          "Minnesota",
-          "Mississippi",
-          "Missouri",
+          "Iron Mountain",
+          "Jackson",
+          "Kansas City",
+          "Little Rock",
+          "Milwaukee",
+          "Minneapolis",
           "Nashville",
-          "Oklahoma",
+          "New Orleans",
+          "Oklahoma City",
           "Omaha",
           "Sioux Falls",
-          "Wichita",
-          "Wisconsin"
+          "Wichita"
         ]
       }
     ],
@@ -258,8 +270,11 @@
       {
         "name": "Canada",
         "cities": [
+          "Kenora",
           "Montreal",
-          "Toronto"
+          "Ottawa",
+          "Toronto",
+          "Winnipeg"
         ]
       },
       {
@@ -313,16 +328,25 @@
         "cities": [
           "Atlanta",
           "Baltimore",
+          "Boston",
+          "Bridgeport",
+          "Burlington",
+          "Charleston",
+          "Charlotte",
+          "Columbia",
+          "Columbus",
           "Detroit",
           "Indianapolis",
+          "Jacksonville",
           "Louisville",
-          "Massachusetts",
-          "Miami",
+          "Manchester",
           "New York",
-          "Ohio",
-          "South Carolina",
-          "Virginia",
-          "Washington"
+          "Newark",
+          "Philadelphia",
+          "Providence",
+          "Virginia Beach",
+          "Washington",
+          "Wilmington"
         ]
       }
     ],
@@ -367,8 +391,9 @@
       {
         "name": "Canada",
         "cities": [
+          "Charlottetown",
           "Halifax",
-          "Winnipeg"
+          "Moncton"
         ]
       },
       {
