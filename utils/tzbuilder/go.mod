@@ -3,7 +3,7 @@ module tzbuilder
 go 1.18
 
 require (
-	github.com/ugjka/go-tz/v2 v2.2.2
+	github.com/ugjka/go-tz/v2 v2.2.10
 	github.com/ugjka/newyearsbot v0.0.0-20240220183636-60f85109bc95
 )
 
