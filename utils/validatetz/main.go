@@ -73,7 +73,7 @@ func main() {
 
 // Get Timezone Offset
 func timeZone(country, city string) (float64, error) {
-	time.Sleep(time.Second * 2)
+	time.Sleep(time.Second * 3)
 	var mapj nyb.NominatimResults
 	var err error
 	if country == "CAR" || country == "Congo" {
