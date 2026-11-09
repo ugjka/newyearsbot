@@ -118,13 +118,6 @@
   {
     "countries": [
       {
-        "name": "Canada",
-        "cities": [
-          "Surrey",
-          "Vancouver"
-        ]
-      },
-      {
         "name": "Mexico",
         "cities": [
           "Mexicali",
@@ -154,9 +147,8 @@
       {
         "name": "Canada",
         "cities": [
-          "Alberta",
-          "Inuvik",
-          "Northwest Territories",
+          "Surrey",
+          "Vancouver",
           "Yukon"
         ]
       },
@@ -191,7 +183,8 @@
       {
         "name": "Canada",
         "cities": [
-          "Winnipeg"
+          "Alberta",
+          "Inuvik"
         ]
       },
       {
@@ -374,7 +367,8 @@
       {
         "name": "Canada",
         "cities": [
-          "Halifax"
+          "Halifax",
+          "Winnipeg"
         ]
       },
       {
@@ -613,10 +607,6 @@
         "cities": []
       },
       {
-        "name": "Jersey",
-        "cities": []
-      },
-      {
         "name": "Liberia",
         "cities": []
       },
@@ -626,6 +616,10 @@
       },
       {
         "name": "Mauritania",
+        "cities": []
+      },
+      {
+        "name": "Morocco",
         "cities": []
       },
       {
@@ -659,6 +653,10 @@
         "cities": [
           "London"
         ]
+      },
+      {
+        "name": "Western Sahara",
+        "cities": []
       }
     ],
     "offset": 0
@@ -780,10 +778,6 @@
         "cities": []
       },
       {
-        "name": "Morocco",
-        "cities": []
-      },
-      {
         "name": "Netherlands",
         "cities": []
       },
@@ -841,10 +835,6 @@
       },
       {
         "name": "Vatican",
-        "cities": []
-      },
-      {
-        "name": "Western Sahara",
         "cities": []
       }
     ],
